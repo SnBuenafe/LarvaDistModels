@@ -1,0 +1,165 @@
+---
+title: "Learning BRT"
+author: "Tin Buenafe"
+date: "`r format (Sys.Date())`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tibble)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, error = FALSE)
+```
+
+# Boosted Regression Trees for Ecological Modeling (Elith and Leathwick, 2017)
+
+Using `library(dismo)` here.
+
+## Data
+```{r data}
+library(dismo)
+data(Anguilla_train)
+head(Anguilla_train, 3)
+```
+
+## Fitting model
+To start off:
+1. Tree complexity = 5
+2. Learning rate = 0.01
+
+Now... identify the optimal number of trees.
+
+* `gbm.step` is an alternative to the _cross-validation_ provided in `library(gbm)`
+* default is _10-fold cross-validation_
+* to know the optimum number of trees, we find the # of trees that yielded the minimum predictive deviance
+```{r fit}
+angaus.tc5.lr01 <- gbm.step(data = Anguilla_train, gbm.x = 3:13, gbm.y = 2,
+                            family = "bernoulli", tree.complexity = 5,
+                            learning.rate = 0.01, bag.fraction = 0.5)
+```
+
+Checking available lists in object
+```{r fitList}
+names(angaus.tc5.lr01)
+```
+
+Fitted values from the final tree on the response scale
+```{r fitValues}
+head(angaus.tc5.lr01$fitted)
+```
+
+Fitted variance of the fitted values on the response scale
+```{r fitVar}
+head(angaus.tc5.lr01$fitted.vars)
+```
+
+Residuals for the fitted values on the response scale
+```{r fitRes}
+head(angaus.tc5.lr01$residuals)
+```
+
+Relative importance of the variables
+```{r fitContrib}
+head(angaus.tc5.lr01$contributions)
+# or
+summary(angaus.tc5.lr01)
+```
+
+`$self.statistics` demonstrates the fit of the model on the training data; however, it should not be reported as the model predictive performance
+```{r fitSelfStat}
+angaus.tc5.lr01$self.statistics
+```
+
+`$cv.statistics` is the most appropriate evaluation statistics; each statistic is calculated within each fold (at the identified optimal # of trees)
+```{r fitCVStat}
+angaus.tc5.lr01$cv.statistics
+```
+
+Record of the number of trees fitted at each step in the stage-wise fitting
+```{r fitWeights}
+angaus.tc5.lr01$trees.fitted
+```
+
+Stagewise changes in deviance on the training data
+```{r fitTrainLoss}
+angaus.tc5.lr01$training.loss.values
+```
+
+holdout deviance is calculated from `cv.values` and `cv.loss.ses`
+```{r fitHoldDev}
+cv <- tibble::tibble(
+  cvValues = angaus.tc5.lr01$cv.values,
+  cvLoss = angaus.tc5.lr01$cv.loss.ses
+)
+head(cv, n = 3)
+```
+
+Fitted functions from a BRT model can be plotted using `gbm.plot`.
+```{r fitPlot}
+gbm.plot(angaus.tc5.lr01, n.plots = 11, write.title = FALSE)
+```
+
+Plot the fitted values in relation to each of the predictors used in the model
+```{r fitPlotFits}
+gbm.plot.fits(angaus.tc5.lr01)
+```
+
+## Assessing interactions
+```{r interactions}
+find.int <- gbm.interactions(angaus.tc5.lr01)
+find.int$interactions
+
+gbm.perspec(angaus.tc5.lr01, 7, 1, y.range = c(15,20), z.range = c(0, 0.6))
+```
+
+## Predicting to new data
+To predict to a set of sites (rather than to a whole map), the general procedure is to set up the `data.frame` with rows for sites and columns for the variables in the model.
+
+To make predictions to sites from the BRT model use `predict.gbm` and, in the output, the predictions are in a vector called `preds`.
+
+```{r predData}
+data(Anguilla_test)
+library(gbm)
+
+preds <- predict.gbm(angaus.tc5.lr01, Anguilla_test,
+                     n.trees = angaus.tc5.lr01$gbm.call$best.trees,
+                     type = "response")
+calc.deviance(obs = Anguilla_test$Angaus_obs,
+              pred = preds,
+              calc.mean = TRUE)
+
+d <- cbind(Anguilla_test$Angaus_obs, preds)
+pres <- d[d[,1] == 1, 2] # only get those that have presences?
+abs <- d[d[,1] == 0, 2] # only get those that have absences
+e <- evaluate(p = pres, a = abs)
+e
+```
+
+Creating the BRT with a fixed number of trees
+```{r fixed}
+angaus.5000 <- gbm.fit(data = Anguilla_train, gbm.x = 3:13, gbm.y = 2,
+                       learning.rate = 0.005, tree.complexity = 5, n.trees = 5000)
+tree.list <- seq(100, 5000, by = 100)
+pred <- predict.gbm(angaus.5000, Anguilla_test, n.trees = tree.list, "response")
+
+# Calculating the deviance
+angaus.pred.deviance <- rep(0, 50)
+for(i in 1:50) {
+  angaus.pred.deviance[i] <- calc.deviance(Anguilla_test$Angaus_obs,
+                                           pred[,i], calc.mean = TRUE)
+}
+
+plot(tree.list, angaus.pred.deviance, ylim = c(0.7,1), xlim = c(-100, 5000), type = '1',
+     xlab = "number of trees", ylab = "predictive deviance",
+     cex.lab = 1.5)
+```
+
+### Spatial prediction
+```{r spatPred}
+data(Anguilla_grids) # Predictor variables as a raster brick
+plot(Anguilla_grids)
+
+Method <- factor("electric", levels = levels(Anguilla_train$Method))
+add <- data.frame(Method)
+p <- predict(Anguilla_grids, angaus.tc5.lr01, const = add, n.trees = angaus.tc5.lr01$gbm.call$best.trees, type = "response")
+p <- mask(p, raster(Anguilla_grids, 1)) # Make sure to plot only those with values for the first variable?
+```
