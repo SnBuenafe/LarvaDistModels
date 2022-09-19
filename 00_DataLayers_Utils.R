@@ -7,6 +7,7 @@ suppressPackageStartupMessages({
   library(cmocean)
   library(patchwork)
   library(magrittr)
+  library(FNN)
 })
 
 # Load worldwide landmass
@@ -15,7 +16,7 @@ landmass <- rnaturalearth::ne_countries() %>%
 
 # Convert netcdf data (across years) to the model's 30-year mean
 nc2sf <- function(model, expt, var) {
-  path <- "Data/final/"
+  path <- "Data/Climatology/ESM/"
   list <- list.files(path)
   param <- c(model, expt, var)
   
