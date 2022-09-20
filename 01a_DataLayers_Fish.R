@@ -26,27 +26,21 @@ YFTsf <- YFT %>%
 #### Calling climatology data ####
 tos <- nc2sf(model = "ACCESS-ESM1-5",
              expt = "ssp585",
-             var = "tos") %>% 
-  dplyr::mutate(cellID = row_number()) %>% 
+             var = "tos")
   dplyr::rename(tos = mean)
 o2os <- nc2sf(model = "ACCESS-ESM1-5",
               expt = "ssp585",
-              var = "o2os") %>% 
-  dplyr::mutate(cellID = row_number()) %>% 
+              var = "o2os") 
   dplyr::rename(o2os = mean)
 phos <- nc2sf(model = "CMCC-ESM2",
               expt = "ssp585",
-              var = "phos") %>% 
-  dplyr::mutate(cellID = row_number()) %>% 
+              var = "phos")
   dplyr::rename(phos = mean)
 
-tos_df <- tibble::as_tibble(tos)
-YFT_df <- tibble::as_tibble(YFTsf)
-
-join <- dplyr::left_join(tos_df, YFT_df, by = "geometry")
-
-join <- sf::st_join(tos, YFTsf, join = st_contains_properly, left = TRUE) %>% 
+join <- sf::st_join(o2os, YFTsf, join = st_contains_properly, left = TRUE) %>% # TODO: do this for all variables
   dplyr::filter(!is.na(abundance))
+
+# make each grid cell your "planning unit", so we can interpolate other data (e.g., bathymetry, distance to coast) through bilinear interpolation
 
 # dummy
 YFT.model0 <- dismo::gbm.step(data = YFT, gbm.x = 4:6,
