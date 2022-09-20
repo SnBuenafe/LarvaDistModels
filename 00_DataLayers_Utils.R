@@ -10,6 +10,7 @@ suppressPackageStartupMessages({
   library(FNN)
   library(raster)
   library(VoCC)
+  library(dismo)
 })
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
