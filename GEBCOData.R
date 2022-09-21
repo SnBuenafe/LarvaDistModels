@@ -144,6 +144,8 @@ classifyDepthRaster <- function(WDPA, # shapefile of protected area
   DEEP_PROTECTED = 0
   
   for(i in 1:length(file)){
+    
+    # see https://gis.stackexchange.com/questions/421821/how-to-subset-a-spatraster-by-value-in-r
     rs_epi <- terra::rast(file.path(path, list[file[i]])) %>% 
       terra::clamp(., upper = 0, lower = -200, values = FALSE) # making areas with positive elevations and elevations <-200m as NAs
     
@@ -157,6 +159,7 @@ classifyDepthRaster <- function(WDPA, # shapefile of protected area
     deep_aggregated <- terra::aggregate(rs_deep, fact = 10)
     DEEP = DEEP + expanse(deep_aggregated, unit = "km", transform = TRUE)
     
+    # see: https://gis.stackexchange.com/questions/135971/intersection-of-two-raster-objects
     # get areas that are protected AND epipelagic
     epi_protected <- terra::crop(df_rs, epi_aggregated) %>% 
       terra::mask(epi_aggregated)
