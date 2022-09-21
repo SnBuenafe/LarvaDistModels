@@ -118,7 +118,7 @@ nrow(epi_protected)
 # First we rasterize the protected-area database
 
 classifyDepthRaster <- function(WDPA, # shapefile of protected area
-                                res = 0.04166667, # res of GEBCO aggregated by a factor of 10
+                                res = 0.04166667, # res of GEBCO aggregated by a factor of 10; should be the same res
                                 path # where the files are
 ) {
   
