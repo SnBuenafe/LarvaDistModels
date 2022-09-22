@@ -204,15 +204,15 @@ calculateData <- function() {
                      0, Inf, NA), ncol = 3, byrow = TRUE)
   
   # Calculate the following values
-  OCEAN = 0 %>% 
-    units::set_units(km^2)# area of ocean cells
-  EPI = 0 %>% 
+  OCEAN = 537425422 %>% 
+    units::set_units(km^2) # area of ocean cells
+  EPI = 6625942.08562332 %>% 
     units::set_units(km^2)# area of ocean cells that are considered epipelagic
-  DEEP = 0 %>% 
+  DEEP = 201248476.150123%>% 
     units::set_units(km^2)# area of ocean cells that are considered deep
-  EPI_PROTECTED = 0 %>% 
+  EPI_PROTECTED = 163040.391131636 %>% 
     units::set_units(km^2)# area of ocean cells that are considered epipelagic + protected
-  DEEP_PROTECTED = 0 %>% 
+  DEEP_PROTECTED = 957770.882620152 %>% 
     units::set_units(km^2)# area of ocean cells that are ocnsidered deep + protected
   
   for(i in 1:length(file)) {
