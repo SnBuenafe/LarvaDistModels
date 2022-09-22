@@ -10,9 +10,19 @@ lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 moll <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 
 # Load worldwide landmass
-landmass <- rnaturalearth::ne_countries(scale = "large") %>% 
+landmass <- rnaturalearth::ne_countries() %>% 
   sf::st_as_sf(crs = lonlat) %>% 
   sf::st_transform(crs = moll)
+
+# see: https://www.eea.europa.eu/themes/biodiversity/protected-areas/facts-and-figures/IUCN-management-categories
+WDPA <- sf::st_read("Data/WDPA/WDPA_Sep2022_Public_shp-polygons.shp") %>% 
+  dplyr::filter(IUCN_CAT %in% c("Ia", "Ib", "II", "III", "IV")) %>% 
+  dplyr::filter(MARINE > 0) %>% # remove terrestrial reserves
+  dplyr::filter(STATUS %in% c("Designated", "Established", "Inscribed")) %>%  # from spatialplanr
+  sf::st_transform(crs = lonlat)
+
+#######################
+# sf way
 
 # Create global grid
 #sf_use_s2(FALSE)
@@ -21,19 +31,9 @@ Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = "Global",
 
 grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
                                                  landmass,
-                                                 CellArea = 100,# Default was 1000
+                                                 CellArea = 1000,# Default was 1000
                                                  Shape = "square",
                                                  inverse = FALSE)
-
-
-# see: https://www.eea.europa.eu/themes/biodiversity/protected-areas/facts-and-figures/IUCN-management-categories
-WDPA <- sf::st_read("Data/WDPA/WDPA_Sep2022_Public_shp-polygons.shp") %>% 
-  dplyr::filter(IUCN_CAT %in% c("Ia", "Ib", "II", "III", "IV")) %>% 
-  dplyr::filter(MARINE > 0) %>% # remove terrestrial reserves
-  dplyr::filter(STATUS %in% c("Designated", "Established", "Inscribed")) %>%  # from spatialplanr
-  sf::st_transform(crs = lonlat) %>% 
-  dplyr::mutate(value = 1)
-
 
 # intersect WDPA with the grid data
 x <- sf::st_intersects(grid, WDPA) %>% 
@@ -185,3 +185,106 @@ classifyDepthRaster <- function(WDPA, # shapefile of protected area
 
 trial1 <- classifyDepthRaster(WDPA = WDPA, path = "Data/GEBCO")
 trial1
+
+#############################
+WDPA_moll <- WDPA %>% 
+  sf::st_transform(crs = moll) %>% 
+  dplyr::select(WDPAID)
+
+calculateData <- function() {
+  
+  path <- "Data/GEBCO"
+  list <- list.files(path)
+  x <- apply(outer(list, ".tif", stringr::str_detect), 1, all) %>% as.numeric()
+  file <- which(x == 1)
+  
+  # define the classification matrix
+  matrix <- matrix(c(-Inf, -200, 1, # classify <= -200m: 1s (deep)
+                     -200, 0, 0, # classify >200m but <= 0m: 0s (epipelagic)
+                     0, Inf, NA), ncol = 3, byrow = TRUE)
+  
+  # Calculate the following values
+  OCEAN = 0 %>% 
+    units::set_units(km^2)# area of ocean cells
+  EPI = 0 %>% 
+    units::set_units(km^2)# area of ocean cells that are considered epipelagic
+  DEEP = 0 %>% 
+    units::set_units(km^2)# area of ocean cells that are considered deep
+  EPI_PROTECTED = 0 %>% 
+    units::set_units(km^2)# area of ocean cells that are considered epipelagic + protected
+  DEEP_PROTECTED = 0 %>% 
+    units::set_units(km^2)# area of ocean cells that are ocnsidered deep + protected
+  
+  for(i in 1:length(file)) {
+    
+    gebco <- terra::rast(file.path(path, list[file[i]])) %>% 
+      terra::aggregate(., fact = 10) # aggregate by a factor of 10 so we can convert it to sf
+    
+    gebco_reclassified <- gebco %>% 
+      terra::classify(., matrix, right = TRUE) # reclassify based on the matrix defined above
+    
+    # convert to sf object
+    gebco_reclassified_sf <- gebco_reclassified %>% 
+      terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm = FALSE) %>% 
+      sf::st_as_sf(crs = lonlat) %>% 
+      sf::st_transform(crs = moll)
+    
+    colnames(gebco_reclassified_sf)[1] <- "depth" # change column name of the first column
+    
+    # take out those cells that wholly or partially touch the landmass
+    x <- sf::st_intersects(gebco_reclassified_sf, landmass) %>% 
+      lengths > 0
+    
+    gebco_reclassified_sf[x, "depth"] <- NA # change these values to NA
+    
+    # filter for the deep cells
+    deep <- gebco_reclassified_sf %>% 
+      dplyr::filter(depth == 1)
+    
+    # calculate the area that is considered deep for this file...
+    DEEP = DEEP + (sum(sf::st_area(deep)) %>% 
+                     units::set_units(km^2)) # Converts it to km^2... see: https://github.com/r-spatial/sf/issues/291
+    print(paste0("DEEP: ", DEEP))
+    
+    # get the intersection of deep and WDPA data
+    deep_int <- sf::st_intersection(deep, WDPA_moll)
+    
+    # calculate the area for the intersection
+    DEEP_PROTECTED = DEEP_PROTECTED + (sum(sf::st_area(deep_int)) %>% 
+                                         units::set_units(km^2)) # Convert to km^2
+    print(paste0("DEEP_PROTECTED: ", DEEP_PROTECTED))
+    
+    # filter for the epipelagic cells
+    epipelagic <- gebco_reclassified_sf %>% 
+      dplyr::filter(depth == 0)
+    
+    # calculate the area that is considered deep for this file...
+    EPI = EPI + (sum(sf::st_area(epipelagic)) %>% 
+                     units::set_units(km^2)) # Converts it to km^2... see: https://github.com/r-spatial/sf/issues/291
+    print(paste0("EPI: ", EPI))
+    
+    # get the intersection of deep and WDPA data
+    epi_int <- sf::st_intersection(epipelagic, WDPA_moll)
+    
+    # calculate the area for the intersection
+    EPI_PROTECTED = EPI_PROTECTED + (sum(sf::st_area(epi_int)) %>% 
+                                         units::set_units(km^2)) # Convert to km^2
+    
+    print(paste0("EPI_PROTECTED: ", EPI_PROTECTED))
+    
+    OCEAN = OCEAN + EPI + DEEP # update the ocean area
+    print(OCEAN) # sanity check
+  }
+  
+  df <- tibble::tribble(~category, ~area,
+                        "epipelagic", EPI,
+                        "deep", DEEP,
+                        "epipelagic and protected", EPI_PROTECTED,
+                        "deep and protected", DEEP_PROTECTED,
+                        "ocean", OCEAN)
+  
+  return(df)
+  
+}
+
+df <- calculateData()
