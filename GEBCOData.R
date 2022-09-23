@@ -5,6 +5,8 @@ library(sf)
 library(spatialplanr)
 library(magrittr)
 library(stars)
+library(doParallel)
+
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 moll <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
@@ -214,8 +216,8 @@ calculateData <- function() {
     units::set_units(km^2)# area of ocean cells that are considered epipelagic + protected
   DEEP_PROTECTED = 957770.882620152 %>% 
     units::set_units(km^2)# area of ocean cells that are ocnsidered deep + protected
-  
-  for(i in 1:length(file)) {
+
+  for(i in 5:length(file)) {
     
     gebco <- terra::rast(file.path(path, list[file[i]])) %>% 
       terra::aggregate(., fact = 10) # aggregate by a factor of 10 so we can convert it to sf
@@ -247,7 +249,7 @@ calculateData <- function() {
     print(paste0("DEEP: ", DEEP))
     
     # get the intersection of deep and WDPA data
-    deep_int <- sf::st_intersection(deep, WDPA_moll)
+    (system.time(deep_int <- sf::st_intersection(deep, WDPA_moll)))
     
     # calculate the area for the intersection
     DEEP_PROTECTED = DEEP_PROTECTED + (sum(sf::st_area(deep_int)) %>% 
@@ -260,7 +262,7 @@ calculateData <- function() {
     
     # calculate the area that is considered deep for this file...
     EPI = EPI + (sum(sf::st_area(epipelagic)) %>% 
-                     units::set_units(km^2)) # Converts it to km^2... see: https://github.com/r-spatial/sf/issues/291
+                   units::set_units(km^2)) # Converts it to km^2... see: https://github.com/r-spatial/sf/issues/291
     print(paste0("EPI: ", EPI))
     
     # get the intersection of deep and WDPA data
@@ -268,12 +270,13 @@ calculateData <- function() {
     
     # calculate the area for the intersection
     EPI_PROTECTED = EPI_PROTECTED + (sum(sf::st_area(epi_int)) %>% 
-                                         units::set_units(km^2)) # Convert to km^2
+                                       units::set_units(km^2)) # Convert to km^2
     
     print(paste0("EPI_PROTECTED: ", EPI_PROTECTED))
     
     OCEAN = OCEAN + EPI + DEEP # update the ocean area
     print(OCEAN) # sanity check
+    
   }
   
   df <- tibble::tribble(~category, ~area,
@@ -288,3 +291,10 @@ calculateData <- function() {
 }
 
 df <- calculateData()
+
+# at i = 6
+# DEEP: 246678948.688884
+# DEEP_PROTECTED: 2375432.65809186
+# EPI: 9456709.53644897
+# EPI_PROTECTED: 206875.555718883
+# 793561080 OCEAN
