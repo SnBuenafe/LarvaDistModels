@@ -74,9 +74,10 @@ saveRDS(joined_sf, "Data/GEBCO/gebco1000.rds")
 
 # intersect WDPA with grid
 WDPA_int <- sf::st_intersection(grid, WDPA)
-
 # then I'll take the area of the protected area
 WDPA_int %<>% dplyr::select(WDPAID, cellID)
+
+saveRDS(WDPA_int, "Data/wdpa_int.rds")
 
 WDPA_int$Area <- sf::st_area(WDPA_int) %>% 
   units::set_units(km^2)
