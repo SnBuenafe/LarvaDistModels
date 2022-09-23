@@ -79,5 +79,10 @@ WDPA_int %<>% dplyr::select(WDPAID, cellID)
 
 saveRDS(WDPA_int, "Data/wdpa_int.rds")
 
-WDPA_int$Area <- sf::st_area(WDPA_int) %>% 
+WDPA_int$Area <- sf::st_area(WDPA_int) %>%  # getting the area
   units::set_units(km^2)
+
+# get the area for each grid cell
+area <- WDPA_int %>% 
+  dplyr::group_by(cellID) %>% 
+  dplyr::summarise(sumArea = sum(Area, na.rm = TRUE))
