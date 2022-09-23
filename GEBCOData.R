@@ -1,20 +1,4 @@
-# Call the files
-library(terra)
-library(tidyverse)
-library(sf)
-library(spatialplanr)
-library(magrittr)
-library(stars)
-library(doParallel)
 
-
-lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-moll <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
-
-# Load worldwide landmass
-landmass <- rnaturalearth::ne_countries() %>% 
-  sf::st_as_sf(crs = lonlat) %>% 
-  sf::st_transform(crs = moll)
 
 # see: https://www.eea.europa.eu/themes/biodiversity/protected-areas/facts-and-figures/IUCN-management-categories
 WDPA <- sf::st_read("Data/WDPA/WDPA_Sep2022_Public_shp-polygons.shp") %>% 
