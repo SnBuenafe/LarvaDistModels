@@ -12,6 +12,7 @@ suppressPackageStartupMessages({
 })
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+moll <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 
 # Load worldwide landmass
 landmass <- rnaturalearth::ne_countries() %>% 
@@ -134,4 +135,15 @@ gebcoConvert <- function(grid, area) {
     
     return(joined_sf)
   
+}
+
+# Replacing NAs with the nearest neighborhood value
+replaceNN <- function(climate, grid, colname) {
+  filtered <- climate %>% dplyr::filter(!is.na(!!sym(colname)))
+  vector <- purrr::as_vector(sf::st_nearest_feature(grid, filtered))
+  
+  mutatedDF <- climate %>% 
+    dplyr::mutate(!!sym(paste0(colname, "_transformed")) := ifelse(is.na(!!sym(colname)),
+                                                            yes = (filtered[[ colname ]])[vector[cellID]],
+                                                            no = !!sym(colname)))
 }
