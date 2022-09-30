@@ -37,3 +37,14 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Large Files
+Data/Climatology/crop/
+Data/Climatology/merged/
+Data/Climatology/Present/
+Data/Climatology/raw/
+Data/Climatology/ssp126-2050/
+Data/Climatology/ssp245-2050/
+Data/GEBCO/*.tif
+Data/GEBCO/*.pdf
+Data/WDPA/
