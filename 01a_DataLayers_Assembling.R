@@ -1,24 +1,6 @@
 # Load preliminaries
 source("00_Utils.R")
 
-#######################
-# Establish grid data #
-#######################
-# landmass, let's do medium?
-landmass <- rnaturalearth::ne_countries(scale = "medium") %>% 
-  sf::st_as_sf(crs = lonlat) %>% 
-  sf::st_transform(crs = moll)
-
-# Using the mollweide projection (moll)
-Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = "Global",
-                                             Type = NA)
-
-grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
-                                                 landmass,
-                                                 CellArea = 2500, # let's do half a degree? (~ 50 km x 50 km)
-                                                 Shape = "square",
-                                                 inverse = FALSE)
-
 ####################
 # Fish data #
 ####################
@@ -77,6 +59,13 @@ phos <- nc2sf(model = "CMCC-ESM2",
 #bathy <- gebcoConvert(grid, 2500) # bathymetry data is extrapolated depending on the grid area provided
 bathy <- readRDS("Data/GEBCO/gebco2500.rds") %>% 
   dplyr::as_tibble()
+
+# Coastline
+#dist2coast <- calculateDist2Coast(grid) # distance to coast is calculated depending on the grid area provided
+dist2coast <- readRDS("Data/CoastDistance.rds") %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(-geometry)
+
 ###############################################################
 # Joining all predictor and response per fish species #
 ###############################################################
@@ -85,5 +74,8 @@ bathy <- readRDS("Data/GEBCO/gebco2500.rds") %>%
 YFT_full <- dplyr::left_join(tos, o2os, by = c("cellID", "geometry")) %>% 
   dplyr::left_join(., phos, by = c("cellID", "geometry")) %>% 
   dplyr::left_join(., bathy, by = c("cellID", "geometry")) %>% 
+  dplyr::left_join(., dist2coast, by = c("cellID")) %>% 
   dplyr::left_join(grid_YFT, ., by = c("cellID", "geometry")) %>%  # Join with species data
-  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, meanDepth, everything()) # arrange columns
+  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+
+write_csv(YFT_full, file = "Output/YFT_full.csv") # save full data

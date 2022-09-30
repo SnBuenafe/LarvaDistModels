@@ -15,8 +15,22 @@ lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 moll <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 
 # Load worldwide landmass
-landmass <- rnaturalearth::ne_countries() %>% 
-  sf::st_as_sf(crs = lonlat)
+landmass <- rnaturalearth::ne_countries(scale = "medium") %>% 
+  sf::st_as_sf(crs = lonlat) %>% 
+  sf::st_transform(crs = moll)
+
+# Establish the grid
+# Using the mollweide projection (moll)
+Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = "Global",
+                                             Type = NA)
+
+grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
+                                                 landmass,
+                                                 CellArea = 2500, # let's do half a degree? (~ 50 km x 50 km)
+                                                 Shape = "square",
+                                                 inverse = FALSE)
+
+#### Helper functions ####
 
 # Convert netcdf to sf objects
 nc2sf <- function(model, expt, var) {
@@ -146,4 +160,31 @@ replaceNN <- function(climate, grid, colname) {
     dplyr::mutate(!!sym(paste0(colname, "_transformed")) := ifelse(is.na(!!sym(colname)),
                                                             yes = (filtered[[ colname ]])[vector[cellID]],
                                                             no = !!sym(colname)))
+}
+
+# Calculate the distance to the nearest coastline
+calculateDist2Coast <- function(grid) {
+  # Load coast
+  coast <- rnaturalearth::ne_coastline(scale = 'large') %>% 
+    sf::st_as_sf(crs = lonlat) %>% 
+    sf::st_transform(crs = moll)
+  
+  # Convert grid to points (centroids)
+  grid_centroid <- grid %>% 
+    sf::st_centroid()
+  
+  # Find the nearest coast for all the grid cells
+  nearest <- sf::st_nearest_feature(grid_centroid, coast)
+  
+  dists <- c()
+  for(i in 1:nrow(grid_centroid)) {
+    # get the distance and populate an empty vector with it
+    dists[i] <- sf::st_distance(grid_centroid[i, ], coast[nearest[i], ])
+    print(dists[i])
+  }
+  
+  # then add that in the grid_centroid df
+  grid_centroid$coastDistance <- dists
+  
+  saveRDS(grid_centroid, "Data/CoastDistance.rds") # save the coast distance df
 }
