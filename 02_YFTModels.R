@@ -12,6 +12,9 @@ YFT_filtered <- YFT_ds %>%
                                       abundance == 0 ~ 0)) %>%  # mutate the abundance data into 1s and 0s
   as.data.frame() #gbm.step doesn't work if it's a tibble...
 
+# Predict on the rest of the map
+YFT_predict <- YFT_ds %>% 
+
 #### Build the models ####
 # check the index numbers of the columns
 colnames(YFT_filtered)
