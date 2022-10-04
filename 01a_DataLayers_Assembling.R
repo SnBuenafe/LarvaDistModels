@@ -17,6 +17,14 @@ grid_YFT <- sf::st_join(grid, YFT_sf, join = st_contains_properly, left = TRUE) 
 ####################
 # Climate
 # 1. Temperature
+# Convert all models to sf
+tos_model_list <- c("BCC-CSM2-MR", "CMCC-CM2-SR5", "CMCC-ESM2", "FGOALS-f3-L", "FGOALS-g3", "MIROC6", "MIROC-ES2L",
+                    "MRI-ESM2-0", "NorESM2-LM")
+# Create them only for historical for now
+createLayers(tos_model_list, "historical", "tos") # 1956-1981 averages
+# Create the ensemble
+createEnsemble("historical", "tos")
+
 tos <- nc2sf(model = "ACCESS-ESM1-5",
              expt = "ssp585",
              var = "tos") %>% 
@@ -30,6 +38,12 @@ tos <- nc2sf(model = "ACCESS-ESM1-5",
   dplyr::select(cellID, tos_transformed, geometry)
 
 # 2. Oxygen
+o2os_model_list <- c("CMCC-ESM2", "MIROC-ES2L", "MRI-ESM2-0", "NorESM2-LM")
+# Create them only for historical for now
+createLayers(o2os_model_list, "historical", "o2os") # 1956-1981 averages
+# Create the ensemble
+createEnsemble("historical", "o2os")
+
 o2os <- nc2sf(model = "ACCESS-ESM1-5",
               expt = "ssp585",
               var = "o2os") %>% 
@@ -43,6 +57,12 @@ o2os <- nc2sf(model = "ACCESS-ESM1-5",
   dplyr::select(cellID, o2os_transformed, geometry)
 
 # 3. pH
+phos_model_list <- c("CMCC-ESM2", "MIROC-ES2L", "MRI-ESM2-0", "NorESM2-LM")
+# Create them only for historical for now
+createLayers(phos_model_list, "historical", "phos") # 1956-1981 averages
+# Create the ensemble
+createEnsemble("historical", "phos")
+
 phos <- nc2sf(model = "CMCC-ESM2",
               expt = "ssp585",
               var = "phos") %>% 
@@ -54,6 +74,13 @@ phos <- nc2sf(model = "CMCC-ESM2",
   replaceNN(., grid, "phos") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, phos_transformed, geometry)
+
+# 4. chlorophyll-a
+chlos_model_list <- c("CMCC-ESM2", "MIROC-ES2L", "MRI-ESM2-0", "NorESM2-LM")
+# Create them only for historical for now
+createLayers(chlos_model_list, "historical", "chlos")
+# Create the ensemble
+createEnsemble("historical", "chlos")
 
 # Bathymetry
 #bathy <- gebcoConvert(grid, 2500) # bathymetry data is extrapolated depending on the grid area provided

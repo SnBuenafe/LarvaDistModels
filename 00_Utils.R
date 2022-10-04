@@ -34,7 +34,7 @@ grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
 
 # Convert netcdf to sf objects
 nc2sf <- function(model, expt, var) {
-  path <- "Data/Climatology/final1/"
+  path <- "Data/Climatology/merged/"
   list <- list.files(path)
   param <- c(model, expt, var)
   
@@ -43,13 +43,23 @@ nc2sf <- function(model, expt, var) {
   
   rs <- terra::rast(paste0(path, list[file])) # Create RasterStack
   
-  names(rs) <- paste("X", seq(from = 2015, to = 2100, by = 1), sep = "")
-  
-  sf <- rs %>%  
-    terra::subset(., paste("X", seq(from = 2022, to = 2050, by = 1), sep = "")) %>% # 2022-2050
-    terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm=FALSE) %>% # Convert to sf polygon
-    sf::st_as_sf() %>% 
-    sf::st_make_valid()
+  if(expt == "ssp585") { # TODO: discuss the year ranges...
+    names(rs) <- paste("X", seq(from = 2015, to = 2100, by = 1), sep = "")
+    
+    sf <- rs %>%  
+      terra::subset(., paste("X", seq(from = 2022, to = 2050, by = 1), sep = "")) %>% # 2022-2050
+      terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm=FALSE) %>% # Convert to sf polygon
+      sf::st_as_sf() %>% 
+      sf::st_make_valid()
+  } else if (expt == "historical") { # matching the years of the data for now...
+    names(rs) <- paste("X", seq(from = 1850, to = 2014, by = 1), sep = "")
+    
+    sf <- rs %>%  
+      terra::subset(., paste("X", seq(from = 1956, to = 1981, by = 1), sep = "")) %>% # 1956-1981 (Nishikawa data)
+      terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm=FALSE) %>% # Convert to sf polygon
+      sf::st_as_sf() %>% 
+      sf::st_make_valid()
+  }
   
   sf::st_crs(sf) <- lonlat # set the CRS
   sf %<>% sf::st_transform(crs = moll) # then transform
@@ -65,7 +75,49 @@ nc2sf <- function(model, expt, var) {
     dplyr::mutate(mean = rowMeans(across(1:(ncol(int)-1)), na.rm = FALSE)) %>% 
     dplyr::select(mean)
   
+  saveRDS(fin, paste0("Data/Climatology/sf/", model, "-", expt, "-", var, ".rds"))
+  
   return(fin)
+}
+
+# Loop the conversion through all the models
+createLayers <- function(model_list, expt, metric) {
+  for(j in 1:length(model_list)) {
+    nc2sf(model_list[j], expt, metric)
+    print(j) # sanity check
+  }
+}
+
+# Create ensemble mean/median
+# Creating ensemble
+createEnsemble <- function(expt, metric) {
+  # Get all files of the same depth and same experiment
+  path <- "Data/Climatology"
+  
+  list <- list.files(file.path(path, "sf"))
+  param <- c(expt, metric)
+  
+  file <- apply(outer(list, param, stringr::str_detect), 1, all) %>% as.numeric()
+  file <- which(file == 1)
+  
+  files <- paste(path, "/sf/", list[file], sep="")
+  
+  geom <- readRDS(files[1]) %>% # Storing geometry data
+    dplyr::mutate(cellID = row_number()) %>%
+    dplyr::select(cellID) %>%
+    tibble::as_tibble()
+  
+  ensemble <- lapply(files, readRDS) %>%
+    purrr::map_dfc(., st_drop_geometry) %>% # Applying a function to each element of a list, then column-binding the results.
+    dplyr::mutate(EnsembleMean = rowMeans(., na.rm = TRUE),
+                  EnsembleMedian = matrixStats::rowMedians(as.matrix(.), na.rm = TRUE)) %>%
+    dplyr::select(starts_with("Ensemble")) %>%
+    dplyr::mutate(cellID = row_number()) %>% # Sanity check.
+    dplyr::left_join(., geom, by = "cellID") %>%
+    sf::st_as_sf(sf_column_name = "geometry") %>%
+    dplyr::select(EnsembleMedian, EnsembleMean)
+  
+  saveRDS(ensemble, file.path(path, "ensemble", paste0("Ensemble-", expt, "-", metric, ".rds")))
 }
 
 # combine seasonal data.frames of species into one sf object

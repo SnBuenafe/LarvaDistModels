@@ -13,7 +13,7 @@ YFT_filtered <- YFT_ds %>%
   as.data.frame() #gbm.step doesn't work if it's a tibble...
 
 # Predict on the rest of the map
-YFT_predict <- YFT_ds %>% 
+#YFT_predict <- YFT_ds %>% 
 
 #### Build the models ####
 # check the index numbers of the columns
