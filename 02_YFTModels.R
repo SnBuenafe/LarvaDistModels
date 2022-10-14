@@ -39,13 +39,26 @@ YFT_sf <- grid_YFT %>% # convert to sf so we can plot
 
 ggmodel <- ggplot() + 
   geom_sf(data = YFT_sf, aes(fill = model0, color = model0), size = 0.1) +
-  scale_fill_cmocean(name = "matter") +
-  geom_sf(data = landmass, fill = "grey64", color = NA, size = 0.01) +
+  scale_fill_cmocean(name = "matter", aesthetics = c("color", "fill")) +
+  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+  theme_bw()
+ggsave(plot = ggmodel, filename = "Figures/model0.png", width = 15, height = 8, dpi = 300)
+
+library(RColorBrewer) # TODO: Add this in utils
+ggabundance <- ggplot() + 
+  geom_sf(data = YFT_sf, aes(fill = as.factor(abundance), color = as.factor(abundance)), size = 0.1) +
+  scale_fill_brewer(aesthetics = c("fill", "color"),
+                    palette = "RdPu") +
+  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+  theme_bw()
+ggsave(plot = ggabundance, filename = "Figures/abundance.png", width = 15, height = 8, dpi = 300)
+
+ggpresence <- ggplot() +
+  geom_sf(data = YFT_sf, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence)), size = 0.1) +
+  scale_color_manual(aesthetics = c("color", "fill"),
+    values = c("pink", "red")
+                     ) +
+  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
   theme_bw()
 
-ggabundance <- ggplot() + 
-  geom_sf(data = YFT_sf, aes(fill = abundance, color = abundance), size = 0.1) +
-  #scale_fill_cmocean(name = "thermal",
-  #                   aes) +
-  geom_sf(data = landmass, fill = "grey64", color = NA, size = 0.01) +
-  theme_bw()
+ggsave(plot = ggpresence, filename = "Figures/abundance_presence.png", width = 15, height = 8, dpi = 300)

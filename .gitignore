@@ -46,3 +46,8 @@ Data/Climatology/raw/
 Data/GEBCO/*.tif
 Data/GEBCO/*.pdf
 Data/WDPA/
+Data/Climatology/ensemble/
+Data/Climatology/newfreq/
+Data/Climatology/selectyears/
+Data/Climatology/temporary/
+Data/Climatology/remapped
