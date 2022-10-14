@@ -15,103 +15,111 @@ grid_YFT <- sf::st_join(grid, YFT_sf, join = st_contains_properly, left = TRUE) 
 ####################
 # Predictor data #
 ####################
-# Climate
-# 1. Temperature
-# If needed to reprocess, run all of these...
-# Convert all models to sf
-# tos_model_list <- c("BCC-CSM2-MR", "CMCC-CM2-SR5", "CMCC-ESM2", "FGOALS-f3-L", "FGOALS-g3", "MIROC6", "MIROC-ES2L",
-#                     "MRI-ESM2-0", "NorESM2-LM")
-# # Create them only for historical for now
-# createLayers(tos_model_list, "historical", "tos") # 1956-1981 averages
-# # Create the ensemble
-# createEnsemble("historical", "tos")
+# Reprocess?
+reprocess = FALSE # Change to FALSE if no (reprocess=TRUE takes a while to run)
 
-tos <- readRDS("Data/Climatology/ensemble/Ensemble-historical-tos.rds") %>% 
-  dplyr::rename(tos = EnsembleMean) %>% # using the mean of the models
-  sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
-  dplyr::as_tibble() %>% 
-  dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
-  replaceNN(., grid, "tos") %>%
-  dplyr::as_tibble() %>% 
-  dplyr::select(cellID, tos_transformed, geometry)
-
-# 2. Oxygen
-# # If needed to reprocess, run all of these...
-# o2os_model_list <- c("CMCC-ESM2", "MIROC-ES2L", "MRI-ESM2-0", "NorESM2-LM")
-# # Create them only for historical for now
-# createLayers(o2os_model_list, "historical", "o2os") # 1956-1981 averages
-# # Create the ensemble
-# createEnsemble("historical", "o2os")
-
-o2os <- readRDS("Data/Climatology/ensemble/Ensemble-historical-o2os.rds") %>% 
-  dplyr::rename(o2os = EnsembleMean) %>% # using the mean of the models 
-  sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
-  dplyr::as_tibble() %>% 
-  dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
-  replaceNN(., grid, "o2os") %>%
-  dplyr::as_tibble( )%>% 
-  dplyr::select(cellID, o2os_transformed, geometry)
-
-# 3. pH
-# # If needed to reprocess, run all of these...
-# phos_model_list <- c("CMCC-ESM2", "MIROC-ES2L", "MRI-ESM2-0", "NorESM2-LM")
-# # Create them only for historical for now
-# createLayers(phos_model_list, "historical", "phos") # 1956-1981 averages
-# # Create the ensemble
-# createEnsemble("historical", "phos")
-
-phos <- readRDS("Data/Climatology/ensemble/Ensemble-historical-phos.rds") %>% 
-  dplyr::rename(phos = EnsembleMean) %>% # using the mean of the models
-  sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
-  dplyr::as_tibble() %>% 
-  dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
-  replaceNN(., grid, "phos") %>%
-  dplyr::as_tibble() %>% 
-  dplyr::select(cellID, phos_transformed, geometry)
-
-# 4. chlorophyll-a
-# # If needed to reprocess, run all of these...
-# chlos_model_list <- c("CMCC-ESM2", "MIROC-ES2L", "MRI-ESM2-0", "NorESM2-LM")
-# # Create them only for historical for now
-# createLayers(chlos_model_list, "historical", "chlos")
-# # Create the ensemble
-# createEnsemble("historical", "chlos")
-
-chlos <- readRDS("Data/Climatology/ensemble/Ensemble-historical-chlos.rds") %>% 
-  dplyr::rename(chlos = EnsembleMean) %>% # using the mean of the models
-  sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
-  dplyr::as_tibble() %>% 
-  dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
-  replaceNN(., grid, "chlos") %>%
-  dplyr::as_tibble() %>% 
-  dplyr::select(cellID, chlos_transformed, geometry)
-
-# Bathymetry
-#bathy <- gebcoConvert(grid, 2500) # bathymetry data is extrapolated depending on the grid area provided
-bathy <- readRDS("Data/GEBCO/gebco2500.rds") %>% 
-  dplyr::as_tibble()
-
-# Coastline
-#dist2coast <- calculateDist2Coast(grid) # distance to coast is calculated depending on the grid area provided
-dist2coast <- readRDS("Data/CoastDistance.rds") %>% 
-  dplyr::as_tibble() %>% 
-  dplyr::select(-geometry)
+if(isTRUE(reprocess)) {
+  # Climate
+  # 1. Temperature
+  tos_rs <- stars::read_ncdf("Data/Climatology/ensemble/tos_ensemble.nc") %>% 
+    terra::rast()
+  names(tos_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  tos <- rs2sf(tos_rs) %>% 
+    dplyr::rename(tos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "tos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, tos_transformed, geometry)
+  saveRDS(tos, "Data/Climatology/sf/tos_interpolated.rds")
+  
+  # 2. Oxygen
+  o2os_rs <- stars::read_ncdf("Data/Climatology/ensemble/o2os_ensemble.nc") %>% 
+    terra::rast()
+  names(o2os_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  o2os <- rs2sf(o2os_rs) %>% 
+    dplyr::rename(o2os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "o2os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, o2os_transformed, geometry)
+  saveRDS(o2os, "Data/Climatology/sf/o2os_interpolated.rds")
+  
+  # 3. pH
+  phos_rs <- stars::read_ncdf("Data/Climatology/ensemble/phos_ensemble.nc") %>% 
+    terra::rast()
+  names(phos_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  phos <- rs2sf(phos_rs) %>% 
+    dplyr::rename(phos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "phos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, phos_transformed, geometry)
+  saveRDS(phos, "Data/Climatology/sf/phos_interpolated.rds")
+  
+  # 4. chlorophyll-a
+  chlos_rs <- stars::read_ncdf("Data/Climatology/ensemble/chlos_ensemble.nc") %>% 
+    terra::rast()
+  names(chlos_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  chlos <- rs2sf(chlos_rs) %>% 
+    dplyr::rename(chlos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "chlos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, chlos_transformed, geometry)
+  saveRDS(chlos, "Data/Climatology/sf/chlos_interpolated.rds")
+  
+  # Bathymetry
+  bathy <- gebcoConvert(grid, 2500) # bathymetry data is extrapolated depending on the grid area provided
+  
+  # Coastline
+  dist2coast <- calculateDist2Coast(grid) # distance to coast is calculated depending on the grid area provided
+} else {
+  
+  # Climatology
+  tos <- readRDS("Data/Climatology/sf/tos_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  o2os <- readRDS("Data/Climatology/sf/o2os_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  phos <- readRDS("Data/Climatology/sf/phos_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  chlos <- readRDS("Data/Climatology/sf/chlos_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # Bathymetry
+  bathy <- readRDS("Data/GEBCO/gebco2500.rds") %>% 
+    dplyr::as_tibble() %>% 
+    dplyr::select(-geometry)
+  
+  # Coastline
+  
+  dist2coast <- readRDS("Data/CoastDistance.rds") %>% 
+    dplyr::as_tibble() %>% 
+    dplyr::select(-geometry)
+}
 
 ###############################################################
 # Joining all predictor and response per fish species #
 ###############################################################
 
 # Joining all the data with the species data
-YFT_full <- dplyr::left_join(tos, o2os, by = c("cellID", "geometry")) %>% 
-  dplyr::left_join(., phos, by = c("cellID", "geometry")) %>% 
-  dplyr::left_join(., chlos, by = c("cellID", "geometry")) %>% 
-  dplyr::left_join(., bathy, by = c("cellID", "geometry")) %>% 
-  dplyr::left_join(., dist2coast, by = c("cellID")) %>% 
-  dplyr::left_join(grid_YFT, ., by = c("cellID", "geometry")) %>%  # Join with species data
+YFT_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
+  dplyr::left_join(., phos, by = "cellID") %>% 
+  dplyr::left_join(., chlos, by = "cellID") %>% 
+  dplyr::left_join(., bathy, by = "cellID") %>% 
+  dplyr::left_join(., dist2coast, by = "cellID") %>% 
+  dplyr::left_join(grid_YFT, ., by = "cellID") %>%  # Join with species data
   dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
 
 write_csv(YFT_full, file = "Output/YFT_full.csv") # save full data

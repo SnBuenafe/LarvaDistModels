@@ -8,12 +8,10 @@ YFT_ds <- read_csv("Output/YFT_full.csv", show_col_types = FALSE)
 YFT_filtered <- YFT_ds %>% 
   dplyr::filter(!is.na(abundance)) %>% # filter those with data!
   dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::mutate(abundance = case_when(abundance > 0 ~ 1,
+  dplyr::mutate(abundance_presence = case_when(abundance > 0 ~ 1,
                                       abundance == 0 ~ 0)) %>%  # mutate the abundance data into 1s and 0s
+  dplyr::select(-geometry) %>% 
   as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# Predict on the rest of the map
-#YFT_predict <- YFT_ds %>% 
 
 #### Build the models ####
 # check the index numbers of the columns
@@ -21,24 +19,33 @@ colnames(YFT_filtered)
 
 # higher AUC better. A model with AUC values closer to 0 have more wrong predictions.
 # see: https://rspatial.org/raster/sdm/9_sdm_brt.html for interpreting results
-# model 0: season, longitude, and latitude as predictors
-YFT_model0 <- dismo::gbm.step(data = YFT_filtered, gbm.x = 4:6,
-                              gbm.y = 3, family = "bernoulli", tree.complexity = 5,
-                              learning.rate = 0.01, bag.fraction = 0.5)
-YFT_model0$fitted
+# model 1: all predictors
+YFT_model0 <- dismo::gbm.step(data = YFT_filtered, gbm.x = 4:12,
+                              gbm.y = 13, family = "bernoulli", tree.complexity = 5,
+                              learning.rate = 0.01, bag.fraction = 0.5, n.folds = 5)
+length(YFT_model0$fitted)
 YFT_model0$cv.statistics
 summary(YFT_model0)
 
-# model 1: season, longitude, latitude, climate data, bathymetry, distance to coast
-YFT_model1 <- dismo::gbm.step(data = YFT_filtered, gbm.x = 4:11,
-                              gbm.y = 3, family = "bernoulli", tree.complexity = 5,
-                              learning.rate = 0.01, bag.fraction = 0.5)
-YFT_model1$cv.statistics
-summary(YFT_model1)
+gbm.plot(YFT_model0, n.plots=11, plot.layout=c(4, 3), write.title = FALSE)
+gbm.plot.fits(YFT_model0)
 
-# model 2: model 1 without longitude and latitude
-YFT_model2 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 7:11),
-                              gbm.y = 3, family = "bernoulli", tree.complexity = 5,
-                              learning.rate = 0.01, bag.fraction = 0.5)
-YFT_model2$cv.statistics
-summary(YFT_model2)
+# Check the plot
+YFT_filtered$model0 <- YFT_model0$fitted
+YFT_sf <- grid_YFT %>% # convert to sf so we can plot
+  dplyr::select(-species, -abundance, -season, -longitude, -latitude) %>% 
+  dplyr::left_join(YFT_filtered, ., by = "cellID") %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggmodel <- ggplot() + 
+  geom_sf(data = YFT_sf, aes(fill = model0, color = model0), size = 0.1) +
+  scale_fill_cmocean(name = "matter") +
+  geom_sf(data = landmass, fill = "grey64", color = NA, size = 0.01) +
+  theme_bw()
+
+ggabundance <- ggplot() + 
+  geom_sf(data = YFT_sf, aes(fill = abundance, color = abundance), size = 0.1) +
+  #scale_fill_cmocean(name = "thermal",
+  #                   aes) +
+  geom_sf(data = landmass, fill = "grey64", color = NA, size = 0.01) +
+  theme_bw()
