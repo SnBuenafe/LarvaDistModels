@@ -16,7 +16,7 @@ declare -a ExpArray=("ssp585" "historical")
 ######################################### COMPLETED
 # phos
 # For natural grids (gn)
-#declare -a ph_list=("CMCC-ESM2" "MIROC-ES2L")
+#declare -a ph_list=("CMCC-ESM2" "MIROC-ES2L" "NorEMS2-LM")
 
 # for e in ${ExpArray[@]}; do
 #     for p in ${ph_list[@]}; do

@@ -1,56 +1,95 @@
 source("00_Utils.R")
 
 # ----- Temperature -----
-dataTmp <- nc2sf("ACCESS-ESM1-5", "historical", "tos")
-
+dataTmp <- readRDS("Data/Climatology/sf/tos_interpolated.rds") %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+  
 ggTemp <- ggplot() +
-  geom_sf(data = dataTmp, aes(fill = mean), color = NA, size = 0.01) +
+  geom_sf(data = dataTmp, aes(fill = tos_transformed), color = NA, size = 0.01) +
   scale_fill_cmocean(name = "deep",
                   #   alpha = 1,
                      aesthetics = c("fill"),
                      direction = -1,
                      na.value = "grey64") +
-  geom_sf(data = landmass, fill = "grey70", color = "grey64") +
+  geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('Mean temperature (1952-1981) ('^"o"*'C)')) +
   theme_bw()
+ggsave(plot = ggTemp, filename = "Figures/global_temp.png", width = 15, height = 8, dpi = 300)
 
 # ----- Oxygen -----
-dataO2 <- nc2sf("ACCESS-ESM1-5", "historical", "o2os")
+dataO2 <- readRDS("Data/Climatology/sf/o2os_interpolated.rds") %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
 
 ggO2 <- ggplot() +
-  geom_sf(data = dataO2, aes(fill = mean), color = NA, size = 0.01) +
+  geom_sf(data = dataO2, aes(fill = o2os_transformed), color = NA, size = 0.01) +
   scale_fill_cmocean(name = "tempo",
                      #   alpha = 1,
                      aesthetics = c("fill"),
                      direction = 1,
                      na.value = "grey64") +
-  geom_sf(data = landmass, fill = "grey70", color = "grey64") +
+  geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('Mean O'[2]*' levels (1952-1981) (mol m'^"-3"*')')) +
   theme_bw()
+ggsave(plot = ggO2, filename = "Figures/global_oxygen.png", width = 15, height = 8, dpi = 300)
+
+# ---- Chlorophyll ----
+dataChl <- readRDS("Data/Climatology/sf/chlos_interpolated.rds") %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggChl <- ggplot() +
+  geom_sf(data = dataChl, aes(fill = chlos_transformed), color = NA, size = 0.01) +
+  scale_fill_cmocean(name = "algae",
+                     #   alpha = 1,
+                     aesthetics = c("fill"),
+                     direction = 1,
+                     na.value = "grey64") +
+  geom_sf(data = landmass, fill = "black", color = "black") +
+  labs(fill = expression('Mean surface chlorophyll levels (1952-1981) (kg m'^"-3"*')')) +
+  theme_bw()
+ggsave(plot = ggChl, filename = "Figures/global_chlorophyll.png", width = 15, height = 8, dpi = 300)
+
+# ---- pH ----
+dataPH <- readRDS("Data/Climatology/sf/phos_interpolated.rds") %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggPH <- ggplot() +
+  geom_sf(data = dataPH, aes(fill = phos_transformed), color = NA, size = 0.01) +
+  scale_fill_cmocean(name = "dense",
+                     #   alpha = 1,
+                     aesthetics = c("fill"),
+                     direction = -1,
+                     na.value = "grey64") +
+  geom_sf(data = landmass, fill = "black", color = "black") +
+  labs(fill = expression('Mean surface pH levels (1952-1981)')) +
+  theme_bw()
+ggsave(plot = ggPH, filename = "Figures/global_ph.png", width = 15, height = 8, dpi = 300)
 
 # ----- Distance to coast -----
-# Data from NASA's OceanColor Web supported by Ocean Biology Processing Group (OBPG) at NASA's Goddard Space Flight Center (https://oceancolor.gsfc.nasa.gov/docs/distfromcoast/)
-tmp <- read.table("Data/final/dist2coast.txt.bz2", header = FALSE, sep = "\t") 
+dataCoast <- readRDS("Data/CoastDistance.rds")
 
-coast <- tmp %>%  # Distance is in km
-  dplyr::rename(longitude = V1, latitude = V2) %>% 
-  st_as_sf(., coords = c("longitude", "latitude"), crs = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+ggCoast <- ggplot() +
+  geom_sf(data = dataCoast, aes(color = coastDistance), size = 0.2) +
+  scale_color_cmocean(name = "deep",
+                     #   alpha = 1,
+                     aesthetics = c("color"),
+                     direction = -1,
+                     na.value = "grey64") +
+  geom_sf(data = landmass, fill = "white", color = "white") +
+  labs(fill = expression('Distance to the nearest coast (m)')) +
+  theme_bw()
+ggsave(plot = ggCoast, filename = "Figures/global_coast.png", width = 15, height = 8, dpi = 300)
 
-X <- st_coordinates(coast)[,1]
-Y <- st_coordinates(coast)[,2]
+# ---- Bathymetry ----
+dataBathy <- readRDS("Data/GEBCO/gebco2500.rds")
 
-coast %<>% bind_cols(., X, Y) %>% 
-  rename(longitude = ...3, latitude = ...4) %>% 
-  relocate(geometry, .after = latitude)
-
-# Make grid around the limits of the area
-df_poly <- coast %>% 
-  st_make_grid(cellsize = c(1,1), offset = st_bbox(coast)[c("xmin", "ymin")] - 0.5) %>% 
-  st_as_sf()
-
-# "Intersect" grids and points (from csv); TRUE if points are contained within the grid cells.
-idx <- st_contains(df_poly, df_sf, sparse = FALSE) %>%
-  rowSums() %>% 
-  as.logical()
-
-int <- st_interpolate_aw(coast, dataTmp, extensive = FALSE)
+ggBathy <- ggplot() +
+  geom_sf(data = dataBathy, aes(fill = meanDepth), color = NA, size = 0.2) +
+  scale_fill_cmocean(name = "ice",
+                      #   alpha = 1,
+                      aesthetics = c("fill"),
+                      direction = 1,
+                      na.value = "grey64") +
+  geom_sf(data = landmass, fill = "black", color = "black") +
+  labs(fill = expression('Depth (m)')) +
+  theme_bw()
+ggsave(plot = ggBathy, filename = "Figures/global_bathy.png", width = 15, height = 8, dpi = 300)
