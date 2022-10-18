@@ -9,6 +9,7 @@ suppressPackageStartupMessages({
   library(magrittr)
   library(raster)
   library(dismo) # for boosted regression trees
+  library(RColorBrewer)
 })
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"

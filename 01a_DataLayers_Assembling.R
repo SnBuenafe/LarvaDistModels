@@ -4,13 +4,38 @@ source("00_Utils.R")
 ####################
 # Fish data #
 ####################
-# Assemble yellowfin tuna data
+# 1. Assemble yellowfin tuna data
 YFT_sf <- combineFish(species = "yellowfin-tuna") %>% 
   sf::st_transform(crs = moll) %>% 
   sf::st_centroid() # transform into point data
 
 grid_YFT <- sf::st_join(grid, YFT_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
   dplyr::as_tibble()
+
+# 2. Assemble albacore data
+ALB_sf <- combineFish(species = "albacore") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_ALB <- sf::st_join(grid, ALB_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
+  dplyr::as_tibble()
+
+# 3. Assemble skipjack tuna
+SKP_sf <- combineFish(species = "skipjack-tuna") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_SKP <- sf::st_join(grid, SKP_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
+  dplyr::as_tibble()
+
+# 4. Assemble swordfish
+SWO_sf <- combineFish(species = "swordfish") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_SWO <- sf::st_join(grid, SWO_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
+  dplyr::as_tibble()
+
 
 ####################
 # Predictor data #
@@ -114,6 +139,7 @@ if(isTRUE(reprocess)) {
 ###############################################################
 
 # Joining all the data with the species data
+# 1. Yellowfin
 YFT_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
   dplyr::left_join(., phos, by = "cellID") %>% 
   dplyr::left_join(., chlos, by = "cellID") %>% 
@@ -123,3 +149,36 @@ YFT_full <- dplyr::left_join(tos, o2os, by = "cellID") %>%
   dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
 
 write_csv(YFT_full, file = "Output/YFT_full.csv") # save full data
+
+# 2. Albacore
+ALB_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
+  dplyr::left_join(., phos, by = "cellID") %>% 
+  dplyr::left_join(., chlos, by = "cellID") %>% 
+  dplyr::left_join(., bathy, by = "cellID") %>% 
+  dplyr::left_join(., dist2coast, by = "cellID") %>% 
+  dplyr::left_join(grid_ALB, ., by = "cellID") %>%  # Join with species data
+  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+
+write_csv(ALB_full, file = "Output/ALB_full.csv") # save full data
+
+# 3. Skipjack tuna
+SKP_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
+  dplyr::left_join(., phos, by = "cellID") %>% 
+  dplyr::left_join(., chlos, by = "cellID") %>% 
+  dplyr::left_join(., bathy, by = "cellID") %>% 
+  dplyr::left_join(., dist2coast, by = "cellID") %>% 
+  dplyr::left_join(grid_SKP, ., by = "cellID") %>%  # Join with species data
+  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+
+write_csv(SKP_full, file = "Output/SKP_full.csv") # save full data
+
+# 4. Swordfish
+SWO_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
+  dplyr::left_join(., phos, by = "cellID") %>% 
+  dplyr::left_join(., chlos, by = "cellID") %>% 
+  dplyr::left_join(., bathy, by = "cellID") %>% 
+  dplyr::left_join(., dist2coast, by = "cellID") %>% 
+  dplyr::left_join(grid_SWO, ., by = "cellID") %>%  # Join with species data
+  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+
+write_csv(SWO_full, file = "Output/SWO_full.csv") # save full data

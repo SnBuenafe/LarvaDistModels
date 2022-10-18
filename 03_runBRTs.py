@@ -1,8 +1,10 @@
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import cross_val_predict
+from sklearn.model_selection import cross_val_score
 from sklearn.metrics import roc_auc_score
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import f1_score
+#from sklearn.metrics import accuracy_score
+#from sklearn.metrics import f1_score
 from sklearn.metrics import r2_score
 from os import chdir, getcwd
 import pandas as pd
@@ -37,41 +39,22 @@ numpy.unique(df_filtered['abundance_mut']) # Seems right
 df_filtered.columns.values # Check column names
 X,y = df_filtered.drop(['cellID','species','abundance', 'abundance_mut', 'season'], axis=1),df_filtered['abundance_mut']
 
-auc_list = []
-accuracy_list = []
-f_list = []
-r2_list = []
+# Define the BRT
+gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 2000) 
 
+# Define the CV parameters
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42) #Stratified is to ensure that each fold of dataset has the same proportion of observations with a given label
-for train_index, test_index in skf.split(X, y):
-    
-    # Split into training and testing data
-   X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-   y_train, y_test = y.iloc[train_index], y.iloc[test_index]
-   
-   gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 1000) # 
-   gbr.fit(X_train, y_train.values.ravel())
-   y_pred = gbr.predict(X_test)
-   
-   # Calculate AUC per fold
-   auc = roc_auc_score(y_test, y_pred, average = "macro")
-   auc_list.append(auc)
-   
-   # Calculate accuracy score per fold
-   #accuracy = accuracy_score(y_test, y_pred)
-   #accuracy_list.append(accuracy)
-   
-   # Calculate F1 score per fold
-   #fscore = f1_score(y_test, y_pred, average = "macro")
-   #f_list.append(fscore)
-   
-   # Calculate R2 per fold
-   r2 = r2_score(y_test, y_pred)
-   r2_list.append(r2)
-   
-   
-mean_auc_gbr = numpy.mean(auc_list, axis = 0)
-mean_accuracy_gbr = numpy.mean(accuracy_list, axis = 0)
-mean_fscore_gbr = numpy.mean(f_list, axis = 0)
 
-# Accuracy score
+# Calculate cross-validated predictions
+y_pred = cross_val_predict(gbr, X, y, cv = skf)
+preds = pd.DataFrame(y_pred)
+preds.to_csv("Output/YFT_preds_python.csv")
+
+# Calculate cross-validated AUC
+cv_score = (cross_val_score(gbr, X, y, cv = skf, scoring = 'roc_auc'))
+mean_auc_gbr = numpy.mean(cv_score, axis = 0)
+
+# Calculate cross-validated R2
+r2_score = (cross_val_score(gbr, X, y, cv = skf, scoring = 'r2'))
+mean_r2_gbr = numpy.mean(r2_score, axis = 0)
+
