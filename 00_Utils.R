@@ -176,3 +176,68 @@ calculateDist2Coast <- function(grid) {
   
   saveRDS(grid_centroid, "Data/CoastDistance.rds") # save the coast distance df
 }
+
+##########
+# Plotting
+##########
+
+# Plot the model
+plotModel <- function(sf, saveFile) {
+  #palette = brewer.pal(9, "YlOrBr")
+  ggmodel <- ggplot() + 
+    geom_sf(data = sf, aes(fill = model, color = model), size = 0.1) +
+    #scale_fill_gradientn(name = "Probabilities",
+    #                     colors = palette,
+    #                     aesthetics = c("fill", "color")) +
+    scale_fill_cmocean("Probabilities",
+                       name = "tempo", 
+                       aesthetics = c("color", "fill")) +
+    geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    theme_bw()
+  ggsave(plot = ggmodel, filename = saveFile, width = 15, height = 8, dpi = 300)
+  
+  return(ggmodel)
+}
+
+# Plot the abundance
+plotAbundance <- function(sf, saveFile) {
+  ggabundance <- ggplot() + 
+    geom_sf(data = sf, aes(fill = as.factor(abundance), color = as.factor(abundance)), size = 0.1) +
+    scale_fill_brewer(name = "Abundance",
+                      aesthetics = c("fill", "color"),
+                      palette = "RdPu") +
+    geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    theme_bw()
+  ggsave(plot = ggabundance, filename = saveFile, width = 15, height = 8, dpi = 300)
+  
+  return(ggabundance)
+}
+
+# Plot the presence/absence
+plotPA <- function(sf, saveFile) {
+  ggpresence <- ggplot() +
+    geom_sf(data = sf, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence)), size = 0.1) +
+    scale_color_manual(name = "Presence/Absence",
+                       aesthetics = c("color", "fill"),
+                       values = c("#feebe2", "#7a0177")) +
+    geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    theme_bw()
+  
+  ggsave(plot = ggpresence, filename = saveFile, width = 15, height = 8, dpi = 300)
+  
+  return(ggpresence)
+}
+
+# Plot predictions
+plotPredictions <- function(sf, saveFile) {
+  ggpreds <- ggplot() + 
+    geom_sf(data = sf, aes(fill = predictions, color = predictions), size = 0.1) +
+    scale_fill_cmocean("Predictions",
+                       name = "tempo", 
+                       aesthetics = c("color", "fill")) +
+    geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    theme_bw()
+  ggsave(plot = ggpreds, filename = saveFile, width = 15, height = 8, dpi = 300)
+  
+  return(ggpreds)
+}

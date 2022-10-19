@@ -4,38 +4,42 @@ source("00_Utils.R")
 ####################
 # Fish data #
 ####################
-# 1. Assemble yellowfin tuna data
-YFT_sf <- combineFish(species = "yellowfin-tuna") %>% 
-  sf::st_transform(crs = moll) %>% 
-  sf::st_centroid() # transform into point data
+load = TRUE # if TRUE, scripts are only reloaded; none are reran
 
-grid_YFT <- sf::st_join(grid, YFT_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
-  dplyr::as_tibble()
-
-# 2. Assemble albacore data
-ALB_sf <- combineFish(species = "albacore") %>% 
-  sf::st_transform(crs = moll) %>% 
-  sf::st_centroid()# transform into point data
-
-grid_ALB <- sf::st_join(grid, ALB_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
-  dplyr::as_tibble()
-
-# 3. Assemble skipjack tuna
-SKP_sf <- combineFish(species = "skipjack-tuna") %>% 
-  sf::st_transform(crs = moll) %>% 
-  sf::st_centroid()# transform into point data
-
-grid_SKP <- sf::st_join(grid, SKP_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
-  dplyr::as_tibble()
-
-# 4. Assemble swordfish
-SWO_sf <- combineFish(species = "swordfish") %>% 
-  sf::st_transform(crs = moll) %>% 
-  sf::st_centroid()# transform into point data
-
-grid_SWO <- sf::st_join(grid, SWO_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
-  dplyr::as_tibble()
-
+if(isTRUE(load)) {
+  # 1. Assemble yellowfin tuna data
+  YFT_sf <- combineFish(species = "yellowfin-tuna") %>% 
+    sf::st_transform(crs = moll) %>% 
+    sf::st_centroid() # transform into point data
+  
+  grid_YFT <- sf::st_join(grid, YFT_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
+    dplyr::as_tibble()
+  
+  # 2. Assemble albacore data
+  ALB_sf <- combineFish(species = "albacore") %>% 
+    sf::st_transform(crs = moll) %>% 
+    sf::st_centroid()# transform into point data
+  
+  grid_ALB <- sf::st_join(grid, ALB_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
+    dplyr::as_tibble()
+  
+  # 3. Assemble skipjack tuna
+  SKP_sf <- combineFish(species = "skipjack-tuna") %>% 
+    sf::st_transform(crs = moll) %>% 
+    sf::st_centroid()# transform into point data
+  
+  grid_SKP <- sf::st_join(grid, SKP_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
+    dplyr::as_tibble()
+  
+  # 4. Assemble swordfish
+  SWO_sf <- combineFish(species = "swordfish") %>% 
+    sf::st_transform(crs = moll) %>% 
+    sf::st_centroid()# transform into point data
+  
+  grid_SWO <- sf::st_join(grid, SWO_sf, join = st_contains_properly, left = TRUE) %>% # join with the grid data if the centroid is contained within the grid
+    dplyr::as_tibble()
+  
+} else {
 
 ####################
 # Predictor data #
@@ -182,3 +186,4 @@ SWO_full <- dplyr::left_join(tos, o2os, by = "cellID") %>%
   dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
 
 write_csv(SWO_full, file = "Output/SWO_full.csv") # save full data
+}
