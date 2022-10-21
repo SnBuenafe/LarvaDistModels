@@ -37,9 +37,39 @@ def callDF(spName):
 
     # Define the predictors (X) and the response (Y)
     df_filtered.columns.values # Check column names
-    X,y = df_filtered.drop(['cellID','species','abundance', 'abundance_mut', 'season'], axis=1),df_filtered['abundance_mut']
+    X,y = df_filtered.drop(['cellID','species','abundance', 'abundance_mut', 'season', 'longitude', 'latitude'], axis=1),df_filtered['abundance_mut'] # Added longitude and latitude for model 5
     
     return X,y
+
+def callPredict(spName):
+    file = 'Output/' + spName + '_full.csv'
+    df = pd.read_csv(file)
+    df_filtered = df[df['abundance'].isnull()] # Filter for rows with abundance values
+    df_filtered = df_filtered.drop('geometry', axis=1)
+
+    # Change the seasons to numeric?
+    def season(row):
+        if row['season'] == "jan-mar":
+            return 0
+        elif row['season'] == "apr-jun":
+            return 1
+        elif row['season'] == "jul-sept":
+            return 2
+        else:
+            return 3
+    
+    df_filtered['season_mut'] = df_filtered.apply(season, axis=1) # Change seasons to numeric factors instead of strings
+    numpy.unique(df_filtered['season_mut']) # Check if it does what we want it to do
+
+    # Create column for presence/absence
+    df_filtered = df_filtered.assign(abundance_mut = [1 if abundance > 0 else 0 for abundance in df_filtered['abundance']])
+    numpy.unique(df_filtered['abundance_mut']) # Seems right
+
+    # Define the predictors (X) and the response (Y)
+    df_filtered.columns.values # Check column names
+    X = df_filtered.drop(['cellID','species','abundance', 'abundance_mut', 'season', 'longitude', 'latitude'], axis=1) # Added longitude and latitude for model 5
+    
+    return X
 
 # Function for saving predictions and calculating metrics
 def createPreds(gbr, skf, save):
@@ -116,3 +146,22 @@ gsearch.best_params_, gsearch.best_score_
 ######### Model 4 #########
 gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 1000, learning_rate = 0.05, max_depth = 3, min_samples_split = 150, min_samples_leaf = 50) 
 createPreds(gbr, skf, "YFT_model4.csv")
+
+X_preds = callPredict('YFT')
+gbr.fit(X, y)
+y_preds = pd.DataFrame(gbr.predict(X_preds))
+saveFile = wd + "/GitHub/LarvaDistModels/Output/python/" + 'YFT_model4_preds.csv'
+y_preds.to_csv(saveFile)
+
+######### Model 5 #########
+# Following model 2
+# Define the BRT
+gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 1000, learning_rate = 0.05) 
+createPreds(gbr, skf, "YFT_model5.csv")
+
+# Make predictions
+X_preds = callPredict('YFT')
+gbr.fit(X, y)
+y_preds = pd.DataFrame(gbr.predict(X_preds))
+saveFile = wd + "/GitHub/LarvaDistModels/Output/python/" + 'YFT_model5_preds.csv'
+y_preds.to_csv(saveFile)

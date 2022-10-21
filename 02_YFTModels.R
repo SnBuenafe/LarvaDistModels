@@ -80,7 +80,7 @@ YFT_predict_sf <- grid_YFT %>% # convert to sf so we can plot
   dplyr::left_join(YFT_predict, ., by = "cellID") %>% 
   sf::st_as_sf(sf_column_name = "geometry")
 
-plotPredictions(YFT_predict_sf, "Figures/YFT_Model0preds.png") # Plot predictions
+plotPredictions(YFT_predict_sf, "Figures/YFT_Model0preds_nolonlat.png") # Plot predictions
 
 #### Model 1 ####
 # model 1: matching hyperparameters of Cerasoli et al. (2017)
@@ -187,3 +187,35 @@ YFT_predict_sf <- grid_YFT %>% # convert to sf so we can plot
   sf::st_as_sf(sf_column_name = "geometry")
 
 plotPredictions(YFT_predict_sf, "Figures/YFT_Model2preds.png") # Plot predictions
+
+### Model 3 ####
+# model 3: try no lonlat of model 1
+YFT_model3 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4,7:12),
+                              gbm.y = 13, family = "bernoulli",
+                              learning.rate = 0.001,
+                              tree.complexity = 5,
+                              n.folds = 5)
+saveRDS(YFT_model3, "Output/YFT_model3.rds") # save the model
+YFT_model3 <- readRDS("Output/YFT_model3.rds") # load the model
+
+summary(YFT_model3) # get the relative importance of each of the predictors
+
+# Plot predictors
+pdf(file = "Figures/YFT_Model3_SmoothPredictors.pdf", width = 10, height = 8)
+gbm.plot(YFT_model3, n.plots=9, plot.layout=c(3, 3), write.title = FALSE)
+dev.off()
+
+pdf(file = "Figures/YFT_Model3_Predictors.pdf", width = 10, height = 8)
+gbm.plot.fits(YFT_model3)
+dev.off()
+
+# Check this for ROC metrics: https://stackoverflow.com/questions/22391547/roc-score-in-gbm-package
+# CV AUC of ROC (Receiver Operating Characteristic Curve)
+YFT_model3$cv.statistics$discrimination.mean # AUC Score
+
+# Calculate R2: https://stats.stackexchange.com/questions/76997/measure-the-goodness-of-fit-in-boosted-regression-tree
+y_new <- YFT_filtered$abundance_presence
+num <- var((YFT_model3$fitted)-y_new)
+den <- var(y_new)
+R2 <- 1-(num/den)
+R2

@@ -83,6 +83,27 @@ combineFish <- function(species) {
   
 }
 
+# assemble the fish data wrt grid
+assembleGrid <- function(grid, sf) {
+  grid_sf <- sf::st_join(grid, sf, join = st_contains_properly, left = TRUE)# join with the grid data if the centroid is contained within the grid
+  
+  centroid <- grid_sf %>% 
+    sf::st_centroid() %>% # Convert to points
+    sf::st_transform(crs = lonlat) # Transform back to lonlat
+  
+  centroid_coordinates <- sf::st_coordinates(centroid) # Get cooridnates
+  
+  grid_sf %<>% dplyr::mutate(longitude = ifelse(!is.na(longitude), 
+                                                yes = longitude, 
+                                                no = centroid_coordinates[cellID, "X"]),
+                             latitude = ifelse(!is.na(latitude), 
+                                               yes = latitude, 
+                                               no = centroid_coordinates[cellID, "Y"])) %>% 
+    dplyr::as_tibble()
+  
+  return(grid_sf)
+}
+
 # Convert bathymetry data (.TIFF) to sf (based on the grid provided)
 gebcoConvert <- function(grid, area) {
   
