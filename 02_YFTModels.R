@@ -219,3 +219,22 @@ num <- var((YFT_model3$fitted)-y_new)
 den <- var(y_new)
 R2 <- 1-(num/den)
 R2
+
+# Check the plot
+YFT_filtered$model <- YFT_model3$fitted
+YFT_sf <- grid %>% # convert to sf so we can plot
+  dplyr::left_join(YFT_filtered, ., by = "cellID") %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+plotModel(YFT_sf, "Figures/YFT_Model3.png") # Plot the model
+
+### Predict for the other points
+preds <- dismo::predict(YFT_model3, YFT_predict, n.trees = YFT_model3$gbm.call$best.trees, type = "response")
+YFT_predict$predictions <- preds
+
+YFT_predict_sf <- grid_YFT %>% # convert to sf so we can plot
+  dplyr::select(-species, -abundance, -season, -longitude, -latitude) %>% 
+  dplyr::left_join(YFT_predict, ., by = "cellID") %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+plotPredictions(YFT_predict_sf, "Figures/YFT_Model3preds.png") # Plot predictions

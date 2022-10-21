@@ -25,19 +25,19 @@ YFT_predict <- YFT_ds %>%
   as.data.frame() #gbm.step doesn't work if it's a tibble...
 
 # Check the plot
-prob <- read_csv("Output/python/YFT_model4.csv", show_col_types = FALSE)[,2] %>% pull()
+prob <- read_csv("Output/python/YFT_model5.csv", show_col_types = FALSE)[,2] %>% pull()
 YFT_filtered$model <- prob
 YFT_sf <- grid %>% # convert to sf so we can plot
   dplyr::left_join(YFT_filtered, ., by = "cellID") %>% 
   sf::st_as_sf(sf_column_name = "geometry")
 
-plotModel(YFT_sf, "Figures/YFT_PythonModel4.png") # Plot the model
+plotModel(YFT_sf, "Figures/YFT_PythonModel5.png") # Plot the model
 
-pred <- read_csv("Output/python/YFT_model4_preds.csv", show_col_types = FALSE)[,2] %>% pull()
+pred <- read_csv("Output/python/YFT_model5_preds.csv", show_col_types = FALSE)[,2] %>% pull()
 YFT_predict$predictions <- pred
 YFT_predict_sf <- grid_YFT %>% # convert to sf so we can plot
   dplyr::select(-species, -abundance, -season, -longitude, -latitude) %>% 
   dplyr::left_join(YFT_predict, ., by = "cellID") %>% 
   sf::st_as_sf(sf_column_name = "geometry")
 
-plotPredictions(YFT_predict_sf, "Figures/YFT_Model4Pythonpreds.png") # Plot predictions
+plotPredictions(YFT_predict_sf, "Figures/YFT_Model5Pythonpreds.png") # Plot predictions
