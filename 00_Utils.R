@@ -20,6 +20,14 @@ landmass <- rnaturalearth::ne_countries(scale = "medium") %>%
   sf::st_as_sf(crs = lonlat) %>% 
   sf::st_transform(crs = moll)
 
+# Load worldwide ocean
+oceans <- rnaturalearth::ne_download(scale = "medium", category = "physical", type = "geography_marine_polys", returnclass = "sf") %>% 
+  dplyr::filter(label %in% c("ARCTIC OCEAN", 'SOUTHERN OCEAN', "NORTH ATLANTIC OCEAN", "NORTH PACIFIC OCEAN",
+                             "SOUTH PACIFIC OCEAN", "INDIAN OCEAN", "SOUTH ATLANTIC OCEAN")) %>% 
+  dplyr::select(label) %>% 
+  sf::st_as_sf(crs = lonlat) %>% 
+  sf::st_transform(crs = moll)
+
 # Establish the grid
 # Using the mollweide projection (moll)
 Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = "Global",
@@ -30,6 +38,8 @@ grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
                                                  CellArea = 2500, # let's do half a degree? (~ 50 km x 50 km)
                                                  Shape = "square",
                                                  inverse = FALSE)
+tmp <- sf::st_nearest_feature(grid, oceans)
+grid %<>% dplyr::mutate(ocean = oceans$label[tmp[cellID]])
 
 #### Helper functions ####
 
@@ -261,4 +271,17 @@ plotPredictions <- function(sf, saveFile) {
   ggsave(plot = ggpreds, filename = saveFile, width = 15, height = 8, dpi = 300)
   
   return(ggpreds)
+}
+
+# Joining predictors and response
+joinPredictors <- function(grid, tos, o2os, phos, chlos, bathy, dist2coast) {
+  df <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
+    dplyr::left_join(., phos, by = "cellID") %>% 
+    dplyr::left_join(., chlos, by = "cellID") %>% 
+    dplyr::left_join(., bathy, by = "cellID") %>% 
+    dplyr::left_join(., dist2coast, by = "cellID") %>% 
+    dplyr::left_join(grid_YFT, ., by = "cellID") %>%  # Join with species data
+    dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+  
+  return(df)
 }

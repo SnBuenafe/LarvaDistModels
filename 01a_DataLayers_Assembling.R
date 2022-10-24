@@ -1,5 +1,14 @@
 # Load preliminaries
-source("00_Utils.R")
+#source("00_Utils.R")
+
+Dict <- tibble::tribble(
+  ~Species, ~Code, ~Trees, ~LR, ~TC, ~BF, ~AUC,
+  "yellowfin-tuna", "YFT", 4950, 0.005, 5, 0.5, 0.78393,
+  "skipjack-tuna", "SKP", 6200, 0.005, 5, 0.5, 0.79526,
+  "albacore", "ALB", 3800, 0.005, 5, 0.5, 0.88791,
+  "swordfish", "SWO", 2450, 0.005, 5, 0.5, 0.80528,
+  "blue-marlin", "BLUM", 5500, 0.005, 5, 0.5, 0.78891
+)
 
 ####################
 # Fish data #
@@ -32,12 +41,36 @@ SWO_sf <- combineFish(species = "swordfish") %>%
 
 grid_SWO <- assembleGrid(grid, SWO_sf)
 
+# 5. Assemble blue marlin
+BLUM_sf <- combineFish(species = "blue-marlin") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
 
+grid_BLUM <- assembleGrid(grid, BLUM_sf)
 
-load = TRUE # if TRUE, scripts are only reloaded; none are reran
-if(isTRUE(load)) {
-  
-} else {
+# 6. Assemble shortbill spearfish
+SHOS_sf <- combineFish(species = "shortbill-spearfish") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_SHOS <- assembleGrid(grid, SHOS_sf)
+
+# 7. Assemble frigate tuna
+FRI_sf <- combineFish(species = "frigate-tuna") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_FRI <- assembleGrid(grid, FRI_sf)
+
+# 8. Assemble bigeye tuna
+BET_sf <- combineFish(species = "bigeye-tuna") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_BET <- assembleGrid(grid, BET_sf)
+
+load = TRUE # if TRUE, scripts above are only reloaded; none are reran
+if(isFALSE(load)) {
 
 ####################
 # Predictor data #
@@ -142,46 +175,96 @@ if(isTRUE(reprocess)) {
 
 # Joining all the data with the species data
 # 1. Yellowfin
-YFT_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
-  dplyr::left_join(., phos, by = "cellID") %>% 
-  dplyr::left_join(., chlos, by = "cellID") %>% 
-  dplyr::left_join(., bathy, by = "cellID") %>% 
-  dplyr::left_join(., dist2coast, by = "cellID") %>% 
-  dplyr::left_join(grid_YFT, ., by = "cellID") %>%  # Join with species data
-  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
-
+YFT_full <- joinPredictors(grid = grid_YFT, 
+                           tos = tos, 
+                           o2os = o2os, 
+                           phos = phos, 
+                           chlos = chlos, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
 write_csv(YFT_full, file = "Output/YFT_full.csv") # save full data
 
 # 2. Albacore
-ALB_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
-  dplyr::left_join(., phos, by = "cellID") %>% 
-  dplyr::left_join(., chlos, by = "cellID") %>% 
-  dplyr::left_join(., bathy, by = "cellID") %>% 
-  dplyr::left_join(., dist2coast, by = "cellID") %>% 
-  dplyr::left_join(grid_ALB, ., by = "cellID") %>%  # Join with species data
-  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+ALB_full <- joinPredictors(grid = grid_ALB, 
+                           tos = tos, 
+                           o2os = o2os, 
+                           phos = phos, 
+                           chlos = chlos, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
 
 write_csv(ALB_full, file = "Output/ALB_full.csv") # save full data
 
 # 3. Skipjack tuna
-SKP_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
-  dplyr::left_join(., phos, by = "cellID") %>% 
-  dplyr::left_join(., chlos, by = "cellID") %>% 
-  dplyr::left_join(., bathy, by = "cellID") %>% 
-  dplyr::left_join(., dist2coast, by = "cellID") %>% 
-  dplyr::left_join(grid_SKP, ., by = "cellID") %>%  # Join with species data
-  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+SKP_full <- joinPredictors(grid = grid_SKP, 
+                           tos = tos, 
+                           o2os = o2os, 
+                           phos = phos, 
+                           chlos = chlos, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
 
 write_csv(SKP_full, file = "Output/SKP_full.csv") # save full data
 
 # 4. Swordfish
-SWO_full <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
-  dplyr::left_join(., phos, by = "cellID") %>% 
-  dplyr::left_join(., chlos, by = "cellID") %>% 
-  dplyr::left_join(., bathy, by = "cellID") %>% 
-  dplyr::left_join(., dist2coast, by = "cellID") %>% 
-  dplyr::left_join(grid_SWO, ., by = "cellID") %>%  # Join with species data
-  dplyr::select(cellID, species, abundance, season, longitude, latitude, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+SWO_full <- joinPredictors(grid = grid_SWO, 
+                           tos = tos, 
+                           o2os = o2os, 
+                           phos = phos, 
+                           chlos = chlos, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
 
 write_csv(SWO_full, file = "Output/SWO_full.csv") # save full data
+
+# 5. Blue marlin
+BLUM_full <- joinPredictors(grid = grid_BLUM, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+                            )
+write_csv(BLUM_full, file = "Output/BLUM_full.csv") # save full data
+
+# 6. Shortbill spearfish
+SHOS_full <- joinPredictors(grid = grid_SHOS, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SHOS_full, file = "Output/SHOS_full.csv") # save full data
+
+# 7. Frigate tuna
+FRI_full <- joinPredictors(grid = grid_FRI, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(FRI_full, file = "Output/FRI_full.csv") # save full data
+
+# 8. Bigeye tuna
+BET_full <- joinPredictors(grid = grid_BET, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BET_full, file = "Output/BET_full.csv") # save full data
+
+} else {
+  
 }

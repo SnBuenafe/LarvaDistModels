@@ -11,7 +11,7 @@ import numpy as numpy
 wd = os.getcwd()
 os.chdir(os.path.join(wd,'GitHub/LarvaDistModels/'))
 
-def callDF(spName):
+def callDF(spName, list):
     file = 'Output/' + spName + '_full.csv'
     df = pd.read_csv(file)
     df_filtered = df[df['abundance'].notnull()] # Filter for rows with abundance values
@@ -27,8 +27,22 @@ def callDF(spName):
             return 2
         else:
             return 3
+
+    # Change the oceans to numeric?
+    def oceans(row):
+        if row['ocean'] == "INDIAN OCEAN":
+            return 0
+        elif row['ocean'] == "NORTH ATLANTIC OCEAN":
+            return 1
+        elif row['ocean'] == "NORTH PACIFIC OCEAN":
+            return 2
+        elif row['ocean'] == "SOUTH ATLANTIC OCEAN":
+            return 3
+        else:
+            return 4        
     
     df_filtered['season_mut'] = df_filtered.apply(season, axis=1) # Change seasons to numeric factors instead of strings
+    df_filtered['ocean'] = df_filtered.apply(oceans, axis=1) # Change oceans to numeric factors instead of strings
     numpy.unique(df_filtered['season_mut']) # Check if it does what we want it to do
 
     # Create column for presence/absence
@@ -37,11 +51,11 @@ def callDF(spName):
 
     # Define the predictors (X) and the response (Y)
     df_filtered.columns.values # Check column names
-    X,y = df_filtered.drop(['cellID','species','abundance', 'abundance_mut', 'season', 'longitude', 'latitude'], axis=1),df_filtered['abundance_mut'] # Added longitude and latitude for model 5
+    X,y = df_filtered.drop(list, axis=1),df_filtered['abundance_mut']
     
     return X,y
 
-def callPredict(spName):
+def callPredict(spName, list):
     file = 'Output/' + spName + '_full.csv'
     df = pd.read_csv(file)
     df_filtered = df[df['abundance'].isnull()] # Filter for rows with abundance values
@@ -57,8 +71,22 @@ def callPredict(spName):
             return 2
         else:
             return 3
+        
+    # Change the oceans to numeric?
+    def oceans(row):
+        if row['ocean'] == "INDIAN OCEAN":
+            return 0
+        elif row['ocean'] == "NORTH ATLANTIC OCEAN":
+            return 1
+        elif row['ocean'] == "NORTH PACIFIC OCEAN":
+            return 2
+        elif row['ocean'] == "SOUTH ATLANTIC OCEAN":
+            return 3
+        else:
+            return 4
     
     df_filtered['season_mut'] = df_filtered.apply(season, axis=1) # Change seasons to numeric factors instead of strings
+    df_filtered['ocean'] = df_filtered.apply(oceans, axis=1) # Change oceans to numeric factors instead of strings
     numpy.unique(df_filtered['season_mut']) # Check if it does what we want it to do
 
     # Create column for presence/absence
@@ -67,7 +95,7 @@ def callPredict(spName):
 
     # Define the predictors (X) and the response (Y)
     df_filtered.columns.values # Check column names
-    X = df_filtered.drop(['cellID','species','abundance', 'abundance_mut', 'season', 'longitude', 'latitude'], axis=1) # Added longitude and latitude for model 5
+    X = df_filtered.drop(list, axis=1) # Added longitude and latitude for model 5
     
     return X
 
@@ -88,38 +116,102 @@ def createPreds(gbr, skf, save):
     print(mean_auc_gbr)
     
     # Calculate cross-validated R2
-    r2_score = (cross_val_score(gbr, X, y, cv = skf, scoring = 'r2'))
-    mean_r2_gbr = numpy.mean(r2_score, axis = 0)
-    print(mean_r2_gbr)
+    #r2_score = (cross_val_score(gbr, X, y, cv = skf, scoring = 'r2'))
+    #mean_r2_gbr = numpy.mean(r2_score, axis = 0)
+    #print(mean_r2_gbr)
     
 # Define the CV parameters
 skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42) #Stratified is to ensure that each fold of dataset has the same proportion of observations with a given label
 
 ######### YELLOWFIN TUNA #########
-df = callDF('YFT')
+
+######### Model 0 #########
+list = ['cellID','species','abundance', 'abundance_mut', 'season', 'longitude', 'latitude'] # list those columns that will be dropped
+df = callDF('YFT', list)
 X = df[0]
 y = df[1]
 
-######### Model 0 #########
-# Define the BRT
-gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 1000, verbose = 1) 
+# Define the BRT; using oceans
+gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 500) 
 createPreds(gbr, skf, "YFT_model0.csv")
 
+# Make predictions
+X_preds = callPredict('YFT', list)
+gbr.fit(X, y)
+y_preds = pd.DataFrame(gbr.predict(X_preds))
+saveFile = wd + "/GitHub/LarvaDistModels/Output/python/" + 'YFT_model0_preds.csv'
+y_preds.to_csv(saveFile)
+
 ######### Model 1 #########
-# Define the BRT
-gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 2000, verbose = 1) 
+list = ['cellID','species','abundance', 'abundance_mut', 'season', 'ocean'] # list those columns that will be dropped
+df = callDF('YFT', list)
+X = df[0]
+y = df[1]
+
+# Define the BRT; no geographic coordinates
+gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 500) 
 createPreds(gbr, skf, "YFT_model1.csv")
 
+# Make predictions
+X_preds = callPredict('YFT', list)
+gbr.fit(X, y)
+y_preds = pd.DataFrame(gbr.predict(X_preds))
+saveFile = wd + "/GitHub/LarvaDistModels/Output/python/" + 'YFT_model1_preds.csv'
+y_preds.to_csv(saveFile)
+
 ######### Model 2 #########
-# Define the BRT
-gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 1000, learning_rate = 0.05, verbose = 1) 
+list = ['cellID','species','abundance', 'abundance_mut', 'season', 'ocean', 'longitude', 'latitude'] # list those columns that will be dropped
+df = callDF('YFT', list)
+X = df[0]
+y = df[1]
+
+# Define the BRT; no geographic coordinates
+gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 500) 
 createPreds(gbr, skf, "YFT_model2.csv")
 
+# Make predictions
+X_preds = callPredict('YFT', list)
+gbr.fit(X, y)
+y_preds = pd.DataFrame(gbr.predict(X_preds))
+saveFile = wd + "/GitHub/LarvaDistModels/Output/python/" + 'YFT_model2_preds.csv'
+y_preds.to_csv(saveFile)
+
 ######### Model 3 #########
-# Define the BRT
-gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 2000, learning_rate = 0.05, verbose = 1)
+list = ['cellID','species','abundance', 'abundance_mut', 'season', 'ocean', 'longitude'] # list those columns that will be dropped
+df = callDF('YFT', list)
+X = df[0]
+y = df[1]
+
+# Define the BRT; no geographic coordinates
+gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 500) 
 createPreds(gbr, skf, "YFT_model3.csv")
 
+# Make predictions
+X_preds = callPredict('YFT', list)
+gbr.fit(X, y)
+y_preds = pd.DataFrame(gbr.predict(X_preds))
+saveFile = wd + "/GitHub/LarvaDistModels/Output/python/" + 'YFT_model3_preds.csv'
+y_preds.to_csv(saveFile)
+
+######### Model 4 #########
+list = ['cellID','species','abundance', 'abundance_mut', 'season', 'ocean', 'latitude'] # list those columns that will be dropped
+df = callDF('YFT', list)
+X = df[0]
+y = df[1]
+
+# Define the BRT; no geographic coordinates
+gbr = GradientBoostingRegressor(loss='squared_error', n_estimators = 500) 
+createPreds(gbr, skf, "YFT_model4.csv")
+
+# Make predictions
+X_preds = callPredict('YFT', list)
+gbr.fit(X, y)
+y_preds = pd.DataFrame(gbr.predict(X_preds))
+saveFile = wd + "/GitHub/LarvaDistModels/Output/python/" + 'YFT_model4_preds.csv'
+y_preds.to_csv(saveFile)
+
+
+##### IMPLEMENT THIS ONCE WE FIGURE OUT THE MODELS
 ## See this for tuning: https://www.analyticsvidhya.com/blog/2016/02/complete-guide-parameter-tuning-gradient-boosting-gbm-python/
 
 ########### GRID SEARCH ############
