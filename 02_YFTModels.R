@@ -300,57 +300,10 @@ plotPredictions(YFT_predict_sf, "Figures/YFT_Model4preds.png") # Plot prediction
 ###########################
 # Do a cross-validated grid search using gbm.fixed
 # define a 5-fold cross-validation
-train <- dismo::kfold(YFT_filtered, k = 5)
+CVGrid <- CVgridSearch(YFT_filtered, 5, tc = c(1, 2, 3, 5), bf = c(0.5, 0.75), lr = 0.005)
 
-YFT_filtered$fold <- train
-
-gridTib <- tibble(tree_complexity = numeric(),
-               bag_fraction = numeric(),
-               learning_rate = numeric(),
-               cv_deviance = numeric(),
-               time = numeric())
-
-tc <- c(1, 2, 3, 5) # tree complexity
-bf <- c(0.5, 0.75)
-lr <- c(0.005) # constant learning rate of 0.001 so we have >= 1000 trees (Cerasoli et al., 2017)
-
-x = 1
-for(i in 1:length(tc)) {
-  for(j in 1:length(bf)) {
-    for(k in 1:length(lr)) {
-      
-      time <- system.time({ 
-        deviance <- c()
-        for(l in 1:length(unique(train))) {
-          subset <- dplyr::filter(YFT_filtered, fold == l)
-          
-          model <- dismo::gbm.fixed(data = subset, gbm.x = c(4, 6, 8:13), gbm.y = 14,
-                                    tree.complexity = tc[i],
-                                    learning.rate = lr[k],
-                                    bag.fraction = bf[j],
-                                    n.trees = 500, # just for the sake of grid search
-                                    verbose = FALSE)
-          
-          deviance[l] <- model$self.statistics$resid.deviance
-        }
-        
-        cv_deviance <- mean(deviance)
-      }
-      )
-      
-      # Populate the grid tibble
-      grid[x, "tree_complexity"] = tc[i]
-      grid[x, "bag_fraction"] = bf[j]
-      grid[x, "learning_rate"] = lr[k]
-      grid[x, "cv_deviance"] = cv_deviance
-      grid[x, "time"] = time[[3]] # get the time elapsed
-      print(paste0("Run: ", x, "; deviance = ", cv_deviance))
-      
-      
-      x = x + 1
-    }
-  }
-}
+print(CVGrid %>% dplyr::arrange(cv_deviance))
+# constant learning rate of 0.005; we want >= 1000 trees (Cerasoli et al., 2017)
 
 # Now build the model; we want to have a lot of trees: preferably at least 1,000 trees
 YFT_model5 <- gbm.step(YFT_filtered, gbm.x = c(4, 6, 8:13), gbm.y = 14, 

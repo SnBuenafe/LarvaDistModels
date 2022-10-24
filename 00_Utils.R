@@ -285,3 +285,56 @@ joinPredictors <- function(grid, tos, o2os, phos, chlos, bathy, dist2coast) {
   
   return(df)
 }
+
+# Do a k-fold grid search
+CVgridSearch <- function(df, folds, tc, bf, lr) {
+  train <- dismo::kfold(df, k = folds)
+  
+  df$fold <- train
+  
+  gridTib <- tibble(tree_complexity = numeric(),
+                    bag_fraction = numeric(),
+                    learning_rate = numeric(),
+                    cv_deviance = numeric(),
+                    time = numeric())
+  
+  x = 1
+  for(i in 1:length(tc)) {
+    for(j in 1:length(bf)) {
+      for(k in 1:length(lr)) {
+        
+        time <- system.time({ 
+          deviance <- c()
+          for(l in 1:length(unique(train))) {
+            subset <- dplyr::filter(df, fold == l)
+            
+            model <- dismo::gbm.fixed(data = subset, gbm.x = c(4, 6, 8:13), gbm.y = 14,
+                                      tree.complexity = tc[i],
+                                      learning.rate = lr[k],
+                                      bag.fraction = bf[j],
+                                      n.trees = 500, # just for the sake of grid search
+                                      verbose = FALSE)
+            
+            deviance[l] <- model$self.statistics$resid.deviance
+          }
+          
+          cv_deviance <- mean(deviance)
+        }
+        )
+        
+        # Populate the grid tibble
+        gridTib[x, "tree_complexity"] = tc[i]
+        gridTib[x, "bag_fraction"] = bf[j]
+        gridTib[x, "learning_rate"] = lr[k]
+        gridTib[x, "cv_deviance"] = cv_deviance
+        gridTib[x, "time"] = time[[3]] # get the time elapsed
+        print(paste0("Run: ", x, "; deviance = ", cv_deviance))
+        
+        
+        x = x + 1
+      }
+    }
+  }
+  
+  return(gridTib)
+}

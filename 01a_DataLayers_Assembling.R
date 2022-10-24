@@ -7,7 +7,10 @@ Dict <- tibble::tribble(
   "skipjack-tuna", "SKP", 6200, 0.005, 5, 0.5, 0.79526,
   "albacore", "ALB", 3800, 0.005, 5, 0.5, 0.88791,
   "swordfish", "SWO", 2450, 0.005, 5, 0.5, 0.80528,
-  "blue-marlin", "BLUM", 5500, 0.005, 5, 0.5, 0.78891
+  "blue-marlin", "BLUM", 5500, 0.005, 5, 0.5, 0.78891,
+  "shortbill-spearfish", "SHOS", 5500, 0.005, 5, 0.5, 0.78866,
+  "frigate-tuna", "FRI", 4950, 0.005, 5, 0.5, 0.78486,
+  "bigeye-tuna", "BET", 5300, 0.005, 5, 0.5, 0.78726
 )
 
 ####################
