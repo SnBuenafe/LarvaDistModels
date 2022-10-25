@@ -77,7 +77,7 @@ STRM_sf <- grid %>% # convert to sf so we can plot
 plotModel(STRM_sf, "Figures/STRM_Model1.png") # Plot the model
 plotAbundance(STRM_sf, "Figures/STRM_abundance.png") # Plot raw
 pres <- round(sum(STRM_sf$abundance_presence)/nrow(STRM_sf) * 100, 2)
-plotPA(STRM_sf, inset, pres, "Figures/STRM_presabs.png") # Plot presence absence
+plotPA(STRM_sf, pres, "Figures/STRM_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

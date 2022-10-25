@@ -77,7 +77,7 @@ BON_sf <- grid %>% # convert to sf so we can plot
 plotModel(BON_sf, "Figures/BON_Model1.png") # Plot the model
 plotAbundance(BON_sf, "Figures/BON_abundance.png") # Plot raw
 pres <- round(sum(BON_sf$abundance_presence)/nrow(BON_sf) * 100, 2)
-plotPA(BON_sf, inset, pres, "Figures/BON_presabs.png") # Plot presence absence
+plotPA(BON_sf, pres, "Figures/BON_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

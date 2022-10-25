@@ -77,7 +77,7 @@ SAIL_sf <- grid %>% # convert to sf so we can plot
 plotModel(SAIL_sf, "Figures/SAIL_Model1.png") # Plot the model
 plotAbundance(SAIL_sf, "Figures/SAIL_abundance.png") # Plot raw
 pres <- round(sum(SAIL_sf$abundance_presence)/nrow(SAIL_sf) * 100, 2)
-plotPA(SAIL_sf, inset, pres, "Figures/SAIL_presabs.png") # Plot presence absence
+plotPA(SAIL_sf, pres, "Figures/SAIL_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

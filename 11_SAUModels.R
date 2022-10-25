@@ -77,7 +77,7 @@ SAU_sf <- grid %>% # convert to sf so we can plot
 plotModel(SAU_sf, "Figures/SAU_Model1.png") # Plot the model
 plotAbundance(SAU_sf, "Figures/SAU_abundance.png") # Plot raw
 pres <- round(sum(SAU_sf$abundance_presence)/nrow(SAU_sf) * 100, 2)
-plotPA(SAU_sf, inset, pres, "Figures/SAU_presabs.png") # Plot presence absence
+plotPA(SAU_sf, pres, "Figures/SAU_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

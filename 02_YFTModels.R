@@ -31,15 +31,6 @@ YFT_predict <- YFT_ds %>%
   dplyr::select(-geometry) %>% 
   as.data.frame() #gbm.step doesn't work if it's a tibble...
 
-inset <- ggplot(data = YFT_filtered) + 
-  geom_bar(aes(x = as.factor(abundance_presence), y = (..count..)/sum(..count..), fill = as.factor(abundance_presence)), show.legend = FALSE) +
-  scale_color_manual(aesthetics = c("color", "fill"),
-                     values = c("#feebe2", "#7a0177")) +
-  theme_bw() +
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank())
-
-
 ###########################
 ## Model 0 ##
 ###########################
@@ -88,7 +79,7 @@ YFT_sf <- grid %>% # convert to sf so we can plot
 plotModel(YFT_sf, "Figures/YFT_Model0.png") # Plot the model
 plotAbundance(YFT_sf, "Figures/YFT_abundance.png") # Plot raw
 pres <- round(sum(YFT_sf$abundance_presence)/nrow(YFT_sf) * 100, 2)
-plotPA(YFT_sf, inset, pres, "Figures/YFT_presabs.png") # Plot presence absence
+plotPA(YFT_sf, pres, "Figures/YFT_presabs.png") # Plot presence absence
 
 ### Predict for the other points
 preds <- dismo::predict(YFT_model0, YFT_predict, n.trees = YFT_model0$gbm.call$best.trees, type = "response")

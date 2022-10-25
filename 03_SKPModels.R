@@ -78,7 +78,7 @@ SKP_sf <- grid %>% # convert to sf so we can plot
 plotModel(SKP_sf, "Figures/SKP_Model1.png") # Plot the model
 plotAbundance(SKP_sf, "Figures/SKP_abundance.png") # Plot raw
 pres <- round(sum(SKP_sf$abundance_presence)/nrow(SKP_sf) * 100, 2)
-plotPA(SKP_sf, inset, pres, "Figures/SKP_presabs.png") # Plot presence absence
+plotPA(SKP_sf, pres, "Figures/SKP_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

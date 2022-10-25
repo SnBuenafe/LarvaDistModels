@@ -223,7 +223,8 @@ plotModel <- function(sf, saveFile) {
     #                     aesthetics = c("fill", "color")) +
     scale_fill_cmocean("Probabilities",
                        name = "tempo", 
-                       aesthetics = c("color", "fill")) +
+                       aesthetics = c("color", "fill"),
+                       limits = c(0, 1)) +
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
     theme_bw()
   ggsave(plot = ggmodel, filename = saveFile, width = 15, height = 8, dpi = 300)
@@ -246,22 +247,19 @@ plotAbundance <- function(sf, saveFile) {
 }
 
 # Plot the presence/absence
-plotPA <- function(sf, inset, positive, saveFile) {
+plotPA <- function(sf, positive, saveFile) {
   ggpresence <- ggplot() +
     geom_sf(data = sf, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence)), size = 0.1) +
     scale_color_manual(name = "Presence/Absence",
                        aesthetics = c("color", "fill"),
                        values = c("#feebe2", "#7a0177")) +
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    annotate("text", x = -15000000, y = -6000000, label = paste0(positive, "% of points\n are presences")) + 
     theme_bw()
   
-  ggplot <- ggpresence + 
-    annotate("text", x = -10000000, y = -5870048, label = paste(positive, "%")) + 
-    inset_element(inset, 0, 0, 0.2, 0.3) 
+  ggsave(plot = ggpresence, filename = saveFile, width = 15, height = 8, dpi = 300)
   
-  ggsave(plot = ggplot, filename = saveFile, width = 15, height = 8, dpi = 300)
-  
-  return(ggplot)
+  return(ggpresence)
 }
 
 # Plot predictions
@@ -270,7 +268,8 @@ plotPredictions <- function(sf, saveFile) {
     geom_sf(data = sf, aes(fill = predictions, color = predictions), size = 0.1) +
     scale_fill_cmocean("Predictions",
                        name = "tempo", 
-                       aesthetics = c("color", "fill")) +
+                       aesthetics = c("color", "fill"),
+                       limits = c(0, 1)) +
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
     theme_bw()
   ggsave(plot = ggpreds, filename = saveFile, width = 15, height = 8, dpi = 300)

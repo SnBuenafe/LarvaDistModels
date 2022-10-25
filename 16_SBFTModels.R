@@ -77,7 +77,7 @@ SBFT_sf <- grid %>% # convert to sf so we can plot
 plotModel(SBFT_sf, "Figures/SBFT_Model1.png") # Plot the model
 plotAbundance(SBFT_sf, "Figures/SBFT_abundance.png") # Plot raw
 pres <- round(sum(SBFT_sf$abundance_presence)/nrow(SBFT_sf) * 100, 2)
-plotPA(SBFT_sf, inset, pres, "Figures/SBFT_presabs.png") # Plot presence absence
+plotPA(SBFT_sf, pres, "Figures/SBFT_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

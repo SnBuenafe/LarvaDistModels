@@ -77,7 +77,7 @@ BET_sf <- grid %>% # convert to sf so we can plot
 plotModel(BET_sf, "Figures/BET_Model1.png") # Plot the model
 plotAbundance(BET_sf, "Figures/BET_abundance.png") # Plot raw
 pres <- round(sum(BET_sf$abundance_presence)/nrow(BET_sf) * 100, 2)
-plotPA(BET_sf, inset, pres, "Figures/BET_presabs.png") # Plot presence absence
+plotPA(BET_sf, pres, "Figures/BET_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

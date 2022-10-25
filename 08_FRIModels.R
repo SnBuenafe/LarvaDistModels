@@ -77,7 +77,7 @@ FRI_sf <- grid %>% # convert to sf so we can plot
 plotModel(FRI_sf, "Figures/FRI_Model1.png") # Plot the model
 plotAbundance(FRI_sf, "Figures/FRI_abundance.png") # Plot raw
 pres <- round(sum(FRI_sf$abundance_presence)/nrow(FRI_sf) * 100, 2)
-plotPA(FRI_sf, inset, pres, "Figures/FRI_presabs.png") # Plot presence absence
+plotPA(FRI_sf, pres, "Figures/FRI_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

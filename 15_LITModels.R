@@ -77,7 +77,7 @@ LIT_sf <- grid %>% # convert to sf so we can plot
 plotModel(LIT_sf, "Figures/LIT_Model1.png") # Plot the model
 plotAbundance(LIT_sf, "Figures/LIT_abundance.png") # Plot raw
 pres <- round(sum(LIT_sf$abundance_presence)/nrow(LIT_sf) * 100, 2)
-plotPA(LIT_sf, inset, pres, "Figures/LIT_presabs.png") # Plot presence absence
+plotPA(LIT_sf, pres, "Figures/LIT_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

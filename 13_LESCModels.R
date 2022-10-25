@@ -77,7 +77,7 @@ LESC_sf <- grid %>% # convert to sf so we can plot
 plotModel(LESC_sf, "Figures/LESC_Model1.png") # Plot the model
 plotAbundance(LESC_sf, "Figures/LESC_abundance.png") # Plot raw
 pres <- round(sum(LESC_sf$abundance_presence)/nrow(LESC_sf) * 100, 2)
-plotPA(LESC_sf, inset, pres, "Figures/LESC_presabs.png") # Plot presence absence
+plotPA(LESC_sf, pres, "Figures/LESC_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##
