@@ -47,7 +47,7 @@ print(CVGrid %>% dplyr::arrange(cv_deviance))
 # Now build the model; we want to have a lot of trees: preferably at least 1,000 trees
 FRI_model1 <- gbm.step(FRI_filtered, gbm.x = c(4, 6, 8:13), gbm.y = 14, 
                         learning.rate = 0.005,
-                        bag.fraction = 0.5,
+                        bag.fraction = 0.75,
                         tree.complexity = 5
 )
 saveRDS(FRI_model1, "Output/FRI_model1.rds") # save the model
@@ -76,7 +76,8 @@ FRI_sf <- grid %>% # convert to sf so we can plot
 
 plotModel(FRI_sf, "Figures/FRI_Model1.png") # Plot the model
 plotAbundance(FRI_sf, "Figures/FRI_abundance.png") # Plot raw
-plotPA(FRI_sf, "Figures/FRI_presabs.png") # Plot presence absence
+pres <- round(sum(FRI_sf$abundance_presence)/nrow(FRI_sf) * 100, 2)
+plotPA(FRI_sf, inset, pres, "Figures/FRI_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

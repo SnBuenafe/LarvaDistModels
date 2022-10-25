@@ -79,7 +79,8 @@ SWO_sf <- grid %>% # convert to sf so we can plot
 
 plotModel(SWO_sf, "Figures/SWO_Model1.png") # Plot the model
 plotAbundance(SWO_sf, "Figures/SWO_abundance.png") # Plot raw
-plotPA(SWO_sf, "Figures/SWO_presabs.png") # Plot presence absence
+pres <- round(sum(SWO_sf$abundance_presence)/nrow(SWO_sf) * 100, 2)
+plotPA(SWO_sf, inset, pres, "Figures/SWO_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

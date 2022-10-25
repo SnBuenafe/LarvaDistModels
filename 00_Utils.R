@@ -10,6 +10,7 @@ suppressPackageStartupMessages({
   library(raster)
   library(dismo) # for boosted regression trees
   library(RColorBrewer)
+  library(patchwork)
 })
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
@@ -245,7 +246,7 @@ plotAbundance <- function(sf, saveFile) {
 }
 
 # Plot the presence/absence
-plotPA <- function(sf, saveFile) {
+plotPA <- function(sf, inset, positive, saveFile) {
   ggpresence <- ggplot() +
     geom_sf(data = sf, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence)), size = 0.1) +
     scale_color_manual(name = "Presence/Absence",
@@ -254,9 +255,13 @@ plotPA <- function(sf, saveFile) {
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
     theme_bw()
   
-  ggsave(plot = ggpresence, filename = saveFile, width = 15, height = 8, dpi = 300)
+  ggplot <- ggpresence + 
+    annotate("text", x = -10000000, y = -5870048, label = paste(positive, "%")) + 
+    inset_element(inset, 0, 0, 0.2, 0.3) 
   
-  return(ggpresence)
+  ggsave(plot = ggplot, filename = saveFile, width = 15, height = 8, dpi = 300)
+  
+  return(ggplot)
 }
 
 # Plot predictions
@@ -280,7 +285,7 @@ joinPredictors <- function(grid, tos, o2os, phos, chlos, bathy, dist2coast) {
     dplyr::left_join(., chlos, by = "cellID") %>% 
     dplyr::left_join(., bathy, by = "cellID") %>% 
     dplyr::left_join(., dist2coast, by = "cellID") %>% 
-    dplyr::left_join(grid_YFT, ., by = "cellID") %>%  # Join with species data
+    dplyr::left_join(grid, ., by = "cellID") %>%  # Join with species data
     dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
   
   return(df)

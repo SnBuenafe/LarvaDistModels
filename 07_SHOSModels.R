@@ -78,7 +78,8 @@ SHOS_sf <- grid %>% # convert to sf so we can plot
 
 plotModel(SHOS_sf, "Figures/SHOS_Model1.png") # Plot the model
 plotAbundance(SHOS_sf, "Figures/SHOS_abundance.png") # Plot raw
-plotPA(SHOS_sf, "Figures/SHOS_presabs.png") # Plot presence absence
+pres <- round(sum(SHOS_sf$abundance_presence)/nrow(SHOS_sf) * 100, 2)
+plotPA(SHOS_sf, inset, pres, "Figures/SHOS_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##

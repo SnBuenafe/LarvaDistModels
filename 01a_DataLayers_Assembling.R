@@ -7,10 +7,21 @@ Dict <- tibble::tribble(
   "skipjack-tuna", "SKP", 6200, 0.005, 5, 0.5, 0.79526,
   "albacore", "ALB", 3800, 0.005, 5, 0.5, 0.88791,
   "swordfish", "SWO", 2450, 0.005, 5, 0.5, 0.80528,
-  "blue-marlin", "BLUM", 5500, 0.005, 5, 0.5, 0.78891,
-  "shortbill-spearfish", "SHOS", 5500, 0.005, 5, 0.5, 0.78866,
-  "frigate-tuna", "FRI", 4950, 0.005, 5, 0.5, 0.78486,
-  "bigeye-tuna", "BET", 5300, 0.005, 5, 0.5, 0.78726
+  "blue-marlin", "BLUM", 6800, 0.005, 5, 0.5, 0.84797,
+  "shortbill-spearfish", "SHOS", 3150, 0.005, 5, 0.5, 0.8464,
+  "frigate-tuna", "FRI", 4150, 0.005, 5, 0.75, 0.8889,
+  "bigeye-tuna", "BET", 4250, 0.005, 5, 0.5, 0.82867,
+  "striped-marlin", "STRM", 2850, 0.005, 5, 0.5, 0.85267, 
+  "sauries", "SAU", 2850, 0.005, 5, 0.75, 0.95151, 
+  "sailfish", "SAIL", 2700, 0.005, 5, 0.5, 0.87756, 
+  "longfin-escolar", "LESC", 1250, 0.005, 5, 0.5, 0.82454,
+  "bluefin-tuna", "BFT", 1450, 0.005, 5, 0.5, 0.96989,
+  "little-tuna", "LIT", 1900, 0.005, 5, 0.75, 0.90922,
+  "southern-bluefin-tuna", "SBFT", 1500, 0.005, 5, 0.75, 0.98466,
+  "slender-tuna", "SLT", 1300, 0.005, 5, 0.75, 0.98202,
+  "bonitos", "BON", 200, 0.005, 3, 0.5, 0.8255 # 300 TREES; POSSIBLY OVERFITTED
+  # CAN'T BUILD MODELS FOR BLACK MARLIN
+  
 )
 
 ####################
@@ -71,6 +82,76 @@ BET_sf <- combineFish(species = "bigeye-tuna") %>%
   sf::st_centroid()# transform into point data
 
 grid_BET <- assembleGrid(grid, BET_sf)
+
+# 9. Assemble striped marlin & white marlin
+STRM_sf <- combineFish(species = "striped-marlin") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_STRM <- assembleGrid(grid, STRM_sf)
+
+# 10. Assemble sauries
+SAU_sf <- combineFish(species = "sauries") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_SAU <- assembleGrid(grid, SAU_sf)
+
+# 11. Assemble sailfish
+SAIL_sf <- combineFish(species = "sailfish") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_SAIL <- assembleGrid(grid, SAIL_sf)
+
+# 12. Assemble longfin escolar
+LESC_sf <- combineFish(species = "longfin-escolar") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_LESC <- assembleGrid(grid, LESC_sf)
+
+# 13. Assemble bluefin tuna
+BFT_sf <- combineFish(species = "bluefin-tuna") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_BFT <- assembleGrid(grid, BFT_sf)
+
+# 14. Assemble little tuna
+LIT_sf <- combineFish(species = "little-tuna") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_LIT <- assembleGrid(grid, LIT_sf)
+
+# 15. Assemble southern bluefin tuna
+SBFT_sf <- combineFish(species = "southern-bluefin-tuna") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_SBFT <- assembleGrid(grid, SBFT_sf)
+
+# 16. Assemble slender tuna
+SLT_sf <- combineFish(species = "slender-tuna") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_SLT <- assembleGrid(grid, SLT_sf)
+
+# 17. Assemble bonitos
+BON_sf <- combineFish(species = "bonitos") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_BON <- assembleGrid(grid, BON_sf)
+
+# 18. Assemble black marlin
+BLAM_sf <- combineFish(species = "black-marlin") %>% 
+  sf::st_transform(crs = moll) %>% 
+  sf::st_centroid()# transform into point data
+
+grid_BLAM <- assembleGrid(grid, BLAM_sf)
 
 load = TRUE # if TRUE, scripts above are only reloaded; none are reran
 if(isFALSE(load)) {
@@ -267,6 +348,116 @@ BET_full <- joinPredictors(grid = grid_BET,
                             dist2coast = dist2coast
 )
 write_csv(BET_full, file = "Output/BET_full.csv") # save full data
+
+# 9. Striped marlin and white marlin
+STRM_full <- joinPredictors(grid = grid_STRM, 
+                           tos = tos, 
+                           o2os = o2os, 
+                           phos = phos, 
+                           chlos = chlos, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(STRM_full, file = "Output/STRM_full.csv") # save full data
+
+# 10. Sauries
+SAU_full <- joinPredictors(grid = grid_SAU, 
+                             tos = tos, 
+                             o2os = o2os, 
+                             phos = phos, 
+                             chlos = chlos, 
+                             bathy = bathy,
+                             dist2coast = dist2coast
+)
+write_csv(SAU_full, file = "Output/SAU_full.csv") # save full data
+
+# 11. Sailfish
+SAIL_full <- joinPredictors(grid = grid_SAIL, 
+                           tos = tos, 
+                           o2os = o2os, 
+                           phos = phos, 
+                           chlos = chlos, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(SAIL_full, file = "Output/SAIL_full.csv") # save full data
+
+# 12. Longfin escolar
+LESC_full <- joinPredictors(grid = grid_LESC, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(LESC_full, file = "Output/LESC_full.csv") # save full data
+
+# 13. Bluefin tuna
+BFT_full <- joinPredictors(grid = grid_BFT, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BFT_full, file = "Output/BFT_full.csv") # save full data
+
+# 14. Little tuna
+LIT_full <- joinPredictors(grid = grid_LIT, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(LIT_full, file = "Output/LIT_full.csv") # save full data
+
+# 15. Southern bluefin escolar
+SBFT_full <- joinPredictors(grid = grid_SBFT, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SBFT_full, file = "Output/SBFT_full.csv") # save full data
+
+# 16. Slender tuna
+SLT_full <- joinPredictors(grid = grid_SLT, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SLT_full, file = "Output/SLT_full.csv") # save full data
+
+# 17. BONITOS
+BON_full <- joinPredictors(grid = grid_BON, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BON_full, file = "Output/BON_full.csv") # save full data
+
+# 18. Black marlin
+BLAM_full <- joinPredictors(grid = grid_BLAM, 
+                            tos = tos, 
+                            o2os = o2os, 
+                            phos = phos, 
+                            chlos = chlos, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BLAM_full, file = "Output/BLAM_full.csv") # save full data
 
 } else {
   

@@ -79,7 +79,8 @@ BLUM_sf <- grid %>% # convert to sf so we can plot
 
 plotModel(BLUM_sf, "Figures/BLUM_Model1.png") # Plot the model
 plotAbundance(BLUM_sf, "Figures/BLUM_abundance.png") # Plot raw
-plotPA(BLUM_sf, "Figures/BLUM_presabs.png") # Plot presence absence
+pres <- round(sum(BLUM_sf$abundance_presence)/nrow(BLUM_sf) * 100, 2)
+plotPA(BLUM_sf, inset, pres, "Figures/BLUM_presabs.png") # Plot presence absence
 
 ###############################
 ## Predict for other points ##
