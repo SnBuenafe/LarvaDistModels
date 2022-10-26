@@ -2,7 +2,7 @@
 
 # FUNCTION: Crop to specific boundaries
 
-while getopts m:v:e:tn:tx:nn:nx: flag
+while getopts m:v:e:tn:tx:nn:nx:n:x: flag
 do
 	case "${flag}" in
 		m) model=${OPTARG};;
@@ -12,6 +12,8 @@ do
 		tx) latmax=${OPTARG};;
 		nn) lonmin=${OPTARG};;
 		nx) lonmax=${OPTARG};;
+		n) yearmin=${OPTARG};;
+		x) yearmax=${OPTARG};;
 	esac
 done
 
@@ -24,4 +26,4 @@ echo "Longitudes: ${lonmin} to ${lonmax}";
 
 mkdir crop
 
-cdo -sellonlatbox,$lonmin,$lonmax,$latmin,$latmax "remapped/${var}_${model}_${expt}_remapped.nc" "crop/${var}_${model}_${expt}_cropped.nc"
+cdo -sellonlatbox,$lonmin,$lonmax,$latmin,$latmax "remapped/${var}_${model}_${expt}_${yearmin}_${yearmax}_remapped.nc" "crop/${var}_${model}_${expt}_cropped.nc"
