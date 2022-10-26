@@ -27,6 +27,7 @@ Dict <- tibble::tribble(
 ####################
 # Fish data #
 ####################
+
 # 1. Assemble yellowfin tuna data
 YFT_sf <- combineFish(species = "yellowfin-tuna") %>% 
   sf::st_transform(crs = moll) %>% 
@@ -165,7 +166,9 @@ reprocess = FALSE # Change to FALSE if no (reprocess=TRUE takes a while to run)
 if(isTRUE(reprocess)) {
   # Climate
   # 1. Temperature
-  tos_rs <- stars::read_ncdf("Data/Climatology/ensemble/tos_ensemble.nc") %>% 
+  
+  # A. Historical (to fit the model)
+  tos_rs <- stars::read_ncdf("Data/Climatology/ensemble/tos_historical_1956_1984_ensemble.nc") %>% 
     terra::rast()
   names(tos_rs) <- paste0("X", seq(1956, 1984, by = 1))
   tos <- rs2sf(tos_rs) %>% 
@@ -177,10 +180,57 @@ if(isTRUE(reprocess)) {
     replaceNN(., grid, "tos") %>%
     dplyr::as_tibble() %>% 
     dplyr::select(cellID, tos_transformed, geometry)
-  saveRDS(tos, "Data/Climatology/sf/tos_interpolated.rds")
+  saveRDS(tos, "Data/Climatology/sf/tos_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  tos_rs <- stars::read_ncdf("Data/Climatology/ensemble/tos_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(tos_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  tos <- rs2sf(tos_rs) %>% 
+    dplyr::rename(tos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "tos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, tos_transformed, geometry)
+  saveRDS(tos, "Data/Climatology/sf/tos_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  tos_rs <- stars::read_ncdf("Data/Climatology/ensemble/tos_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(tos_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  tos <- rs2sf(tos_rs) %>% 
+    dplyr::rename(tos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "tos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, tos_transformed, geometry)
+  saveRDS(tos, "Data/Climatology/sf/tos_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  tos_rs <- stars::read_ncdf("Data/Climatology/ensemble/tos_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(tos_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  tos <- rs2sf(tos_rs) %>% 
+    dplyr::rename(tos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "tos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, tos_transformed, geometry)
+  saveRDS(tos, "Data/Climatology/sf/tos_endCentury_interpolated.rds")
   
   # 2. Oxygen
-  o2os_rs <- stars::read_ncdf("Data/Climatology/ensemble/o2os_ensemble.nc") %>% 
+  
+  # A. Historical (to fit the model)
+  o2os_rs <- stars::read_ncdf("Data/Climatology/ensemble/o2os_historical_1956_1984_ensemble.nc") %>% 
     terra::rast()
   names(o2os_rs) <- paste0("X", seq(1956, 1984, by = 1))
   o2os <- rs2sf(o2os_rs) %>% 
@@ -192,10 +242,57 @@ if(isTRUE(reprocess)) {
     replaceNN(., grid, "o2os") %>%
     dplyr::as_tibble() %>% 
     dplyr::select(cellID, o2os_transformed, geometry)
-  saveRDS(o2os, "Data/Climatology/sf/o2os_interpolated.rds")
+  saveRDS(o2os, "Data/Climatology/sf/o2os_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  o2os_rs <- stars::read_ncdf("Data/Climatology/ensemble/o2os_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(o2os_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  o2os <- rs2sf(o2os_rs) %>% 
+    dplyr::rename(o2os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "o2os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, o2os_transformed, geometry)
+  saveRDS(o2os, "Data/Climatology/sf/o2os_present_interpolated.rds")  
+  
+  # C. Mid-century (2046-2055)
+  o2os_rs <- stars::read_ncdf("Data/Climatology/ensemble/o2os_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(o2os_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  o2os <- rs2sf(o2os_rs) %>% 
+    dplyr::rename(o2os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "o2os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, o2os_transformed, geometry)
+  saveRDS(o2os, "Data/Climatology/sf/o2os_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  o2os_rs <- stars::read_ncdf("Data/Climatology/ensemble/o2os_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(o2os_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  o2os <- rs2sf(o2os_rs) %>% 
+    dplyr::rename(o2os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "o2os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, o2os_transformed, geometry)
+  saveRDS(o2os, "Data/Climatology/sf/o2os_endCentury_interpolated.rds")
   
   # 3. pH
-  phos_rs <- stars::read_ncdf("Data/Climatology/ensemble/phos_ensemble.nc") %>% 
+  
+  # A. Historical (to fit the models)
+  phos_rs <- stars::read_ncdf("Data/Climatology/ensemble/phos_historical_1956_1984_ensemble.nc") %>% 
     terra::rast()
   names(phos_rs) <- paste0("X", seq(1956, 1984, by = 1))
   phos <- rs2sf(phos_rs) %>% 
@@ -207,10 +304,57 @@ if(isTRUE(reprocess)) {
     replaceNN(., grid, "phos") %>%
     dplyr::as_tibble() %>% 
     dplyr::select(cellID, phos_transformed, geometry)
-  saveRDS(phos, "Data/Climatology/sf/phos_interpolated.rds")
+  saveRDS(phos, "Data/Climatology/sf/phos_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  phos_rs <- stars::read_ncdf("Data/Climatology/ensemble/phos_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(phos_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  phos <- rs2sf(phos_rs) %>% 
+    dplyr::rename(phos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "phos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, phos_transformed, geometry)
+  saveRDS(phos, "Data/Climatology/sf/phos_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  phos_rs <- stars::read_ncdf("Data/Climatology/ensemble/phos_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(phos_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  phos <- rs2sf(phos_rs) %>% 
+    dplyr::rename(phos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "phos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, phos_transformed, geometry)
+  saveRDS(phos, "Data/Climatology/sf/phos_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  phos_rs <- stars::read_ncdf("Data/Climatology/ensemble/phos_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(phos_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  phos <- rs2sf(phos_rs) %>% 
+    dplyr::rename(phos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "phos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, phos_transformed, geometry)
+  saveRDS(phos, "Data/Climatology/sf/phos_endCentury_interpolated.rds")
   
   # 4. chlorophyll-a
-  chlos_rs <- stars::read_ncdf("Data/Climatology/ensemble/chlos_ensemble.nc") %>% 
+  
+  # A. Historical (to fit the model)
+  chlos_rs <- stars::read_ncdf("Data/Climatology/ensemble/chlos_historical_1956_1984_ensemble.nc") %>% 
     terra::rast()
   names(chlos_rs) <- paste0("X", seq(1956, 1984, by = 1))
   chlos <- rs2sf(chlos_rs) %>% 
@@ -222,7 +366,52 @@ if(isTRUE(reprocess)) {
     replaceNN(., grid, "chlos") %>%
     dplyr::as_tibble() %>% 
     dplyr::select(cellID, chlos_transformed, geometry)
-  saveRDS(chlos, "Data/Climatology/sf/chlos_interpolated.rds")
+  saveRDS(chlos, "Data/Climatology/sf/chlos_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  chlos_rs <- stars::read_ncdf("Data/Climatology/ensemble/chlos_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(chlos_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  chlos <- rs2sf(chlos_rs) %>% 
+    dplyr::rename(chlos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "chlos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, chlos_transformed, geometry)
+  saveRDS(chlos, "Data/Climatology/sf/chlos_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  chlos_rs <- stars::read_ncdf("Data/Climatology/ensemble/chlos_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(chlos_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  chlos <- rs2sf(chlos_rs) %>% 
+    dplyr::rename(chlos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "chlos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, chlos_transformed, geometry)
+  saveRDS(chlos, "Data/Climatology/sf/chlos_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  chlos_rs <- stars::read_ncdf("Data/Climatology/ensemble/chlos_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(chlos_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  chlos <- rs2sf(chlos_rs) %>% 
+    dplyr::rename(chlos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "chlos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, chlos_transformed, geometry)
+  saveRDS(chlos, "Data/Climatology/sf/chlos_endCentury_interpolated.rds")
   
   # Bathymetry
   bathy <- gebcoConvert(grid, 2500) # bathymetry data is extrapolated depending on the grid area provided
@@ -232,13 +421,44 @@ if(isTRUE(reprocess)) {
 } else {
   
   # Climatology
-  tos <- readRDS("Data/Climatology/sf/tos_interpolated.rds") %>% 
+  # Temperature
+  tos_historical <- readRDS("Data/Climatology/sf/tos_historical_interpolated.rds") %>% 
     dplyr::select(-geometry)
-  o2os <- readRDS("Data/Climatology/sf/o2os_interpolated.rds") %>% 
+  tos_present <- readRDS("Data/Climatology/sf/tos_present_interpolated.rds") %>% 
     dplyr::select(-geometry)
-  phos <- readRDS("Data/Climatology/sf/phos_interpolated.rds") %>% 
+  tos_midCentury <- readRDS("Data/Climatology/sf/tos_midCentury_interpolated.rds") %>% 
     dplyr::select(-geometry)
-  chlos <- readRDS("Data/Climatology/sf/chlos_interpolated.rds") %>% 
+  tos_endCentury <- readRDS("Data/Climatology/sf/tos_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # Oxygen
+  o2os_historical <- readRDS("Data/Climatology/sf/o2os_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  o2os_present <- readRDS("Data/Climatology/sf/o2os_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  o2os_midCentury <- readRDS("Data/Climatology/sf/o2os_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  o2os_endCentury <- readRDS("Data/Climatology/sf/o2os_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # pH
+  phos_historical <- readRDS("Data/Climatology/sf/phos_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  phos_present <- readRDS("Data/Climatology/sf/phos_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  phos_midCentury <- readRDS("Data/Climatology/sf/phos_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  phos_endCentury <- readRDS("Data/Climatology/sf/phos_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # chlorophyll-a
+  chlos_historical <- readRDS("Data/Climatology/sf/chlos_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  chlos_present <- readRDS("Data/Climatology/sf/chlos_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  chlos_midCentury <- readRDS("Data/Climatology/sf/chlos_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  chlos_endCentury <- readRDS("Data/Climatology/sf/chlos_endCentury_interpolated.rds") %>% 
     dplyr::select(-geometry)
   
   # Bathymetry
@@ -253,6 +473,7 @@ if(isTRUE(reprocess)) {
     dplyr::select(-geometry)
 }
 
+
 ###############################################################
 # Joining all predictor and response per fish species #
 ###############################################################
@@ -260,204 +481,753 @@ if(isTRUE(reprocess)) {
 # Joining all the data with the species data
 # 1. Yellowfin
 YFT_full <- joinPredictors(grid = grid_YFT, 
-                           tos = tos, 
-                           o2os = o2os, 
-                           phos = phos, 
-                           chlos = chlos, 
+                           tos = tos_historical, 
+                           o2os = o2os_historical, 
+                           phos = phos_historical, 
+                           chlos = chlos_historical, 
                            bathy = bathy,
                            dist2coast = dist2coast
 )
-write_csv(YFT_full, file = "Output/YFT_full.csv") # save full data
+write_csv(YFT_full, file = "Output/CSV/YFT_historical_full.csv") # save full data
+
+YFT_full <- joinPredictors(grid = grid_YFT, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(YFT_full, file = "Output/CSV/YFT_present_full.csv") # save full data
+
+YFT_full <- joinPredictors(grid = grid_YFT, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(YFT_full, file = "Output/CSV/YFT_midCentury_full.csv") # save full data
+
+YFT_full <- joinPredictors(grid = grid_YFT, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(YFT_full, file = "Output/CSV/YFT_endCentury_full.csv") # save full data
 
 # 2. Albacore
 ALB_full <- joinPredictors(grid = grid_ALB, 
-                           tos = tos, 
-                           o2os = o2os, 
-                           phos = phos, 
-                           chlos = chlos, 
+                           tos = tos_historical, 
+                           o2os = o2os_historical, 
+                           phos = phos_historical, 
+                           chlos = chlos_historical, 
                            bathy = bathy,
                            dist2coast = dist2coast
 )
 
-write_csv(ALB_full, file = "Output/ALB_full.csv") # save full data
+write_csv(ALB_full, file = "Output/CSV/ALB_historical_full.csv") # save full data
+
+ALB_full <- joinPredictors(grid = grid_ALB, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(ALB_full, file = "Output/CSV/ALB_present_full.csv") # save full data
+
+ALB_full <- joinPredictors(grid = grid_ALB, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(ALB_full, file = "Output/CSV/ALB_midCentury_full.csv") # save full data
+
+ALB_full <- joinPredictors(grid = grid_ALB, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(ALB_full, file = "Output/CSV/ALB_endCentury_full.csv") # save full data
 
 # 3. Skipjack tuna
 SKP_full <- joinPredictors(grid = grid_SKP, 
-                           tos = tos, 
-                           o2os = o2os, 
-                           phos = phos, 
-                           chlos = chlos, 
+                           tos = tos_historical, 
+                           o2os = o2os_historical, 
+                           phos = phos_historical, 
+                           chlos = chlos_historical, 
                            bathy = bathy,
                            dist2coast = dist2coast
 )
 
-write_csv(SKP_full, file = "Output/SKP_full.csv") # save full data
+write_csv(SKP_full, file = "Output/CSV/SKP_historical_full.csv") # save full data
+
+SKP_full <- joinPredictors(grid = grid_SKP, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(SKP_full, file = "Output/CSV/SKP_present_full.csv") # save full data
+
+SKP_full <- joinPredictors(grid = grid_SKP, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(SKP_full, file = "Output/CSV/SKP_midCentury_full.csv") # save full data
+
+SKP_full <- joinPredictors(grid = grid_SKP, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(SKP_full, file = "Output/CSV/SKP_endCentury_full.csv") # save full data
 
 # 4. Swordfish
 SWO_full <- joinPredictors(grid = grid_SWO, 
-                           tos = tos, 
-                           o2os = o2os, 
-                           phos = phos, 
-                           chlos = chlos, 
+                           tos = tos_historical, 
+                           o2os = o2os_historical, 
+                           phos = phos_historical, 
+                           chlos = chlos_historical, 
                            bathy = bathy,
                            dist2coast = dist2coast
 )
 
-write_csv(SWO_full, file = "Output/SWO_full.csv") # save full data
+write_csv(SWO_full, file = "Output/CSV/SWO_historical_full.csv") # save full data
+
+SWO_full <- joinPredictors(grid = grid_SWO, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(SWO_full, file = "Output/CSV/SWO_present_full.csv") # save full data
+
+SWO_full <- joinPredictors(grid = grid_SWO, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(SWO_full, file = "Output/CSV/SWO_midCentury_full.csv") # save full data
+
+SWO_full <- joinPredictors(grid = grid_SWO, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+
+write_csv(SWO_full, file = "Output/CSV/SWO_endCentury_full.csv") # save full data
 
 # 5. Blue marlin
 BLUM_full <- joinPredictors(grid = grid_BLUM, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
                             )
-write_csv(BLUM_full, file = "Output/BLUM_full.csv") # save full data
+write_csv(BLUM_full, file = "Output/CSV/BLUM_historical_full.csv") # save full data
+
+BLUM_full <- joinPredictors(grid = grid_BLUM, 
+                            tos = tos_present, 
+                            o2os = o2os_present, 
+                            phos = phos_present, 
+                            chlos = chlos_present, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BLUM_full, file = "Output/CSV/BLUM_present_full.csv") # save full data
+
+BLUM_full <- joinPredictors(grid = grid_BLUM, 
+                            tos = tos_midCentury, 
+                            o2os = o2os_midCentury, 
+                            phos = phos_midCentury, 
+                            chlos = chlos_midCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BLUM_full, file = "Output/CSV/BLUM_midCentury_full.csv") # save full data
+
+BLUM_full <- joinPredictors(grid = grid_BLUM, 
+                            tos = tos_endCentury, 
+                            o2os = o2os_endCentury, 
+                            phos = phos_endCentury, 
+                            chlos = chlos_endCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BLUM_full, file = "Output/CSV/BLUM_endCentury_full.csv") # save full data
 
 # 6. Shortbill spearfish
 SHOS_full <- joinPredictors(grid = grid_SHOS, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(SHOS_full, file = "Output/SHOS_full.csv") # save full data
+write_csv(SHOS_full, file = "Output/CSV/SHOS_historical_full.csv") # save full data
+
+SHOS_full <- joinPredictors(grid = grid_SHOS, 
+                            tos = tos_present, 
+                            o2os = o2os_present, 
+                            phos = phos_present, 
+                            chlos = chlos_present, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SHOS_full, file = "Output/CSV/SHOS_present_full.csv") # save full data
+
+SHOS_full <- joinPredictors(grid = grid_SHOS, 
+                            tos = tos_midCentury, 
+                            o2os = o2os_midCentury, 
+                            phos = phos_midCentury, 
+                            chlos = chlos_midCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SHOS_full, file = "Output/CSV/SHOS_midCentury_full.csv") # save full data
+
+SHOS_full <- joinPredictors(grid = grid_SHOS, 
+                            tos = tos_endCentury, 
+                            o2os = o2os_endCentury, 
+                            phos = phos_endCentury, 
+                            chlos = chlos_endCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SHOS_full, file = "Output/CSV/SHOS_endCentury_full.csv") # save full data
 
 # 7. Frigate tuna
 FRI_full <- joinPredictors(grid = grid_FRI, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(FRI_full, file = "Output/FRI_full.csv") # save full data
+write_csv(FRI_full, file = "Output/CSV/FRI_historical_full.csv") # save full data
+
+FRI_full <- joinPredictors(grid = grid_FRI, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(FRI_full, file = "Output/CSV/FRI_present_full.csv") # save full data
+
+FRI_full <- joinPredictors(grid = grid_FRI, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(FRI_full, file = "Output/CSV/FRI_midCentury_full.csv") # save full data
+
+FRI_full <- joinPredictors(grid = grid_FRI, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(FRI_full, file = "Output/CSV/FRI_endCentury_full.csv") # save full data
 
 # 8. Bigeye tuna
 BET_full <- joinPredictors(grid = grid_BET, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(BET_full, file = "Output/BET_full.csv") # save full data
+write_csv(BET_full, file = "Output/CSV/BET_historical_full.csv") # save full data
+
+BET_full <- joinPredictors(grid = grid_BET, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BET_full, file = "Output/CSV/BET_present_full.csv") # save full 
+
+BET_full <- joinPredictors(grid = grid_BET, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BET_full, file = "Output/CSV/BET_midCentury_full.csv") # save full data
+
+BET_full <- joinPredictors(grid = grid_BET, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BET_full, file = "Output/CSV/BET_endCentury_full.csv") # save full data
 
 # 9. Striped marlin and white marlin
 STRM_full <- joinPredictors(grid = grid_STRM, 
-                           tos = tos, 
-                           o2os = o2os, 
-                           phos = phos, 
-                           chlos = chlos, 
+                           tos = tos_historical, 
+                           o2os = o2os_historical, 
+                           phos = phos_historical, 
+                           chlos = chlos_historical, 
                            bathy = bathy,
                            dist2coast = dist2coast
 )
-write_csv(STRM_full, file = "Output/STRM_full.csv") # save full data
+write_csv(STRM_full, file = "Output/CSV/STRM_historical_full.csv") # save full data
+
+STRM_full <- joinPredictors(grid = grid_STRM, 
+                            tos = tos_present, 
+                            o2os = o2os_present, 
+                            phos = phos_present, 
+                            chlos = chlos_present, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(STRM_full, file = "Output/CSV/STRM_present_full.csv") # save full data
+
+STRM_full <- joinPredictors(grid = grid_STRM, 
+                            tos = tos_midCentury, 
+                            o2os = o2os_midCentury, 
+                            phos = phos_midCentury, 
+                            chlos = chlos_midCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(STRM_full, file = "Output/CSV/STRM_midCentury_full.csv") # save full data
+
+STRM_full <- joinPredictors(grid = grid_STRM, 
+                            tos = tos_endCentury, 
+                            o2os = o2os_endCentury, 
+                            phos = phos_endCentury, 
+                            chlos = chlos_endCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(STRM_full, file = "Output/CSV/STRM_endCentury_full.csv") # save full data
 
 # 10. Sauries
 SAU_full <- joinPredictors(grid = grid_SAU, 
-                             tos = tos, 
-                             o2os = o2os, 
-                             phos = phos, 
-                             chlos = chlos, 
+                             tos = tos_historical, 
+                             o2os = o2os_historical, 
+                             phos = phos_historical, 
+                             chlos = chlos_historical, 
                              bathy = bathy,
                              dist2coast = dist2coast
 )
-write_csv(SAU_full, file = "Output/SAU_full.csv") # save full data
+write_csv(SAU_full, file = "Output/CSV/SAU_historical_full.csv") # save full data
 
-# 11. Sailfish
-SAIL_full <- joinPredictors(grid = grid_SAIL, 
-                           tos = tos, 
-                           o2os = o2os, 
-                           phos = phos, 
-                           chlos = chlos, 
+SAU_full <- joinPredictors(grid = grid_SAU, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
                            bathy = bathy,
                            dist2coast = dist2coast
 )
-write_csv(SAIL_full, file = "Output/SAIL_full.csv") # save full data
+write_csv(SAU_full, file = "Output/CSV/SAU_present_full.csv") # save full data
+
+SAU_full <- joinPredictors(grid = grid_SAU, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(SAU_full, file = "Output/CSV/SAU_midCentury_full.csv") # save full data
+
+SAU_full <- joinPredictors(grid = grid_SAU, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(SAU_full, file = "Output/CSV/SAU_endCentury_full.csv") # save full data
+
+# 11. Sailfish
+SAIL_full <- joinPredictors(grid = grid_SAIL, 
+                           tos = tos_historical, 
+                           o2os = o2os_historical, 
+                           phos = phos_historical, 
+                           chlos = chlos_historical, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(SAIL_full, file = "Output/CSV/SAIL_historical_full.csv") # save full data
+
+SAIL_full <- joinPredictors(grid = grid_SAIL, 
+                            tos = tos_present, 
+                            o2os = o2os_present, 
+                            phos = phos_present, 
+                            chlos = chlos_present, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SAIL_full, file = "Output/CSV/SAIL_present_full.csv") # save full data
+
+SAIL_full <- joinPredictors(grid = grid_SAIL, 
+                            tos = tos_midCentury, 
+                            o2os = o2os_midCentury, 
+                            phos = phos_midCentury, 
+                            chlos = chlos_midCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SAIL_full, file = "Output/CSV/SAIL_midCentury_full.csv") # save full data
+
+SAIL_full <- joinPredictors(grid = grid_SAIL, 
+                            tos = tos_endCentury, 
+                            o2os = o2os_endCentury, 
+                            phos = phos_endCentury, 
+                            chlos = chlos_endCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SAIL_full, file = "Output/CSV/SAIL_endCentury_full.csv") # save full data
 
 # 12. Longfin escolar
 LESC_full <- joinPredictors(grid = grid_LESC, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(LESC_full, file = "Output/LESC_full.csv") # save full data
+write_csv(LESC_full, file = "Output/CSV/LESC_historical_full.csv") # save full data
+
+LESC_full <- joinPredictors(grid = grid_LESC, 
+                            tos = tos_present, 
+                            o2os = o2os_present, 
+                            phos = phos_present, 
+                            chlos = chlos_present, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(LESC_full, file = "Output/CSV/LESC_present_full.csv") # save full data
+
+LESC_full <- joinPredictors(grid = grid_LESC, 
+                            tos = tos_midCentury, 
+                            o2os = o2os_midCentury, 
+                            phos = phos_midCentury, 
+                            chlos = chlos_midCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(LESC_full, file = "Output/CSV/LESC_midCentury_full.csv") # save full data
+
+LESC_full <- joinPredictors(grid = grid_LESC, 
+                            tos = tos_endCentury, 
+                            o2os = o2os_endCentury, 
+                            phos = phos_endCentury, 
+                            chlos = chlos_endCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(LESC_full, file = "Output/CSV/LESC_endCentury_full.csv") # save full data
 
 # 13. Bluefin tuna
 BFT_full <- joinPredictors(grid = grid_BFT, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(BFT_full, file = "Output/BFT_full.csv") # save full data
+write_csv(BFT_full, file = "Output/CSV/BFT_historical_full.csv") # save full data
+
+BFT_full <- joinPredictors(grid = grid_BFT, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BFT_full, file = "Output/CSV/BFT_present_full.csv") # save full data
+
+BFT_full <- joinPredictors(grid = grid_BFT, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BFT_full, file = "Output/CSV/BFT_midCentury_full.csv") # save full data
+
+BFT_full <- joinPredictors(grid = grid_BFT, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BFT_full, file = "Output/CSV/BFT_endCentury_full.csv") # save full data
 
 # 14. Little tuna
 LIT_full <- joinPredictors(grid = grid_LIT, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(LIT_full, file = "Output/LIT_full.csv") # save full data
+write_csv(LIT_full, file = "Output/CSV/LIT_historical_full.csv") # save full data
 
-# 15. Southern bluefin escolar
+LIT_full <- joinPredictors(grid = grid_LIT, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(LIT_full, file = "Output/CSV/LIT_present_full.csv") # save full data
+
+LIT_full <- joinPredictors(grid = grid_LIT, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(LIT_full, file = "Output/CSV/LIT_midCentury_full.csv") # save full data
+
+LIT_full <- joinPredictors(grid = grid_LIT, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(LIT_full, file = "Output/CSV/LIT_endCentury_full.csv") # save full data
+
+# 15. Southern bluefin tuna
 SBFT_full <- joinPredictors(grid = grid_SBFT, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(SBFT_full, file = "Output/SBFT_full.csv") # save full data
+write_csv(SBFT_full, file = "Output/CSV/SBFT_historical_full.csv") # save full data
+
+SBFT_full <- joinPredictors(grid = grid_SBFT, 
+                            tos = tos_present, 
+                            o2os = o2os_present, 
+                            phos = phos_present, 
+                            chlos = chlos_present, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SBFT_full, file = "Output/CSV/SBFT_present_full.csv") # save full data
+
+SBFT_full <- joinPredictors(grid = grid_SBFT, 
+                            tos = tos_midCentury, 
+                            o2os = o2os_midCentury, 
+                            phos = phos_midCentury, 
+                            chlos = chlos_midCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SBFT_full, file = "Output/CSV/SBFT_midCentury_full.csv") # save full data
+
+SBFT_full <- joinPredictors(grid = grid_SBFT, 
+                            tos = tos_endCentury, 
+                            o2os = o2os_endCentury, 
+                            phos = phos_endCentury, 
+                            chlos = chlos_endCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(SBFT_full, file = "Output/CSV/SBFT_endCentury_full.csv") # save full data
 
 # 16. Slender tuna
 SLT_full <- joinPredictors(grid = grid_SLT, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(SLT_full, file = "Output/SLT_full.csv") # save full data
+write_csv(SLT_full, file = "Output/CSV/SLT_historical_full.csv") # save full data
 
-# 17. BONITOS
+SLT_full <- joinPredictors(grid = grid_SLT, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(SLT_full, file = "Output/CSV/SLT_present_full.csv") # save full data
+
+SLT_full <- joinPredictors(grid = grid_SLT, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(SLT_full, file = "Output/CSV/SLT_midCentury_full.csv") # save full data
+
+SLT_full <- joinPredictors(grid = grid_SLT, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(SLT_full, file = "Output/CSV/SLT_endCentury_full.csv") # save full data
+
+# 17. Bonitos
 BON_full <- joinPredictors(grid = grid_BON, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(BON_full, file = "Output/BON_full.csv") # save full data
+write_csv(BON_full, file = "Output/CSV/BON_historical_full.csv") # save full data
+
+BON_full <- joinPredictors(grid = grid_BON, 
+                           tos = tos_present, 
+                           o2os = o2os_present, 
+                           phos = phos_present, 
+                           chlos = chlos_present, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BON_full, file = "Output/CSV/BON_present_full.csv") # save full data
+
+BON_full <- joinPredictors(grid = grid_BON, 
+                           tos = tos_midCentury, 
+                           o2os = o2os_midCentury, 
+                           phos = phos_midCentury, 
+                           chlos = chlos_midCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BON_full, file = "Output/CSV/BON_midCentury_full.csv") # save full data
+
+BON_full <- joinPredictors(grid = grid_BON, 
+                           tos = tos_endCentury, 
+                           o2os = o2os_endCentury, 
+                           phos = phos_endCentury, 
+                           chlos = chlos_endCentury, 
+                           bathy = bathy,
+                           dist2coast = dist2coast
+)
+write_csv(BON_full, file = "Output/CSV/BON_endCentury_full.csv") # save full data
 
 # 18. Black marlin
 BLAM_full <- joinPredictors(grid = grid_BLAM, 
-                            tos = tos, 
-                            o2os = o2os, 
-                            phos = phos, 
-                            chlos = chlos, 
+                            tos = tos_historical, 
+                            o2os = o2os_historical, 
+                            phos = phos_historical, 
+                            chlos = chlos_historical, 
                             bathy = bathy,
                             dist2coast = dist2coast
 )
-write_csv(BLAM_full, file = "Output/BLAM_full.csv") # save full data
+write_csv(BLAM_full, file = "Output/CSV/BLAM_historical_full.csv") # save full data
+
+BLAM_full <- joinPredictors(grid = grid_BLAM, 
+                            tos = tos_present, 
+                            o2os = o2os_present, 
+                            phos = phos_present, 
+                            chlos = chlos_present, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BLAM_full, file = "Output/CSV/BLAM_present_full.csv") # save full data
+
+BLAM_full <- joinPredictors(grid = grid_BLAM, 
+                            tos = tos_midCentury, 
+                            o2os = o2os_midCentury, 
+                            phos = phos_midCentury, 
+                            chlos = chlos_midCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BLAM_full, file = "Output/CSV/BLAM_midCentury_full.csv") # save full data
+
+BLAM_full <- joinPredictors(grid = grid_BLAM, 
+                            tos = tos_endCentury, 
+                            o2os = o2os_endCentury, 
+                            phos = phos_endCentury, 
+                            chlos = chlos_endCentury, 
+                            bathy = bathy,
+                            dist2coast = dist2coast
+)
+write_csv(BLAM_full, file = "Output/CSV/BLAM_endCentury_full.csv") # save full data
 
 } else {
   
