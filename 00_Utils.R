@@ -100,7 +100,8 @@ assembleGrid <- function(grid, sf) {
   
   centroid <- grid_sf %>% 
     sf::st_centroid() %>% # Convert to points
-    sf::st_transform(crs = lonlat) # Transform back to lonlat
+    sf::st_transform(crs = lonlat) %>%  # Transform back to lonlat
+    dplyr::distinct(cellID, .keep_all = TRUE)
   
   centroid_coordinates <- sf::st_coordinates(centroid) # Get cooridnates
   
@@ -214,34 +215,43 @@ calculateDist2Coast <- function(grid) {
 ##########
 
 # Plot the model
-plotModel <- function(sf, saveFile) {
+plotModel <- function(sf, abundance) {
   #palette = brewer.pal(9, "YlOrBr")
   ggmodel <- ggplot() + 
-    geom_sf(data = sf, aes(fill = model, color = model), size = 0.1) +
+    geom_sf(data = sf, aes(fill = model), color = NA, size = 0.1) +
     #scale_fill_gradientn(name = "Probabilities",
     #                     colors = palette,
     #                     aesthetics = c("fill", "color")) +
     scale_fill_cmocean("Probabilities",
-                       name = "tempo", 
-                       aesthetics = c("color", "fill"),
-                       limits = c(0, 1)) +
+                       name = "tempo",
+                       aesthetics = c("fill"),
+                      # limits = c(0, 1),
+                       na.value = NA) +
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +
+    scale_fill_manual(name = "",
+                       aesthetics = c("color"),
+                       values = c("#143475"),
+                      labels = c("Larvae sampled", ""),
+                       na.value = NA) +
+    xlab("Longitude") +
+    ylab("Latitude") +
     theme_bw()
-  ggsave(plot = ggmodel, filename = saveFile, width = 15, height = 8, dpi = 300)
   
   return(ggmodel)
 }
 
 # Plot the abundance
-plotAbundance <- function(sf, saveFile) {
+plotAbundance <- function(sf) {
   ggabundance <- ggplot() + 
     geom_sf(data = sf, aes(fill = as.factor(abundance), color = as.factor(abundance)), size = 0.1) +
     scale_fill_brewer(name = "Abundance",
                       aesthetics = c("fill", "color"),
                       palette = "RdPu") +
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    xlab("Longitude") +
+    ylab("Latitude") +
     theme_bw()
-  ggsave(plot = ggabundance, filename = saveFile, width = 15, height = 8, dpi = 300)
   
   return(ggabundance)
 }
