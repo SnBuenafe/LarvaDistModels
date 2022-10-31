@@ -101,9 +101,9 @@ assembleGrid <- function(grid, sf) {
   centroid <- grid_sf %>% 
     sf::st_centroid() %>% # Convert to points
     sf::st_transform(crs = lonlat) %>%  # Transform back to lonlat
-    dplyr::distinct(cellID, .keep_all = TRUE)
+    dplyr::distinct(cellID, .keep_all = TRUE) # Select only distinct cellIDs, we're only interested in the geographic locations and not the seasons
   
-  centroid_coordinates <- sf::st_coordinates(centroid) # Get cooridnates
+  centroid_coordinates <- sf::st_coordinates(centroid) # Get coordinates
   
   grid_sf %<>% dplyr::mutate(longitude = ifelse(!is.na(longitude), 
                                                 yes = longitude, 
@@ -225,7 +225,7 @@ plotModel <- function(sf, abundance) {
     scale_fill_cmocean("Probabilities",
                        name = "tempo",
                        aesthetics = c("fill"),
-                      # limits = c(0, 1),
+                       limits = c(0, 1),
                        na.value = NA) +
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
     geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +

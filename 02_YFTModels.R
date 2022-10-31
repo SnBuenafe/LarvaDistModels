@@ -44,7 +44,7 @@ colnames(YFT_filtered)
 YFT_model0 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 8:13),
                               gbm.y = 14, family = "bernoulli", n.folds = 5)
 saveRDS(YFT_model0, "Output/Models/YFT_model0.rds") # save the model
-#YFT_model0 <- readRDS("Output/YFT_model0.rds") # load the model
+#YFT_model0 <- readRDS("Output/Models/YFT_model0.rds") # load the model
 
 summary(YFT_model0) # get the relative importance of each of the predictors
 
@@ -63,6 +63,9 @@ YFT_model0$cv.statistics$discrimination.mean # AUC Score
 # To calculate R2: https://stats.stackexchange.com/questions/76997/measure-the-goodness-of-fit-in-boosted-regression-tree
 
 # Plot
+YFT_filtered %<>% dplyr::select(-model) # Deselect models on both data.frames
+YFT_predict %<>% dplyr::select(-model)
+
 YFT_filtered$model <- YFT_model0$fitted # fitted values for the model
 preds <- dismo::predict(YFT_model0, YFT_predict, n.trees = YFT_model0$gbm.call$best.trees, type = "response") # Predicted values
 YFT_predict$model <- preds
@@ -93,7 +96,7 @@ YFT_model1 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4,7:13),
                               gbm.y = 14, family = "bernoulli",
                               n.folds = 5)
 saveRDS(YFT_model1, "Output/Models/YFT_model1.rds") # save the model
-#YFT_model1 <- readRDS("Output/YFT_model1.rds") # load the model
+#YFT_model1 <- readRDS("Output/Models/YFT_model1.rds") # load the model
 
 summary(YFT_model1) # get the relative importance of each of the predictors
 
@@ -110,6 +113,10 @@ dev.off()
 # CV AUC of ROC (Receiver Operating Characteristic Curve)
 YFT_model1$cv.statistics$discrimination.mean # AUC Score
 
+YFT_filtered %<>% dplyr::select(-model) # Deselect models on both data.frames
+YFT_predict %<>% dplyr::select(-model)
+
+# Plot
 YFT_filtered$model <- YFT_model1$fitted # fitted values for the model
 preds <- dismo::predict(YFT_model1, YFT_predict, n.trees = YFT_model1$gbm.call$best.trees, type = "response") # Predicted values
 YFT_predict$model <- preds
@@ -129,13 +136,10 @@ ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
 ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model1.png", width = 15, height = 8, dpi = 300)
 
 ###########################
-## Model 2: Latitude ##
+## Model 2: Lat & Lon ##
 ###########################
-YFT_model2 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 6, 8:13),
+YFT_model2 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4:6, 8:13),
                               gbm.y = 14, family = "bernoulli",
-                              learning.rate = 0.005,
-                              bag.fraction = 0.5,
-                              tree.complexity = 5,
                               n.folds = 5)
 saveRDS(YFT_model2, "Output/Models/YFT_model2.rds") # save the model
 #YFT_model2 <- readRDS("Output/Models/YFT_model2.rds") # load the model
@@ -144,7 +148,7 @@ summary(YFT_model2) # get the relative importance of each of the predictors
 
 # Plot predictors
 pdf(file = "Figures/YFT/YFT_Model2_SmoothPredictors.pdf", width = 10, height = 8)
-gbm.plot(YFT_model2, n.plots=8, plot.layout=c(3, 3), write.title = FALSE)
+gbm.plot(YFT_model2, n.plots=9, plot.layout=c(3, 3), write.title = FALSE)
 dev.off()
 
 pdf(file = "Figures/YFT/YFT_Model2_Predictors.pdf", width = 10, height = 8)
@@ -154,6 +158,9 @@ dev.off()
 # Check this for ROC metrics: https://stackoverflow.com/questions/22391547/roc-score-in-gbm-package
 # CV AUC of ROC (Receiver Operating Characteristic Curve)
 YFT_model2$cv.statistics$discrimination.mean # AUC Score
+
+YFT_filtered %<>% dplyr::select(-model) # Deselect models on both data.frames
+YFT_predict %<>% dplyr::select(-model)
 
 YFT_filtered$model <- YFT_model2$fitted # fitted values for the model
 preds <- dismo::predict(YFT_model2, YFT_predict, n.trees = YFT_model2$gbm.call$best.trees, type = "response") # Predicted values
@@ -170,12 +177,12 @@ ggYFT <- grid_YFT %>%
   sf::st_as_sf(sf_column_name = "geometry")
 
 ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
-  ggtitle("Yellowfin tuna (1956-1981): Latitude (AUC: 0.78)")
+  ggtitle("Yellowfin tuna (1956-1981): With longitude and latitude (AUC: 0.74)")
 ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model2.png", width = 15, height = 8, dpi = 300)
 
-#################################################################################
-## Model 3: Restricting range to just the max and min latitudes of Nishikawa ##
-#################################################################################
+#############################################
+## Model 2a: Restricted (historical) ##
+#############################################
 # What are the min and max latitudes?
 min(YFT_filtered$latitude)
 max(YFT_filtered$latitude)
@@ -186,13 +193,12 @@ YFT_restrict <- YFT_predict %>%
 
 # Model should still be Model 2
 YFT_filtered %<>% dplyr::select(-model) # clear the model column
+YFT_predict %<>% dplyr::select(-model)
 YFT_filtered$model <- YFT_model2$fitted # fitted values for the model
 preds <- dismo::predict(YFT_model2, YFT_restrict, n.trees = YFT_model2$gbm.call$best.trees, type = "response") # Predicted values
 YFT_restrict$model <- preds
 
 YFT_restrict_joined <- YFT_predict %>% 
- # dplyr::select(-model) %>% 
- # dplyr::filter(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude)) %>% 
   dplyr::left_join(., YFT_restrict)
 
 model <- dplyr::bind_rows(YFT_filtered, YFT_restrict_joined) %>% 
@@ -204,16 +210,17 @@ ggYFT <- grid_YFT %>%
   dplyr::arrange(cellID) %>% 
   dplyr::bind_cols(., model = model) %>% 
   dplyr::select(cellID, ocean, latitude, model, geometry) %>% 
-  sf::st_as_sf(sf_column_name = "geometry")# %>% 
-  dplyr::mutate(model = ifelse(latitude == 49.5, yes = 100, no = model))
+  sf::st_as_sf(sf_column_name = "geometry")
 
 ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
-  ggtitle("Yellowfin tuna (1956-1981): Latitude (restricted range)") +
-  geom_hline(yintercept = 5502172, color = "red") +
-  geom_hline(yintercept = -5502172, color = "red")
-ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3.png", width = 15, height = 8, dpi = 300)
+  ggtitle("Yellowfin tuna (1956-1981): Latitude and latitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model2a.png", width = 15, height = 8, dpi = 300)
 
-# Try and use Model 2 to predict for present...
+#############################################
+## Model 2b: Restricted (present) ##
+#############################################
 YFT_present <- read_csv(file = "Output/CSV/YFT_present_full.csv") %>% 
   as.data.frame() %>% 
   dplyr::select(-geometry)
@@ -238,11 +245,14 @@ ggYFT <- grid_YFT %>%
   sf::st_as_sf(sf_column_name = "geometry")
 
 ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
-  ggtitle("Yellowfin tuna (2017-2026)") +
-  geom_hline(yintercept = 5502172, color = "red") +
-  geom_hline(yintercept = -5502172, color = "red")
-ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3_Present.png", width = 15, height = 8, dpi = 300)
+  ggtitle("Yellowfin tuna (2017-2026): Latitude and longitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model2b.png", width = 15, height = 8, dpi = 300)
 
+#############################################
+## Model 2c: Restricted (mid-century) ##
+#############################################
 # Try and use model 2 to predict mid-century
 YFT_mid <- read_csv(file = "Output/CSV/YFT_midCentury_full.csv") %>% 
   as.data.frame() %>% 
@@ -268,11 +278,14 @@ ggYFT <- grid_YFT %>%
   sf::st_as_sf(sf_column_name = "geometry")
 
 ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
-  ggtitle("Yellowfin tuna (2046-2055)") +
-  geom_hline(yintercept = 5502172, color = "red") +
-  geom_hline(yintercept = -5502172, color = "red")
-ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3_MidCentury.png", width = 15, height = 8, dpi = 300)
+  ggtitle("Yellowfin tuna (2046-2055): Latitude and longitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model2c.png", width = 15, height = 8, dpi = 300)
 
+################################################
+## Model 2d: Restricted (end of the century) ##
+################################################
 # Try and use model 2 to predict end of the century
 YFT_end <- read_csv(file = "Output/CSV/YFT_endCentury_full.csv") %>% 
   as.data.frame() %>% 
@@ -298,10 +311,238 @@ ggYFT <- grid_YFT %>%
   sf::st_as_sf(sf_column_name = "geometry")
 
 ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
-  ggtitle("Yellowfin tuna (2091-2100)") +
-  geom_hline(yintercept = 5502172, color = "red") +
-  geom_hline(yintercept = -5502172, color = "red")
-ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3_EndCentury.png", width = 15, height = 8, dpi = 300)
+  ggtitle("Yellowfin tuna (2091-2100): Latitude and longitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model2d.png", width = 15, height = 8, dpi = 300)
+
+###########################
+## Model 3: Latitude ##
+###########################
+YFT_model3 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 6, 8:13),
+                              gbm.y = 14, family = "bernoulli",
+                              n.folds = 5)
+saveRDS(YFT_model3, "Output/Models/YFT_model3.rds") # save the model
+#YFT_model3 <- readRDS("Output/Models/YFT_model3.rds") # load the model
+
+summary(YFT_model3) # get the relative importance of each of the predictors
+
+# Plot predictors
+pdf(file = "Figures/YFT/YFT_Model3_SmoothPredictors.pdf", width = 10, height = 8)
+gbm.plot(YFT_model3, n.plots=8, plot.layout=c(3, 3), write.title = FALSE)
+dev.off()
+
+pdf(file = "Figures/YFT/YFT_Model3_Predictors.pdf", width = 10, height = 8)
+gbm.plot.fits(YFT_model3)
+dev.off()
+
+# Check this for ROC metrics: https://stackoverflow.com/questions/22391547/roc-score-in-gbm-package
+# CV AUC of ROC (Receiver Operating Characteristic Curve)
+YFT_model3$cv.statistics$discrimination.mean # AUC Score
+
+YFT_filtered %<>% dplyr::select(-model) # Deselect models on both data.frames
+YFT_predict %<>% dplyr::select(-model)
+
+YFT_filtered$model <- YFT_model3$fitted # fitted values for the model
+preds <- dismo::predict(YFT_model3, YFT_predict, n.trees = YFT_model3$gbm.call$best.trees, type = "response") # Predicted values
+YFT_predict$model <- preds
+
+model <- dplyr::bind_rows(YFT_filtered, YFT_predict) %>% 
+  dplyr::arrange(cellID) %>%  # Make sure everything is arranged by cellID
+  dplyr::select(model) %>% 
+  pull()
+
+ggYFT <- grid_YFT %>% 
+  dplyr::bind_cols(., model = model) %>% 
+  dplyr::select(cellID, ocean, model, geometry) %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
+  ggtitle("Yellowfin tuna (1956-1981): Latitude (AUC: 0.72)")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3.png", width = 15, height = 8, dpi = 300)
+
+#############################################
+## Model 3a: Restricted (historical) ##
+#############################################
+# What are the min and max latitudes?
+min(YFT_filtered$latitude)
+max(YFT_filtered$latitude)
+
+# Let's restrict the predictions there
+YFT_restrict <- YFT_predict %>% 
+  dplyr::filter(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude))
+
+# Model should still be Model 3
+YFT_filtered %<>% dplyr::select(-model) # clear the model column
+YFT_predict %<>% dplyr::select(-model)
+YFT_filtered$model <- YFT_model3$fitted # fitted values for the model
+preds <- dismo::predict(YFT_model3, YFT_restrict, n.trees = YFT_model3$gbm.call$best.trees, type = "response") # Predicted values
+YFT_restrict$model <- preds
+
+YFT_restrict_joined <- YFT_predict %>% 
+  dplyr::left_join(., YFT_restrict)
+
+model <- dplyr::bind_rows(YFT_filtered, YFT_restrict_joined) %>% 
+  dplyr::arrange(cellID) %>%  # Make sure everything is arranged by cellID
+  dplyr::select(model) %>% 
+  pull()
+
+ggYFT <- grid_YFT %>% 
+  dplyr::arrange(cellID) %>% 
+  dplyr::bind_cols(., model = model) %>% 
+  dplyr::select(cellID, ocean, latitude, model, geometry) %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
+  ggtitle("Yellowfin tuna (1956-1981): Latitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3a.png", width = 15, height = 8, dpi = 300)
+
+#############################################
+## Model 3b: Restricted (present) ##
+#############################################
+YFT_present <- read_csv(file = "Output/CSV/YFT_present_full.csv") %>% 
+  as.data.frame() %>% 
+  dplyr::select(-geometry)
+
+YFT_present_restricted <- YFT_present %>% 
+  dplyr::filter(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude))
+
+YFT_present_left <- YFT_present %>% 
+  dplyr::filter(!(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude)))
+
+preds <- dismo::predict(YFT_model3, YFT_present_restricted, n.trees = YFT_model3$gbm.call$best.trees, type = "response") # Predicted values
+YFT_present_restricted$model <- preds
+
+model <- dplyr::bind_rows(YFT_present_left, YFT_present_restricted) %>% 
+  dplyr::arrange(cellID) %>%  # Make sure everything is arranged by cellID
+  dplyr::select(model) %>% 
+  pull()
+
+ggYFT <- grid_YFT %>% 
+  dplyr::bind_cols(., model = model) %>% 
+  dplyr::select(cellID, ocean, model, geometry) %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
+  ggtitle("Yellowfin tuna (2017-2026): Latitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3b.png", width = 15, height = 8, dpi = 300)
+
+
+#############################################
+## Model 3c: Restricted (mid-century) ##
+#############################################
+# Try and use model 3 to predict mid-century
+YFT_mid <- read_csv(file = "Output/CSV/YFT_midCentury_full.csv") %>% 
+  as.data.frame() %>% 
+  dplyr::select(-geometry)
+
+YFT_mid_restricted <- YFT_mid %>% 
+  dplyr::filter(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude))
+
+YFT_mid_left <- YFT_mid %>% 
+  dplyr::filter(!(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude)))
+
+preds <- dismo::predict(YFT_model3, YFT_mid_restricted, n.trees = YFT_model3$gbm.call$best.trees, type = "response") # Predicted values
+YFT_mid_restricted$model <- preds
+
+model <- dplyr::bind_rows(YFT_mid_left, YFT_mid_restricted) %>% 
+  dplyr::arrange(cellID) %>%  # Make sure everything is arranged by cellID
+  dplyr::select(model) %>% 
+  pull()
+
+ggYFT <- grid_YFT %>% 
+  dplyr::bind_cols(., model = model) %>% 
+  dplyr::select(cellID, ocean, model, geometry) %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
+  ggtitle("Yellowfin tuna (2046-2055): Latitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3c.png", width = 15, height = 8, dpi = 300)
+
+################################################
+## Model 3d: Restricted (end of the century) ##
+################################################
+# Try and use model 3 to predict end of the century
+YFT_end <- read_csv(file = "Output/CSV/YFT_endCentury_full.csv") %>% 
+  as.data.frame() %>% 
+  dplyr::select(-geometry)
+
+YFT_end_restricted <- YFT_end %>% 
+  dplyr::filter(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude))
+
+YFT_end_left <- YFT_end %>% 
+  dplyr::filter(!(latitude >= min(YFT_filtered$latitude) & latitude <= max(YFT_filtered$latitude)))
+
+preds <- dismo::predict(YFT_model3, YFT_end_restricted, n.trees = YFT_model3$gbm.call$best.trees, type = "response") # Predicted values
+YFT_end_restricted$model <- preds
+
+model <- dplyr::bind_rows(YFT_end_left, YFT_end_restricted) %>% 
+  dplyr::arrange(cellID) %>%  # Make sure everything is arranged by cellID
+  dplyr::select(model) %>% 
+  pull()
+
+ggYFT <- grid_YFT %>% 
+  dplyr::bind_cols(., model = model) %>% 
+  dplyr::select(cellID, ocean, model, geometry) %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
+  ggtitle("Yellowfin tuna (2091-2100): Latitude (restricted range)") +
+  geom_hline(yintercept = 5821011, color = "red") +
+  geom_hline(yintercept = -5821011, color = "red")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3d.png", width = 15, height = 8, dpi = 300)
+
+###########################
+## Model 4: Longitude ##
+###########################
+YFT_model4 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4:5, 8:13),
+                              gbm.y = 14, family = "bernoulli",
+                              n.folds = 5)
+saveRDS(YFT_model4, "Output/Models/YFT_model4.rds") # save the model
+#YFT_model3 <- readRDS("Output/Models/YFT_model4.rds") # load the model
+
+summary(YFT_model4) # get the relative importance of each of the predictors
+
+# Plot predictors
+pdf(file = "Figures/YFT/YFT_Model4_SmoothPredictors.pdf", width = 10, height = 8)
+gbm.plot(YFT_model4, n.plots=8, plot.layout=c(3, 3), write.title = FALSE)
+dev.off()
+
+pdf(file = "Figures/YFT/YFT_Model4_Predictors.pdf", width = 10, height = 8)
+gbm.plot.fits(YFT_model4)
+dev.off()
+
+# Check this for ROC metrics: https://stackoverflow.com/questions/22391547/roc-score-in-gbm-package
+# CV AUC of ROC (Receiver Operating Characteristic Curve)
+YFT_model4$cv.statistics$discrimination.mean # AUC Score
+
+YFT_filtered %<>% dplyr::select(-model) # Deselect models on both data.frames
+YFT_predict %<>% dplyr::select(-model)
+
+YFT_filtered$model <- YFT_model4$fitted # fitted values for the model
+preds <- dismo::predict(YFT_model4, YFT_predict, n.trees = YFT_model4$gbm.call$best.trees, type = "response") # Predicted values
+YFT_predict$model <- preds
+
+model <- dplyr::bind_rows(YFT_filtered, YFT_predict) %>% 
+  dplyr::arrange(cellID) %>%  # Make sure everything is arranged by cellID
+  dplyr::select(model) %>% 
+  pull()
+
+ggYFT <- grid_YFT %>% 
+  dplyr::bind_cols(., model = model) %>% 
+  dplyr::select(cellID, ocean, model, geometry) %>% 
+  sf::st_as_sf(sf_column_name = "geometry")
+
+ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
+  ggtitle("Yellowfin tuna (1956-1981): Longitude (AUC: 0.74)")
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model4.png", width = 15, height = 8, dpi = 300)
+
 
 ###########################
 ## Model 5 ##
