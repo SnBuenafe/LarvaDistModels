@@ -2,11 +2,11 @@
 #source("00_Utils.R")
 
 Dict <- tibble::tribble(
-  ~Species, ~Code, ~Trees, ~LR, ~TC, ~BF, ~AUC,
-  "yellowfin-tuna", "YFT", 4950, 0.005, 5, 0.5, 0.78393,
-  "skipjack-tuna", "SKP", 6200, 0.005, 5, 0.5, 0.79526,
-  "albacore", "ALB", 3800, 0.005, 5, 0.5, 0.88791,
-  "swordfish", "SWO", 2450, 0.005, 5, 0.5, 0.80528,
+  ~Species, ~Code, ~Trees, ~LR, ~TC, ~BF, ~Test_AUC, ~Train_AUC,
+  "yellowfin-tuna", "YFT", 5000, 0.005, 5, 0.5, 0.80572, 0.888,
+  "skipjack-tuna", "SKP", 5450, 0.005, 5, 0.5, 0.81386, 0.884,
+  "albacore", "ALB", 4550, 0.005, 5, 0.5, 0.89988, 0.953,
+  "swordfish", "SWO", 2950, 0.005, 5, 0.5, 0.81348, 0.923,
   "blue-marlin", "BLUM", 6800, 0.005, 5, 0.5, 0.84797,
   "shortbill-spearfish", "SHOS", 3150, 0.005, 5, 0.5, 0.8464,
   "frigate-tuna", "FRI", 4150, 0.005, 5, 0.75, 0.8889,
