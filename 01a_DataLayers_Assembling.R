@@ -2,13 +2,13 @@
 #source("00_Utils.R")
 
 Dict <- tibble::tribble(
-  ~Species, ~Code, ~Trees, ~LR, ~TC, ~BF, ~Test_AUC, ~Train_AUC,
-  "yellowfin-tuna", "YFT", 5000, 0.005, 5, 0.5, 0.80572, 0.888,
-  "skipjack-tuna", "SKP", 5450, 0.005, 5, 0.5, 0.81386, 0.884,
-  "albacore", "ALB", 4550, 0.005, 5, 0.5, 0.89988, 0.953,
-  "swordfish", "SWO", 2950, 0.005, 5, 0.5, 0.81348, 0.923,
-  "blue-marlin", "BLUM", 6800, 0.005, 5, 0.5, 0.84797,
-  "shortbill-spearfish", "SHOS", 3150, 0.005, 5, 0.5, 0.8464,
+  ~Species, ~Code, ~Trees, ~LR, ~TC, ~BF, ~Test_AUC, ~Train_AUC, ~impt_feat1, ~impt_feat2, ~impt_feat3, ~latrange, ~lonrange,
+  "yellowfin-tuna", "YFT", 5000, 0.005, 5, 0.5, 0.80572, 0.888, "longitude", "season", "tos", "59N-48S", "180E-180W",
+  "skipjack-tuna", "SKP", 5450, 0.005, 5, 0.5, 0.81386, 0.884, "longitude", "season", "tos", "63N-47S", "180E-180W",
+  "albacore", "ALB", 4550, 0.005, 5, 0.5, 0.89988, 0.953, "longitude", "chlos", "season", "60N-50S", "180E-180W",
+  "swordfish", "SWO", 2950, 0.005, 5, 0.5, 0.81348, 0.923, "chlos", "tos", "season", "69N-50S", "180E-180W",
+  "blue-marlin", "BLUM", 6900, 0.005, 5, 0.5, 0.86248, 0.926, "season", "longitude", "meanDepth", "50N-45S", "180E-180W",
+  "shortbill-spearfish", "SHOS", 2550, 0.005, 5, 0.5, 0.85708, 0.922, "longitude", "phos", "latitude", "43N-56S", "20E-68W",
   "frigate-tuna", "FRI", 4150, 0.005, 5, 0.75, 0.8889,
   "bigeye-tuna", "BET", 4250, 0.005, 5, 0.5, 0.82867,
   "striped-marlin", "STRM", 2850, 0.005, 5, 0.5, 0.85267, 
