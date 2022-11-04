@@ -413,6 +413,316 @@ if(isTRUE(reprocess)) {
     dplyr::select(cellID, chlos_transformed, geometry)
   saveRDS(chlos, "Data/Climatology/sf/chlos_endCentury_interpolated.rds")
   
+  # 5. Salinity
+  
+  # A. Historical (to fit the model)
+  sos_rs <- stars::read_ncdf("Data/Climatology/ensemble/sos_historical_1956_1984_ensemble.nc") %>% 
+    terra::rast()
+  names(sos_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  sos <- rs2sf(sos_rs) %>% 
+    dplyr::rename(sos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "sos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, sos_transformed, geometry)
+  saveRDS(sos, "Data/Climatology/sf/sos_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  sos_rs <- stars::read_ncdf("Data/Climatology/ensemble/sos_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(sos_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  sos <- rs2sf(sos_rs) %>% 
+    dplyr::rename(sos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "sos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, sos_transformed, geometry)
+  saveRDS(sos, "Data/Climatology/sf/sos_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  sos_rs <- stars::read_ncdf("Data/Climatology/ensemble/sos_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(sos_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  sos <- rs2sf(sos_rs) %>% 
+    dplyr::rename(sos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "sos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, sos_transformed, geometry)
+  saveRDS(sos, "Data/Climatology/sf/sos_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  sos_rs <- stars::read_ncdf("Data/Climatology/ensemble/sos_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(sos_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  sos <- rs2sf(sos_rs) %>% 
+    dplyr::rename(sos = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "sos") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, sos_transformed, geometry)
+  saveRDS(sos, "Data/Climatology/sf/sos_endCentury_interpolated.rds")
+  
+  # 6. Mixed layer depth
+  
+  # A. Historical (to fit the model)
+  mlotst_rs <- stars::read_ncdf("Data/Climatology/ensemble/mlotst_historical_1956_1984_ensemble.nc") %>% 
+    terra::rast()
+  names(mlotst_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  mlotst <- rs2sf(mlotst_rs) %>% 
+    dplyr::rename(mlotst = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "mlotst") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, mlotst_transformed, geometry)
+  saveRDS(mlotst, "Data/Climatology/sf/mlotst_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  mlotst_rs <- stars::read_ncdf("Data/Climatology/ensemble/mlotst_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(mlotst_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  mlotst <- rs2sf(mlotst_rs) %>% 
+    dplyr::rename(mlotst = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "mlotst") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, mlotst_transformed, geometry)
+  saveRDS(mlotst, "Data/Climatology/sf/mlotst_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  mlotst_rs <- stars::read_ncdf("Data/Climatology/ensemble/mlotst_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(mlotst_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  mlotst <- rs2sf(mlotst_rs) %>% 
+    dplyr::rename(mlotst = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "mlotst") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, mlotst_transformed, geometry)
+  saveRDS(mlotst, "Data/Climatology/sf/mlotst_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  mlotst_rs <- stars::read_ncdf("Data/Climatology/ensemble/mlotst_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(mlotst_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  mlotst <- rs2sf(mlotst_rs) %>% 
+    dplyr::rename(mlotst = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "mlotst") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, mlotst_transformed, geometry)
+  saveRDS(mlotst, "Data/Climatology/sf/mlotst_endCentury_interpolated.rds")
+  
+  # 7. Nitrate
+  
+  # A. Historical (to fit the model)
+  no3os_rs <- stars::read_ncdf("Data/Climatology/ensemble/no3os_historical_1956_1984_ensemble.nc") %>% 
+    terra::rast()
+  names(no3os_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  no3os <- rs2sf(no3os_rs) %>% 
+    dplyr::rename(no3os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "no3os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, no3os_transformed, geometry)
+  saveRDS(no3os, "Data/Climatology/sf/no3os_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  no3os_rs <- stars::read_ncdf("Data/Climatology/ensemble/no3os_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(no3os_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  no3os <- rs2sf(no3os_rs) %>% 
+    dplyr::rename(no3os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "no3os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, no3os_transformed, geometry)
+  saveRDS(no3os, "Data/Climatology/sf/no3os_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  no3os_rs <- stars::read_ncdf("Data/Climatology/ensemble/no3os_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(no3os_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  no3os <- rs2sf(no3os_rs) %>% 
+    dplyr::rename(no3os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "no3os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, no3os_transformed, geometry)
+  saveRDS(no3os, "Data/Climatology/sf/no3os_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  no3os_rs <- stars::read_ncdf("Data/Climatology/ensemble/no3os_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(no3os_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  no3os <- rs2sf(no3os_rs) %>% 
+    dplyr::rename(no3os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "no3os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, no3os_transformed, geometry)
+  saveRDS(no3os, "Data/Climatology/sf/no3os_endCentury_interpolated.rds")
+  
+  # 8. Phosphate
+  
+  # A. Historical (to fit the model)
+  po4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/po4os_historical_1956_1984_ensemble.nc") %>% 
+    terra::rast()
+  names(po4os_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  po4os <- rs2sf(po4os_rs) %>% 
+    dplyr::rename(po4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "po4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, po4os_transformed, geometry)
+  saveRDS(po4os, "Data/Climatology/sf/po4os_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  po4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/po4os_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(po4os_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  po4os <- rs2sf(po4os_rs) %>% 
+    dplyr::rename(po4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "po4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, po4os_transformed, geometry)
+  saveRDS(po4os, "Data/Climatology/sf/po4os_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  po4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/po4os_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(po4os_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  po4os <- rs2sf(po4os_rs) %>% 
+    dplyr::rename(po4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "po4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, po4os_transformed, geometry)
+  saveRDS(po4os, "Data/Climatology/sf/po4os_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  po4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/po4os_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(po4os_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  po4os <- rs2sf(po4os_rs) %>% 
+    dplyr::rename(po4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "po4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, po4os_transformed, geometry)
+  saveRDS(po4os, "Data/Climatology/sf/po4os_endCentury_interpolated.rds")
+  
+  # 9. Ammonium
+  
+  # A. Historical (to fit the model)
+  nh4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/nh4os_historical_1956_1984_ensemble.nc") %>% 
+    terra::rast()
+  names(nh4os_rs) <- paste0("X", seq(1956, 1984, by = 1))
+  nh4os <- rs2sf(nh4os_rs) %>% 
+    dplyr::rename(nh4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "nh4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, nh4os_transformed, geometry)
+  saveRDS(nh4os, "Data/Climatology/sf/nh4os_historical_interpolated.rds")
+  
+  # B. Present (2017-2026)
+  nh4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/nh4os_ssp585_2017_2026_ensemble.nc") %>% 
+    terra::rast()
+  names(nh4os_rs) <- paste0("X", seq(2017, 2026, by = 1))
+  nh4os <- rs2sf(nh4os_rs) %>% 
+    dplyr::rename(nh4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "nh4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, nh4os_transformed, geometry)
+  saveRDS(nh4os, "Data/Climatology/sf/nh4os_present_interpolated.rds")
+  
+  # C. Mid-century (2046-2055)
+  nh4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/nh4os_ssp585_2046_2055_ensemble.nc") %>% 
+    terra::rast()
+  names(nh4os_rs) <- paste0("X", seq(2046, 2055, by = 1))
+  nh4os <- rs2sf(nh4os_rs) %>% 
+    dplyr::rename(nh4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "nh4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, nh4os_transformed, geometry)
+  saveRDS(nh4os, "Data/Climatology/sf/nh4os_midCentury_interpolated.rds")
+  
+  # D. End of the century (2091-2100)
+  nh4os_rs <- stars::read_ncdf("Data/Climatology/ensemble/nh4os_ssp585_2091_2100_ensemble.nc") %>% 
+    terra::rast()
+  names(nh4os_rs) <- paste0("X", seq(2091, 2100, by = 1))
+  nh4os <- rs2sf(nh4os_rs) %>% 
+    dplyr::rename(nh4os = mean) %>% # using the mean of the models
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    dplyr::as_tibble() %>% 
+    dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
+    sf::st_as_sf(crs = moll) %>% 
+    replaceNN(., grid, "nh4os") %>%
+    dplyr::as_tibble() %>% 
+    dplyr::select(cellID, nh4os_transformed, geometry)
+  saveRDS(nh4os, "Data/Climatology/sf/nh4os_endCentury_interpolated.rds")
+  
   # Bathymetry
   bathy <- gebcoConvert(grid, 2500) # bathymetry data is extrapolated depending on the grid area provided
   
