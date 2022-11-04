@@ -771,6 +771,56 @@ if(isTRUE(reprocess)) {
   chlos_endCentury <- readRDS("Data/Climatology/sf/chlos_endCentury_interpolated.rds") %>% 
     dplyr::select(-geometry)
   
+  # Salinity
+  sos_historical <- readRDS("Data/Climatology/sf/sos_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  sos_present <- readRDS("Data/Climatology/sf/sos_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  sos_midCentury <- readRDS("Data/Climatology/sf/sos_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  sos_endCentury <- readRDS("Data/Climatology/sf/sos_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # Mixed layer depth
+  mlotst_historical <- readRDS("Data/Climatology/sf/mlotst_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  mlotst_present <- readRDS("Data/Climatology/sf/mlotst_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  mlotst_midCentury <- readRDS("Data/Climatology/sf/mlotst_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  mlotst_endCentury <- readRDS("Data/Climatology/sf/mlotst_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # Nitrate
+  no3os_historical <- readRDS("Data/Climatology/sf/no3os_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  no3os_present <- readRDS("Data/Climatology/sf/no3os_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  no3os_midCentury <- readRDS("Data/Climatology/sf/no3os_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  no3os_endCentury <- readRDS("Data/Climatology/sf/no3os_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # Phosphate
+  po4os_historical <- readRDS("Data/Climatology/sf/po4os_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  po4os_present <- readRDS("Data/Climatology/sf/po4os_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  po4os_midCentury <- readRDS("Data/Climatology/sf/po4os_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  po4os_endCentury <- readRDS("Data/Climatology/sf/po4os_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
+  # Ammonium
+  nh4os_historical <- readRDS("Data/Climatology/sf/nh4os_historical_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  nh4os_present <- readRDS("Data/Climatology/sf/nh4os_present_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  nh4os_midCentury <- readRDS("Data/Climatology/sf/nh4os_midCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  nh4os_endCentury <- readRDS("Data/Climatology/sf/nh4os_endCentury_interpolated.rds") %>% 
+    dplyr::select(-geometry)
+  
   # Bathymetry
   bathy <- readRDS("Data/GEBCO/gebco2500.rds") %>% 
     dplyr::as_tibble() %>% 
@@ -795,6 +845,11 @@ YFT_full <- joinPredictors(grid = grid_YFT,
                            o2os = o2os_historical, 
                            phos = phos_historical, 
                            chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -805,6 +860,11 @@ YFT_full <- joinPredictors(grid = grid_YFT,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -815,6 +875,11 @@ YFT_full <- joinPredictors(grid = grid_YFT,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -825,6 +890,11 @@ YFT_full <- joinPredictors(grid = grid_YFT,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -836,6 +906,11 @@ ALB_full <- joinPredictors(grid = grid_ALB,
                            o2os = o2os_historical, 
                            phos = phos_historical, 
                            chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -847,6 +922,11 @@ ALB_full <- joinPredictors(grid = grid_ALB,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -858,6 +938,11 @@ ALB_full <- joinPredictors(grid = grid_ALB,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -869,6 +954,11 @@ ALB_full <- joinPredictors(grid = grid_ALB,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -880,7 +970,12 @@ SKP_full <- joinPredictors(grid = grid_SKP,
                            tos = tos_historical, 
                            o2os = o2os_historical, 
                            phos = phos_historical, 
-                           chlos = chlos_historical, 
+                           chlos = chlos_historical,
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -892,6 +987,11 @@ SKP_full <- joinPredictors(grid = grid_SKP,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -903,6 +1003,11 @@ SKP_full <- joinPredictors(grid = grid_SKP,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -914,6 +1019,11 @@ SKP_full <- joinPredictors(grid = grid_SKP,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -926,6 +1036,11 @@ SWO_full <- joinPredictors(grid = grid_SWO,
                            o2os = o2os_historical, 
                            phos = phos_historical, 
                            chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -937,6 +1052,11 @@ SWO_full <- joinPredictors(grid = grid_SWO,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -948,6 +1068,11 @@ SWO_full <- joinPredictors(grid = grid_SWO,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -959,6 +1084,11 @@ SWO_full <- joinPredictors(grid = grid_SWO,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -971,6 +1101,11 @@ BLUM_full <- joinPredictors(grid = grid_BLUM,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                            sos = sos_historical,
+                            mlotst = mlotst_historical,
+                            no3os = no3os_historical,
+                            po4os = po4os_historical,
+                            nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
                             )
@@ -981,6 +1116,11 @@ BLUM_full <- joinPredictors(grid = grid_BLUM,
                             o2os = o2os_present, 
                             phos = phos_present, 
                             chlos = chlos_present, 
+                            sos = sos_present,
+                            mlotst = mlotst_present,
+                            no3os = no3os_present,
+                            po4os = po4os_present,
+                            nh4os = nh4os_present,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -991,6 +1131,11 @@ BLUM_full <- joinPredictors(grid = grid_BLUM,
                             o2os = o2os_midCentury, 
                             phos = phos_midCentury, 
                             chlos = chlos_midCentury, 
+                            sos = sos_midCentury,
+                            mlotst = mlotst_midCentury,
+                            no3os = no3os_midCentury,
+                            po4os = po4os_midCentury,
+                            nh4os = nh4os_midCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1001,6 +1146,11 @@ BLUM_full <- joinPredictors(grid = grid_BLUM,
                             o2os = o2os_endCentury, 
                             phos = phos_endCentury, 
                             chlos = chlos_endCentury, 
+                            sos = sos_endCentury,
+                            mlotst = mlotst_endCentury,
+                            no3os = no3os_endCentury,
+                            po4os = po4os_endCentury,
+                            nh4os = nh4os_endCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1012,6 +1162,11 @@ SHOS_full <- joinPredictors(grid = grid_SHOS,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                            sos = sos_historical,
+                            mlotst = mlotst_historical,
+                            no3os = no3os_historical,
+                            po4os = po4os_historical,
+                            nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1021,7 +1176,12 @@ SHOS_full <- joinPredictors(grid = grid_SHOS,
                             tos = tos_present, 
                             o2os = o2os_present, 
                             phos = phos_present, 
-                            chlos = chlos_present, 
+                            chlos = chlos_present,
+                            sos = sos_present,
+                            mlotst = mlotst_present,
+                            no3os = no3os_present,
+                            po4os = po4os_present,
+                            nh4os = nh4os_present,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1032,6 +1192,11 @@ SHOS_full <- joinPredictors(grid = grid_SHOS,
                             o2os = o2os_midCentury, 
                             phos = phos_midCentury, 
                             chlos = chlos_midCentury, 
+                            sos = sos_midCentury,
+                            mlotst = mlotst_midCentury,
+                            no3os = no3os_midCentury,
+                            po4os = po4os_midCentury,
+                            nh4os = nh4os_midCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1042,6 +1207,11 @@ SHOS_full <- joinPredictors(grid = grid_SHOS,
                             o2os = o2os_endCentury, 
                             phos = phos_endCentury, 
                             chlos = chlos_endCentury, 
+                            sos = sos_endCentury,
+                            mlotst = mlotst_endCentury,
+                            no3os = no3os_endCentury,
+                            po4os = po4os_endCentury,
+                            nh4os = nh4os_endCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1052,7 +1222,12 @@ FRI_full <- joinPredictors(grid = grid_FRI,
                             tos = tos_historical, 
                             o2os = o2os_historical, 
                             phos = phos_historical, 
-                            chlos = chlos_historical, 
+                           chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1063,6 +1238,11 @@ FRI_full <- joinPredictors(grid = grid_FRI,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1073,6 +1253,11 @@ FRI_full <- joinPredictors(grid = grid_FRI,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1083,6 +1268,11 @@ FRI_full <- joinPredictors(grid = grid_FRI,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1094,6 +1284,11 @@ BET_full <- joinPredictors(grid = grid_BET,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1104,6 +1299,11 @@ BET_full <- joinPredictors(grid = grid_BET,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1114,6 +1314,11 @@ BET_full <- joinPredictors(grid = grid_BET,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1124,6 +1329,11 @@ BET_full <- joinPredictors(grid = grid_BET,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1135,6 +1345,11 @@ STRM_full <- joinPredictors(grid = grid_STRM,
                            o2os = o2os_historical, 
                            phos = phos_historical, 
                            chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1145,6 +1360,11 @@ STRM_full <- joinPredictors(grid = grid_STRM,
                             o2os = o2os_present, 
                             phos = phos_present, 
                             chlos = chlos_present, 
+                            sos = sos_present,
+                            mlotst = mlotst_present,
+                            no3os = no3os_present,
+                            po4os = po4os_present,
+                            nh4os = nh4os_present,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1155,6 +1375,11 @@ STRM_full <- joinPredictors(grid = grid_STRM,
                             o2os = o2os_midCentury, 
                             phos = phos_midCentury, 
                             chlos = chlos_midCentury, 
+                            sos = sos_midCentury,
+                            mlotst = mlotst_midCentury,
+                            no3os = no3os_midCentury,
+                            po4os = po4os_midCentury,
+                            nh4os = nh4os_midCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1165,6 +1390,11 @@ STRM_full <- joinPredictors(grid = grid_STRM,
                             o2os = o2os_endCentury, 
                             phos = phos_endCentury, 
                             chlos = chlos_endCentury, 
+                            sos = sos_endCentury,
+                            mlotst = mlotst_endCentury,
+                            no3os = no3os_endCentury,
+                            po4os = po4os_endCentury,
+                            nh4os = nh4os_endCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1176,6 +1406,11 @@ SAU_full <- joinPredictors(grid = grid_SAU,
                              o2os = o2os_historical, 
                              phos = phos_historical, 
                              chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                              bathy = bathy,
                              dist2coast = dist2coast
 )
@@ -1186,6 +1421,11 @@ SAU_full <- joinPredictors(grid = grid_SAU,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1196,6 +1436,11 @@ SAU_full <- joinPredictors(grid = grid_SAU,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1206,6 +1451,11 @@ SAU_full <- joinPredictors(grid = grid_SAU,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1217,6 +1467,11 @@ SAIL_full <- joinPredictors(grid = grid_SAIL,
                            o2os = o2os_historical, 
                            phos = phos_historical, 
                            chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1227,6 +1482,11 @@ SAIL_full <- joinPredictors(grid = grid_SAIL,
                             o2os = o2os_present, 
                             phos = phos_present, 
                             chlos = chlos_present, 
+                            sos = sos_present,
+                            mlotst = mlotst_present,
+                            no3os = no3os_present,
+                            po4os = po4os_present,
+                            nh4os = nh4os_present,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1237,6 +1497,11 @@ SAIL_full <- joinPredictors(grid = grid_SAIL,
                             o2os = o2os_midCentury, 
                             phos = phos_midCentury, 
                             chlos = chlos_midCentury, 
+                            sos = sos_midCentury,
+                            mlotst = mlotst_midCentury,
+                            no3os = no3os_midCentury,
+                            po4os = po4os_midCentury,
+                            nh4os = nh4os_midCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1247,6 +1512,11 @@ SAIL_full <- joinPredictors(grid = grid_SAIL,
                             o2os = o2os_endCentury, 
                             phos = phos_endCentury, 
                             chlos = chlos_endCentury, 
+                            sos = sos_endCentury,
+                            mlotst = mlotst_endCentury,
+                            no3os = no3os_endCentury,
+                            po4os = po4os_endCentury,
+                            nh4os = nh4os_endCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1258,6 +1528,11 @@ LESC_full <- joinPredictors(grid = grid_LESC,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                            sos = sos_historical,
+                            mlotst = mlotst_historical,
+                            no3os = no3os_historical,
+                            po4os = po4os_historical,
+                            nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1268,6 +1543,11 @@ LESC_full <- joinPredictors(grid = grid_LESC,
                             o2os = o2os_present, 
                             phos = phos_present, 
                             chlos = chlos_present, 
+                            sos = sos_present,
+                            mlotst = mlotst_present,
+                            no3os = no3os_present,
+                            po4os = po4os_present,
+                            nh4os = nh4os_present,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1278,6 +1558,11 @@ LESC_full <- joinPredictors(grid = grid_LESC,
                             o2os = o2os_midCentury, 
                             phos = phos_midCentury, 
                             chlos = chlos_midCentury, 
+                            sos = sos_midCentury,
+                            mlotst = mlotst_midCentury,
+                            no3os = no3os_midCentury,
+                            po4os = po4os_midCentury,
+                            nh4os = nh4os_midCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1288,6 +1573,11 @@ LESC_full <- joinPredictors(grid = grid_LESC,
                             o2os = o2os_endCentury, 
                             phos = phos_endCentury, 
                             chlos = chlos_endCentury, 
+                            sos = sos_endCentury,
+                            mlotst = mlotst_endCentury,
+                            no3os = no3os_endCentury,
+                            po4os = po4os_endCentury,
+                            nh4os = nh4os_endCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1299,6 +1589,11 @@ BFT_full <- joinPredictors(grid = grid_BFT,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1309,6 +1604,11 @@ BFT_full <- joinPredictors(grid = grid_BFT,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1319,6 +1619,11 @@ BFT_full <- joinPredictors(grid = grid_BFT,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1329,6 +1634,11 @@ BFT_full <- joinPredictors(grid = grid_BFT,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1340,6 +1650,11 @@ LIT_full <- joinPredictors(grid = grid_LIT,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1350,6 +1665,11 @@ LIT_full <- joinPredictors(grid = grid_LIT,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1360,6 +1680,11 @@ LIT_full <- joinPredictors(grid = grid_LIT,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1370,6 +1695,11 @@ LIT_full <- joinPredictors(grid = grid_LIT,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1381,6 +1711,11 @@ SBFT_full <- joinPredictors(grid = grid_SBFT,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                            sos = sos_historical,
+                            mlotst = mlotst_historical,
+                            no3os = no3os_historical,
+                            po4os = po4os_historical,
+                            nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1391,6 +1726,11 @@ SBFT_full <- joinPredictors(grid = grid_SBFT,
                             o2os = o2os_present, 
                             phos = phos_present, 
                             chlos = chlos_present, 
+                            sos = sos_present,
+                            mlotst = mlotst_present,
+                            no3os = no3os_present,
+                            po4os = po4os_present,
+                            nh4os = nh4os_present,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1401,6 +1741,11 @@ SBFT_full <- joinPredictors(grid = grid_SBFT,
                             o2os = o2os_midCentury, 
                             phos = phos_midCentury, 
                             chlos = chlos_midCentury, 
+                            sos = sos_midCentury,
+                            mlotst = mlotst_midCentury,
+                            no3os = no3os_midCentury,
+                            po4os = po4os_midCentury,
+                            nh4os = nh4os_midCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1411,6 +1756,11 @@ SBFT_full <- joinPredictors(grid = grid_SBFT,
                             o2os = o2os_endCentury, 
                             phos = phos_endCentury, 
                             chlos = chlos_endCentury, 
+                            sos = sos_endCentury,
+                            mlotst = mlotst_endCentury,
+                            no3os = no3os_endCentury,
+                            po4os = po4os_endCentury,
+                            nh4os = nh4os_endCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1422,6 +1772,11 @@ SLT_full <- joinPredictors(grid = grid_SLT,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1432,6 +1787,11 @@ SLT_full <- joinPredictors(grid = grid_SLT,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1442,6 +1802,11 @@ SLT_full <- joinPredictors(grid = grid_SLT,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1452,6 +1817,11 @@ SLT_full <- joinPredictors(grid = grid_SLT,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1463,6 +1833,11 @@ BON_full <- joinPredictors(grid = grid_BON,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                           sos = sos_historical,
+                           mlotst = mlotst_historical,
+                           no3os = no3os_historical,
+                           po4os = po4os_historical,
+                           nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1473,6 +1848,11 @@ BON_full <- joinPredictors(grid = grid_BON,
                            o2os = o2os_present, 
                            phos = phos_present, 
                            chlos = chlos_present, 
+                           sos = sos_present,
+                           mlotst = mlotst_present,
+                           no3os = no3os_present,
+                           po4os = po4os_present,
+                           nh4os = nh4os_present,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1483,6 +1863,11 @@ BON_full <- joinPredictors(grid = grid_BON,
                            o2os = o2os_midCentury, 
                            phos = phos_midCentury, 
                            chlos = chlos_midCentury, 
+                           sos = sos_midCentury,
+                           mlotst = mlotst_midCentury,
+                           no3os = no3os_midCentury,
+                           po4os = po4os_midCentury,
+                           nh4os = nh4os_midCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1493,6 +1878,11 @@ BON_full <- joinPredictors(grid = grid_BON,
                            o2os = o2os_endCentury, 
                            phos = phos_endCentury, 
                            chlos = chlos_endCentury, 
+                           sos = sos_endCentury,
+                           mlotst = mlotst_endCentury,
+                           no3os = no3os_endCentury,
+                           po4os = po4os_endCentury,
+                           nh4os = nh4os_endCentury,
                            bathy = bathy,
                            dist2coast = dist2coast
 )
@@ -1504,6 +1894,11 @@ BLAM_full <- joinPredictors(grid = grid_BLAM,
                             o2os = o2os_historical, 
                             phos = phos_historical, 
                             chlos = chlos_historical, 
+                            sos = sos_historical,
+                            mlotst = mlotst_historical,
+                            no3os = no3os_historical,
+                            po4os = po4os_historical,
+                            nh4os = nh4os_historical,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1514,6 +1909,11 @@ BLAM_full <- joinPredictors(grid = grid_BLAM,
                             o2os = o2os_present, 
                             phos = phos_present, 
                             chlos = chlos_present, 
+                            sos = sos_present,
+                            mlotst = mlotst_present,
+                            no3os = no3os_present,
+                            po4os = po4os_present,
+                            nh4os = nh4os_present,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1524,6 +1924,11 @@ BLAM_full <- joinPredictors(grid = grid_BLAM,
                             o2os = o2os_midCentury, 
                             phos = phos_midCentury, 
                             chlos = chlos_midCentury, 
+                            sos = sos_midCentury,
+                            mlotst = mlotst_midCentury,
+                            no3os = no3os_midCentury,
+                            po4os = po4os_midCentury,
+                            nh4os = nh4os_midCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )
@@ -1534,6 +1939,11 @@ BLAM_full <- joinPredictors(grid = grid_BLAM,
                             o2os = o2os_endCentury, 
                             phos = phos_endCentury, 
                             chlos = chlos_endCentury, 
+                            sos = sos_endCentury,
+                            mlotst = mlotst_endCentury,
+                            no3os = no3os_endCentury,
+                            po4os = po4os_endCentury,
+                            nh4os = nh4os_endCentury,
                             bathy = bathy,
                             dist2coast = dist2coast
 )

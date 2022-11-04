@@ -288,14 +288,19 @@ plotPredictions <- function(sf, saveFile) {
 }
 
 # Joining predictors and response
-joinPredictors <- function(grid, tos, o2os, phos, chlos, bathy, dist2coast) {
+joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4os, nh4os, bathy, dist2coast) {
   df <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
     dplyr::left_join(., phos, by = "cellID") %>% 
     dplyr::left_join(., chlos, by = "cellID") %>% 
+    dplyr::left_join(., sos, by = "cellID") %>% 
+    dplyr::left_join(., mlotst, by = "cellID") %>% 
+    dplyr::left_join(., no3os, by = "cellID") %>% 
+    dplyr::left_join(., po4os, by = "cellID") %>% 
+    dplyr::left_join(., nh4os, by = "cellID") %>% 
     dplyr::left_join(., bathy, by = "cellID") %>% 
     dplyr::left_join(., dist2coast, by = "cellID") %>% 
     dplyr::left_join(grid, ., by = "cellID") %>%  # Join with species data
-    dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, meanDepth, coastDistance, geometry) # arrange columns
+    dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, meanDepth, coastDistance, geometry) # arrange columns
   
   return(df)
 }
