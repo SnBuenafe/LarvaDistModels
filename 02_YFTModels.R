@@ -18,9 +18,17 @@ YFT_filtered <- YFT_ds %>%
   dplyr::filter(!is.na(abundance)) %>% # filter those with data!
   dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
   dplyr::mutate(abundance_presence = case_when(abundance > 0 ~ 1,
-                                      abundance == 0 ~ 0)) %>%  # mutate the abundance data into 1s and 0s
+                                      abundance == 0 ~ 0), 
+                row = row_number()) %>%  # mutate the abundance data into 1s and 0s
   dplyr::select(-geometry) %>% 
+  dplyr::select(row, cellID, species, abundance, abundance_presence, ocean, longitude, latitude, season, everything()) %>% # arrange columns
   as.data.frame() #gbm.step doesn't work if it's a tibble...
+
+# We divide the data into train (training and validation) and test
+nrow(YFT_filtered) * 0.9 # = 11890
+
+train <- slice_sample(YFT_filtered, n = 11890, replace = FALSE) # 90% training set
+test <- YFT_filtered[!YFT_filtered$row %in% train$row, ] # 10% testing set
 
 # Data.frame for predictions
 YFT_predict <- YFT_ds %>% 
@@ -29,6 +37,7 @@ YFT_predict <- YFT_ds %>%
   dplyr::mutate(abundance_presence = case_when(abundance > 0 ~ 1,
                                                abundance == 0 ~ 0)) %>%  # mutate the abundance data into 1s and 0s
   dplyr::select(-geometry) %>% 
+  dplyr::select(cellID, species, abundance, abundance_presence, ocean, longitude, latitude, season, everything()) %>% # arrange columns
   as.data.frame() #gbm.step doesn't work if it's a tibble...
 
 ###########################
@@ -41,7 +50,7 @@ colnames(YFT_filtered)
 # higher AUC better. A model with AUC values closer to 0 have more wrong predictions.
 # see: https://rspatial.org/raster/sdm/9_sdm_brt.html for interpreting results
 
-YFT_model0 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 8:13),
+YFT_model0 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 8:11, 17:18),
                               gbm.y = 14, family = "bernoulli", n.folds = 5)
 saveRDS(YFT_model0, "Output/Models/YFT_model0.rds") # save the model
 #YFT_model0 <- readRDS("Output/Models/YFT_model0.rds") # load the model
@@ -92,7 +101,7 @@ ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model0.png", width = 15, heig
 ###########################
 ## Model 1: Oceans ##
 ###########################
-YFT_model1 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4,7:13),
+YFT_model1 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 7:11, 17:18),
                               gbm.y = 14, family = "bernoulli",
                               n.folds = 5)
 saveRDS(YFT_model1, "Output/Models/YFT_model1.rds") # save the model
@@ -138,7 +147,7 @@ ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model1.png", width = 15, heig
 ###########################
 ## Model 2: Lat & Lon ##
 ###########################
-YFT_model2 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4:6, 8:13),
+YFT_model2 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4:6, 8:11, 17:18),
                               gbm.y = 14, family = "bernoulli",
                               n.folds = 5)
 saveRDS(YFT_model2, "Output/Models/YFT_model2.rds") # save the model
@@ -319,7 +328,7 @@ ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model2d.png", width = 15, hei
 ###########################
 ## Model 3: Latitude ##
 ###########################
-YFT_model3 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 6, 8:13),
+YFT_model3 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4, 6, 8:11, 17:18),
                               gbm.y = 14, family = "bernoulli",
                               n.folds = 5)
 saveRDS(YFT_model3, "Output/Models/YFT_model3.rds") # save the model
@@ -501,7 +510,7 @@ ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model3d.png", width = 15, hei
 ###########################
 ## Model 4: Longitude ##
 ###########################
-YFT_model4 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4:5, 8:13),
+YFT_model4 <- dismo::gbm.step(data = YFT_filtered, gbm.x = c(4:5, 8:11, 17:18),
                               gbm.y = 14, family = "bernoulli",
                               n.folds = 5)
 saveRDS(YFT_model4, "Output/Models/YFT_model4.rds") # save the model
@@ -550,13 +559,13 @@ ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model4.png", width = 15, heig
 # Do a cross-validated grid search using gbm.fixed
 # define a 5-fold cross-validation
 # Setting learning rate to be 
-CVGrid <- CVgridSearch(YFT_filtered, 5, tc = c(2, 3, 5), bf = c(0.5, 0.75), lr = 0.005)
+CVGrid <- CVgridSearch(YFT_filtered, 5, tc = c(2, 3, 5), bf = c(0.5, 0.75), lr = 0.005, pred_in = c(4:6, 8:11, 17:18), resp_in = 19)
 
 print(CVGrid %>% dplyr::arrange(cv_deviance))
 # constant learning rate of 0.005; we want >= 1000 trees (Cerasoli et al., 2017)
 
 # Now build the model; we want to have a lot of trees: preferably at least 1,000 trees
-YFT_model5 <- gbm.step(YFT_filtered, gbm.x = c(4:6, 8:13), gbm.y = 14, 
+YFT_model5 <- gbm.step(YFT_filtered, gbm.x = c(4:6, 8:11, 17:18), gbm.y = 19, 
                   learning.rate = 0.005,
                   bag.fraction = 0.5,
                   tree.complexity = 5,
@@ -681,7 +690,7 @@ ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
   ggtitle("Yellowfin tuna (2046-2055): Latitude and longitude (restricted range + grid search); AUC: 0.81") +
   geom_hline(yintercept = 5821011, color = "red") +
   geom_hline(yintercept = -5821011, color = "red")
-ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model5c1.png", width = 15, height = 8, dpi = 300)
+ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model5c.png", width = 15, height = 8, dpi = 300)
 
 ################################################
 ## Model 5d: Restricted (end of the century) ##
@@ -715,3 +724,63 @@ ggmodel <- plotModel(ggYFT, ggYFT_abun) + # Plot the model
   geom_hline(yintercept = 5821011, color = "red") +
   geom_hline(yintercept = -5821011, color = "red")
 ggsave(plot = ggmodel, filename = "Figures/YFT/YFT_Model5d.png", width = 15, height = 8, dpi = 300)
+
+
+#######################################################################
+## Trying with additional predictors and accounting for overfitting ##
+#######################################################################
+# Do a more stringent cross-validated grid search using gbm.fixed
+# define a 5-fold cross-validation
+CVGrid <- CVgridSearch(YFT_filtered, 5, tc = c(1, 2, 3), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(4:6, 8:18), resp_in = 19)
+
+print(CVGrid %>% dplyr::arrange(cv_deviance), n = 36) # Get the parameters with the lowest deviance?
+
+##################
+## Trial models ##
+##################
+# Addt'l parameters: sos, mlotst, no3os, po4os, nh4os
+
+# Now build the model; we want to have a lot of trees: preferably at least 1,000 trees
+YFT_trialModel <- gbm.step(train, gbm.x = c(4:6, 8:18), gbm.y = 19, 
+                       learning.rate = 0.01,
+                       bag.fraction = 0.5,
+                       tree.complexity = 1,
+                       n.folds = 5 # 5-fold CV
+)
+
+# Check this for ROC metrics: https://stackoverflow.com/questions/22391547/roc-score-in-gbm-package
+# CV AUC of ROC (Receiver Operating Characteristic Curve)
+YFT_trialModel$self.statistics$discrimination # Training AUC
+YFT_trialModel$cv.statistics$discrimination.mean # Validating AUC
+
+.roc <-function (obsdat, preddat) {
+  # code adapted from Ferrier, Pearce and Watson's code, by J.Elith
+  #
+  # see:
+  # Hanley, J.A. & McNeil, B.J. (1982) The meaning and use of the area
+  # under a Receiver Operating Characteristic (ROC) curve.
+  # Radiology, 143, 29-36
+  #
+  # Pearce, J. & Ferrier, S. (2000) Evaluating the predictive performance
+  # of habitat models developed using logistic regression.
+  # Ecological Modelling, 133, 225-245.
+  # this is the non-parametric calculation for area under the ROC curve, 
+  # using the fact that a MannWhitney U statistic is closely related to
+  # the area
+  #
+  
+  # in dismo, this is used in the gbm routines, but not elsewhere (see evaluate).
+  
+  if (length(obsdat) != length(preddat)) { 
+    stop("obs and preds must be equal lengths")
+  }
+  n.x <- length(obsdat[obsdat == 0])
+  n.y <- length(obsdat[obsdat == 1])
+  xy <- c(preddat[obsdat == 0], preddat[obsdat == 1])
+  rnk <- rank(xy)
+  wilc <- ((n.x * n.y) + ((n.x * (n.x + 1))/2) - sum(rnk[1:n.x]))/(n.x * n.y)
+  return(round(wilc, 4))
+}
+
+preds <- gbm::predict.gbm(YFT_trialModel, test, n.trees = YFT_trialModel$gbm.call$best.trees, type = "response")
+.roc(test$abundance_presence, preds)

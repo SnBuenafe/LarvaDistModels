@@ -10,7 +10,7 @@ source("01a_DataLayers_Assembling.R")
 ## Load dataset ##
 ###########################
 
-# Load frigate tuna full dataset
+# Load frigate full dataset
 FRI_ds <- read_csv("Output/CSV/FRI_historical_full.csv", show_col_types = FALSE)
 
 # Always build models with known data only

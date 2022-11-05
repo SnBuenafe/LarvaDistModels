@@ -305,52 +305,85 @@ joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4
   return(df)
 }
 
-# Do a k-fold grid search
-CVgridSearch <- function(df, folds, tc, bf, lr) {
-  train <- dismo::kfold(df, k = folds)
+# ROC CODE FROM DISMO PACKAGE ### CITE PROPERLY
+.roc <-function (obsdat, preddat) {
+  # code adapted from Ferrier, Pearce and Watson's code, by J.Elith
+  #
+  # see:
+  # Hanley, J.A. & McNeil, B.J. (1982) The meaning and use of the area
+  # under a Receiver Operating Characteristic (ROC) curve.
+  # Radiology, 143, 29-36
+  #
+  # Pearce, J. & Ferrier, S. (2000) Evaluating the predictive performance
+  # of habitat models developed using logistic regression.
+  # Ecological Modelling, 133, 225-245.
+  # this is the non-parametric calculation for area under the ROC curve, 
+  # using the fact that a MannWhitney U statistic is closely related to
+  # the area
+  #
   
-  df$fold <- train
+  # in dismo, this is used in the gbm routines, but not elsewhere (see evaluate).
+  
+  if (length(obsdat) != length(preddat)) { 
+    stop("obs and preds must be equal lengths")
+  }
+  n.x <- length(obsdat[obsdat == 0])
+  n.y <- length(obsdat[obsdat == 1])
+  xy <- c(preddat[obsdat == 0], preddat[obsdat == 1])
+  rnk <- rank(xy)
+  wilc <- ((n.x * n.y) + ((n.x * (n.x + 1))/2) - sum(rnk[1:n.x]))/(n.x * n.y)
+  return(round(wilc, 4))
+}
+
+# Do a k-fold grid search
+CVgridSearch <- function(test, train, tc, bf, lr, pred_in, resp_in) {
   
   gridTib <- tibble(tree_complexity = numeric(),
                     bag_fraction = numeric(),
                     learning_rate = numeric(),
-                    cv_deviance = numeric(),
-                    time = numeric())
+                    trees = numeric(),
+                    train_AUC = numeric(),
+                    valid_AUC = numeric(),
+                    test_AUC = numeric(),
+                    train_test_diff = numeric(),
+                    pred_dev = numeric())
   
   x = 1
-  for(i in 1:length(tc)) {
-    for(j in 1:length(bf)) {
-      for(k in 1:length(lr)) {
-        
-        time <- system.time({ 
-          deviance <- c()
-          for(l in 1:length(unique(train))) {
-            subset <- dplyr::filter(df, fold == l)
-            
-            model <- dismo::gbm.fixed(data = subset, gbm.x = c(4, 6, 8:13), gbm.y = 14,
-                                      tree.complexity = tc[i],
-                                      learning.rate = lr[k],
-                                      bag.fraction = bf[j],
-                                      n.trees = 500, # just for the sake of grid search
-                                      verbose = FALSE)
-            
-            deviance[l] <- model$self.statistics$resid.deviance
-          }
-          
-          cv_deviance <- mean(deviance)
-        }
-        )
+  for(t in 1:length(tc)) {
+    for(b in 1:length(bf)) {
+      for(l in 1:length(lr)) {
+        model <- dismo::gbm.step(data = test,
+                                 gbm.x = pred_in,
+                                 gbm.y = resp_in,
+                                 tree.complexity = tc[t],
+                                 learning.rate = lr[l],
+                                 bag.fraction = bf[b],
+                                 family = "bernoulli",
+                                 n.folds = 5 # Use a 5-fold cross-validation
+                                 )
         
         # Populate the grid tibble
         gridTib[x, "tree_complexity"] = tc[i]
         gridTib[x, "bag_fraction"] = bf[j]
         gridTib[x, "learning_rate"] = lr[k]
-        gridTib[x, "cv_deviance"] = cv_deviance
-        gridTib[x, "time"] = time[[3]] # get the time elapsed
-        print(paste0("Run: ", x, "; deviance = ", cv_deviance))
+        gridTib[x, "trees"] = model$gbm.call$best.trees
+        gridTib[x, "train_AUC"] = model$self.statistics$discrimination
+        gridTib[x, "valid_AUC"] = model$cv.statistics$discrimination.mean
         
+        # Predict
+        pred <- gbm::predict.gbm(model, test, n.trees = model$gbm.call$best.trees, type = "response")
+        roc <- .roc(test[,resp_in], pred)
+        
+        gridTib[x, "test_AUC"] = roc
+        gridTib[x, "train_test_diff"] = model$self.statistics$discrimination - roc
+        
+        # Calculate predictive deviance
+        gridTib[x, "pred_dev"] = dismo::calc.deviance(family = "bernoulli")
+        
+        print("Run ", x) # sanity check
         
         x = x + 1
+        
       }
     }
   }

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+declare -a season_list=("jan-mar" "apr-jun" "jul-sept" "oct-dec")
+
 ########################## TEMPERATURE ##########################
 
 # declare -a tmp_list=("BCC-CSM2-MR" "CMCC-CM2-SR5" "CMCC-ESM2" "FGOALS-f3-L" "FGOALS-g3" "MIROC6" "MIROC-ES2L" "MRI-ESM2-0" "NorESM2-LM")
@@ -19,14 +21,16 @@
 # 	bash 03_remapGlobal.sh -i "selectyears/tmpfile.nc" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 # 	rm selectyears/* # Free up space
 
-# 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	# Change frequency (seasons)
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax 
 
 # 	echo $t
 # done
 
-# Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
@@ -45,12 +49,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax 
 
 # 	echo $t
 # done
 
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # Mid-century (2046-2055)
 # yearmin=2046
@@ -68,12 +75,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax 
 
 # 	echo $t
 # done
 
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # End of the century (2091-2100)
 # yearmin=2091
@@ -91,12 +101,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax 
 
 # 	echo $t
 # done
 
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 ########################## pH ##########################
 
@@ -118,22 +131,24 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
-# Present (2017-2026)
+# # Present (2017-2026)
 # yearmin=2017
 # yearmax=2026
 # for t in ${ph_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# #	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -143,14 +158,17 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
-# Mid-century (2046-2055)
+# # Mid-century (2046-2055)
 # yearmin=2046
 # yearmax=2055
 # for t in ${ph_list[@]}; do
@@ -165,14 +183,17 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
-# End of the century (2091-2100)
+# # End of the century (2091-2100)
 # yearmin=2091
 # yearmax=2100
 # for t in ${ph_list[@]}; do
@@ -187,12 +208,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 ########################## OXYGEN ##########################
 
@@ -204,7 +228,7 @@
 
 # for t in ${o2_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -214,28 +238,30 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
-# Present
+# # Present
 # yearmin=2017
 # yearmax=2026
 
 # for t in ${o2_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "MRI-ESM2-0" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "MRI-ESM2-0" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -245,15 +271,17 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
-# Mid-century
+# # Mid-century
 # yearmin=2046
 # yearmax=2055
 
@@ -269,15 +297,17 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# #Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
-# End of the century
+# # End of the century
 # yearmin=2091
 # yearmax=2100
 
@@ -293,13 +323,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 ########################## CHLOROPHYLL ##########################
 
@@ -311,12 +343,12 @@
 
 # for t in ${ch_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "MRI-ESM2-0" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "MRI-ESM2-0" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -326,28 +358,30 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
-# Present
+# # Present
 # yearmin=2017
 # yearmax=2026
 
 # for t in ${ch_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "MRI-ESM2-0" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "MRI-ESM2-0" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -357,15 +391,17 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
-# Mid-century
+# # Mid-century
 # yearmin=2046
 # yearmax=2055
 
@@ -381,15 +417,17 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
-# End of the century
+# # End of the century
 # yearmin=2091
 # yearmax=2100
 
@@ -405,13 +443,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 ########################## SALINITY ##########################
 
@@ -423,12 +463,12 @@
 
 # for t in ${sal_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "MRI-ESM2-0" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "MRI-ESM2-0" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -438,13 +478,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
@@ -454,12 +496,12 @@
 
 # for t in ${sal_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "MRI-ESM2-0" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "MRI-ESM2-0" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -469,13 +511,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # # Mid-century
 # yearmin=2046
@@ -493,13 +537,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # # End of the century
 # yearmin=2091
@@ -517,13 +563,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 ########################## MIXED LAYER ##########################
 
@@ -535,12 +583,12 @@
 
 # for t in ${mix_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GISS-E2-1-G" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "GISS-E2-1-G" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -550,13 +598,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
@@ -566,12 +616,12 @@
 
 # for t in ${mix_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GISS-E2-1-G" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "GISS-E2-1-G" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -581,15 +631,17 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
-# Mid-century
+# # Mid-century
 # yearmin=2046
 # yearmax=2055
 
@@ -605,13 +657,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # # End of the century
 # yearmin=2091
@@ -629,13 +683,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 ########################## NITRATE ##########################
 
@@ -647,12 +703,12 @@
 
 # for t in ${n_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GFDL-ESM4" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "GFDL-ESM4" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -662,13 +718,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
@@ -678,12 +736,12 @@
 
 # for t in ${n_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GFDL-ESM4" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "GFDL-ESM4" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -693,13 +751,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # # Mid-century
 # yearmin=2046
@@ -717,13 +777,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # # End of the century
 # yearmin=2091
@@ -741,13 +803,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 ########################## PHOSPHATE ##########################
 
@@ -759,12 +823,12 @@
 
 # for t in ${p_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GFDL-ESM4" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "GFDL-ESM4" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -774,13 +838,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # expt="ssp585"
 
@@ -790,12 +856,12 @@
 
 # for t in ${p_list[@]}; do
 # 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GFDL-ESM4" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+# 	# if [[ $t == "GFDL-ESM4" ]]
+# 	# 	then
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+# 	# else
+# 	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+# 	# fi
 
 # 	# Select years we want
 # 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
@@ -805,13 +871,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # # Mid-century
 # yearmin=2046
@@ -829,13 +897,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 # # End of the century
 # yearmin=2091
@@ -853,13 +923,15 @@
 # 	rm selectyears/* # Free up space
 
 # 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+# 	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 # 	echo $t
 # done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# # Make the seasonal ensembles
+# for s in ${season_list[@]}; do
+# 	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+# done
 
 
 ########################## AMMONIUM ##########################
@@ -867,88 +939,94 @@
 declare -a a_list=("GFDL-ESM4")
 var="nh4os"
 expt="historical"
-# yearmin=1956
-# yearmax=1984
+yearmin=1956
+yearmax=1984
 
-# for t in ${a_list[@]}; do
-# 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GFDL-ESM4" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+for t in ${a_list[@]}; do
+	# Merge the files into 1 file per model per scenario
+	# if [[ $t == "GFDL-ESM4" ]]
+	# 	then
+	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+	# else
+	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+	# fi
 
-# 	# Select years we want
-# 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
+	# Select years we want
+	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
 
-# 	# Remap to 1x1 degree grid
-# 	bash 03_remapGlobal.sh -i "selectyears/tmpfile.nc" -m $t -v $var -e $expt -n $yearmin -x $yearmax
-# 	rm selectyears/* # Free up space
+	# Remap to 1x1 degree grid
+	bash 03_remapGlobal.sh -i "selectyears/tmpfile.nc" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+	rm selectyears/* # Free up space
 
-# 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+	# Change frequency
+	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
-# 	echo $t
-# done
+	echo $t
+done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# Make the seasonal ensembles
+for s in ${season_list[@]}; do
+	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+done
 
 expt="ssp585"
 
 # Present
-# yearmin=2017
-# yearmax=2026
+yearmin=2017
+yearmax=2026
 
-# for t in ${a_list[@]}; do
-# 	# Merge the files into 1 file per model per scenario
-# 	if [[ $t == "GFDL-ESM4" ]]
-# 		then
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
-# 	else
-# 		bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
-# 	fi
+for t in ${a_list[@]}; do
+	# Merge the files into 1 file per model per scenario
+	# if [[ $t == "GFDL-ESM4" ]]
+	# 	then
+	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g lonlat -v $var -e $expt
+	# else
+	# 	bash 01_mergeFiles.sh -i "/Volumes/SeagateHub/04_LarvaBRT/${var}/" -m $t -g curvilinear -v $var -e $expt
+	# fi
 
-# 	# Select years we want
-# 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
+	# Select years we want
+	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
 
-# 	# Remap to 1x1 degree grid
-# 	bash 03_remapGlobal.sh -i "selectyears/tmpfile.nc" -m $t -v $var -e $expt -n $yearmin -x $yearmax
-# 	rm selectyears/* # Free up space
+	# Remap to 1x1 degree grid
+	bash 03_remapGlobal.sh -i "selectyears/tmpfile.nc" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+	rm selectyears/* # Free up space
 
-# 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+	# Change frequency
+	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
-# 	echo $t
-# done
+	echo $t
+done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# Make the seasonal ensembles
+for s in ${season_list[@]}; do
+	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+done
 
-# # Mid century
-# yearmin=2046
-# yearmax=2055
+# Mid century
+yearmin=2046
+yearmax=2055
 
-# for t in ${a_list[@]}; do
-# 	# Merge the files into 1 file per model per scenario
-# 	# This has been done
+for t in ${a_list[@]}; do
+	# Merge the files into 1 file per model per scenario
+	# This has been done
 
-# 	# Select years we want
-# 	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
+	# Select years we want
+	bash 02_selectYears.sh -m $t -v $var -e $expt -f $yearmin -l $yearmax
 
-# 	# Remap to 1x1 degree grid
-# 	bash 03_remapGlobal.sh -i "selectyears/tmpfile.nc" -m $t -v $var -e $expt -n $yearmin -x $yearmax
-# 	rm selectyears/* # Free up space
+	# Remap to 1x1 degree grid
+	bash 03_remapGlobal.sh -i "selectyears/tmpfile.nc" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+	rm selectyears/* # Free up space
 
-# 	# Change frequency
-# 	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+	# Change frequency
+	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
-# 	echo $t
-# done
+	echo $t
+done
 
-# # Make the ensemble
-# bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# Make the seasonal ensembles
+for s in ${season_list[@]}; do
+	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+done
 
 # End of the century
 yearmin=2091
@@ -966,10 +1044,12 @@ for t in ${a_list[@]}; do
 	rm selectyears/* # Free up space
 
 	# Change frequency
-	bash 05_month2Year.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
+	bash 06_month2Season.sh -i "remapped" -m $t -v $var -e $expt -n $yearmin -x $yearmax
 
 	echo $t
 done
 
-# Make the ensemble
-bash 06_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax
+# Make the seasonal ensembles
+for s in ${season_list[@]}; do
+	bash 07_createEnsemble.sh -i "newfreq" -v $var -e $expt -o "mean" -n $yearmin -x $yearmax -f $s
+done
