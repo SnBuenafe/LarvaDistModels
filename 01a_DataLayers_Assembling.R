@@ -26,6 +26,7 @@ species_code <- tibble::tribble(~species, ~code,
                                 "bonitos", "BON",
                                 "black-marlin", "BLAM")
 
+# Grid per season
 for(i in 1:nrow(species_code)) {
   sf <- combineFish(species = species_code$species[i]) %>% 
     sf::st_transform(crs = moll) %>% 
@@ -39,7 +40,19 @@ for(i in 1:nrow(species_code)) {
   }
 }
 
-# TODO: Prepare full gridded data- perhaps remove seasons.
+# Full grid
+for(i in 1:nrow(species_code)) {
+  sf <- combineFish(species = species_code$species[i]) %>% 
+    sf::st_transform(crs = moll) %>% 
+    sf::st_centroid() # transform into point data
+  
+  gridded <- assembleGrid(grid, sf) %>% 
+    dplyr::group_by(cellID) %>% 
+    dplyr::summarise(ocean = unique(ocean), species = unique(species), abundance = sum(abundance), longitude = unique(longitude),
+                     latitude = unique(latitude), geometry = unique(geometry))
+  
+  assign(paste("grid", species_code$code[i], sep = "_"), gridded)
+}
 
 ##########################
 # Load climatology data #
@@ -47,15 +60,15 @@ for(i in 1:nrow(species_code)) {
 predictors <- c("tos", "o2os", "phos", "chlos", "sos", "mlotst", "no3os", "po4os", "nh4os")
 
 # Load full data
-# timestamps <- c("historical", "present", "midCentury", "endCentury")
-# for(p in 1:length(predictors)) {
-#   for(t in 1:length(timestamps)) {
-#     df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_", timestamps[t], "_interpolated.rds")) %>% 
-#       dplyr::select(-geometry)
-#     
-#     assign(paste(predictors[p], timestamps[t], sep = "_"), df)
-#   }
-# }
+timestamps <- c("historical", "present", "midCentury", "endCentury")
+for(p in 1:length(predictors)) {
+  for(t in 1:length(timestamps)) {
+    df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_", timestamps[t], "_interpolated.rds")) %>%
+      dplyr::select(-geometry)
+
+    assign(paste(predictors[p], timestamps[t], sep = "_"), df)
+  }
+}
 
 # Load historical data
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -116,7 +129,26 @@ dist2coast <- readRDS("Data/CoastDistance.rds") %>%
 # Joining all predictor and response per fish species #
 ###############################################################
 
-# TODO: Joining all the data with the full data
+# Joining all the data with the species data (FULL)
+for(f in 1:nrow(species_code)) {
+  for(t in 1:length(timestamps)) {
+    df <- joinPredictors(grid = eval(sym(paste("grid", species_code$code[f], sep = "_"))),
+                         tos = eval(sym(paste("tos", timestamps[t], sep = "_"))),
+                         o2os = eval(sym(paste("o2os", timestamps[t], sep = "_"))),
+                         phos = eval(sym(paste("phos", timestamps[t], sep = "_"))),
+                         chlos = eval(sym(paste("chlos", timestamps[t], sep = "_"))),
+                         sos = eval(sym(paste("sos", timestamps[t], sep = "_"))),
+                         mlotst = eval(sym(paste("mlotst", timestamps[t], sep = "_"))),
+                         no3os = eval(sym(paste("no3os", timestamps[t], sep = "_"))),
+                         po4os = eval(sym(paste("po4os", timestamps[t], sep = "_"))),
+                         nh4os = eval(sym(paste("nh4os", timestamps[t], sep = "_"))),
+                         bathy = bathy,
+                         dist2coast = dist2coast,
+                         season = FALSE)
+    
+    write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_", timestamps[t], "_full.csv"))
+  }
+}
 
 # Joining all the data with the species data for each season (HISTORICAL)
 for(f in 1:nrow(species_code)) {

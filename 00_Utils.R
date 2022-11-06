@@ -216,24 +216,27 @@ calculateDist2Coast <- function(grid) {
 
 # Plot the model
 plotModel <- function(sf, abundance) {
-  #palette = brewer.pal(9, "YlOrBr")
+  palette = brewer.pal(9, "Purples")
   ggmodel <- ggplot() + 
     geom_sf(data = sf, aes(fill = model), color = NA, size = 0.1) +
-    #scale_fill_gradientn(name = "Probabilities",
-    #                     colors = palette,
-    #                     aesthetics = c("fill", "color")) +
-    scale_fill_cmocean("Probabilities",
-                       name = "tempo",
-                       aesthetics = c("fill"),
-                       limits = c(0, 1),
-                       na.value = NA) +
+    scale_fill_gradientn(name = "Probabilities",
+                        colors = palette,
+                        aesthetics = c("fill"),
+                          limits = c(0, 1),
+                        na.value = NA
+    ) +
+    # scale_fill_cmocean("Probabilities",
+    #                    name = "tempo",
+    #                    aesthetics = c("fill"),
+    #                    limits = c(0, 1),
+    #                    na.value = NA) +
     geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
     geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +
     scale_fill_manual(name = "",
-                       aesthetics = c("color"),
-                       values = c("#143475"),
-                      labels = c("Larvae sampled", ""),
-                       na.value = NA) +
+                      aesthetics = c("color"),
+                      values = c("#67DBDB", "#143875"),
+                      labels = c("Recorded presence", "Recorded absence", ""),
+                      na.value = NA) +
     xlab("Longitude") +
     ylab("Latitude") +
     theme_bw()
@@ -287,8 +290,45 @@ plotPredictions <- function(sf, saveFile) {
   return(ggpreds)
 }
 
+# Plotting seasonal plots
+plotSeasonPredict <- function(train_tmp, test_tmp, season_name, predict_df, model, grid_season) {
+  
+  results <- list()
+  
+  plot_df <- dplyr::bind_rows(train_tmp, test_tmp) %>% 
+    dplyr::arrange(cellID) %>% 
+    dplyr::filter(season %in% season_name)
+  
+  # Predict for the rest of the ocean cells
+  preds <- gbm::predict.gbm(model, predict_df, n.trees = model$gbm.call$best.trees, type = "response")
+  
+  plot_predict <- predict_df %>% 
+    dplyr::mutate(model = preds)
+  
+  plot_model <- dplyr::bind_rows(plot_df, plot_predict) %>% 
+    dplyr::arrange(cellID) %>%  # Make sure everything is arranged by cellID
+    dplyr::select(model) %>% 
+    pull()
+  
+  ggYFT <- grid_season %>% 
+    dplyr::bind_cols(., model = plot_model) %>% 
+    dplyr::select(cellID, ocean, model, geometry) %>% 
+    sf::st_as_sf(sf_column_name = "geometry", crs = moll)
+  
+  ggYFT_abun <- grid_season %>%
+    dplyr::mutate(abundance_presence = factor(case_when(abundance > 0 ~ 1,
+                                                 abundance == 0 ~ 0), levels = c(1, 0))) %>% 
+    sf::st_as_sf(sf_column_name = "geometry", crs = moll) %>% 
+    sf::st_centroid() 
+  
+  results[[1]] <- ggYFT
+  results[[2]] <- ggYFT_abun
+  
+  return(results)
+}
+
 # Joining predictors and response
-joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4os, nh4os, bathy, dist2coast) {
+joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4os, nh4os, bathy, dist2coast, season = TRUE) {
   df <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
     dplyr::left_join(., phos, by = "cellID") %>% 
     dplyr::left_join(., chlos, by = "cellID") %>% 
@@ -299,8 +339,14 @@ joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4
     dplyr::left_join(., nh4os, by = "cellID") %>% 
     dplyr::left_join(., bathy, by = "cellID") %>% 
     dplyr::left_join(., dist2coast, by = "cellID") %>% 
-    dplyr::left_join(grid, ., by = "cellID") %>%  # Join with species data
-    dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, meanDepth, coastDistance, geometry) # arrange columns
+    dplyr::left_join(grid, ., by = "cellID") # Join with species data
+  
+  if(isTRUE(season)) {
+    df %<>% dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, meanDepth, coastDistance, geometry) # arrange columns
+  } else {
+    df %<>% dplyr::select(cellID, species, abundance, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, meanDepth, coastDistance, geometry) # arrange columns
+  }
+
   
   return(df)
 }
@@ -341,7 +387,6 @@ CVgridSearch <- function(test, train, tc, bf, lr, pred_in, resp_in) {
   gridTib <- tibble(tree_complexity = numeric(),
                     bag_fraction = numeric(),
                     learning_rate = numeric(),
-                    trees = numeric(),
                     train_AUC = numeric(),
                     valid_AUC = numeric(),
                     test_AUC = numeric(),
@@ -352,21 +397,21 @@ CVgridSearch <- function(test, train, tc, bf, lr, pred_in, resp_in) {
   for(t in 1:length(tc)) {
     for(b in 1:length(bf)) {
       for(l in 1:length(lr)) {
-        model <- dismo::gbm.step(data = test,
+        model <- dismo::gbm.step(data = train,
                                  gbm.x = pred_in,
                                  gbm.y = resp_in,
                                  tree.complexity = tc[t],
                                  learning.rate = lr[l],
                                  bag.fraction = bf[b],
                                  family = "bernoulli",
-                                 n.folds = 5 # Use a 5-fold cross-validation
+                                 n.folds = 5, # Use a 5-fold cross-validation
+                                 max.trees = 1000 # Solely for grid search
                                  )
         
         # Populate the grid tibble
-        gridTib[x, "tree_complexity"] = tc[i]
-        gridTib[x, "bag_fraction"] = bf[j]
-        gridTib[x, "learning_rate"] = lr[k]
-        gridTib[x, "trees"] = model$gbm.call$best.trees
+        gridTib[x, "tree_complexity"] = tc[t]
+        gridTib[x, "bag_fraction"] = bf[b]
+        gridTib[x, "learning_rate"] = lr[l]
         gridTib[x, "train_AUC"] = model$self.statistics$discrimination
         gridTib[x, "valid_AUC"] = model$cv.statistics$discrimination.mean
         
@@ -378,9 +423,9 @@ CVgridSearch <- function(test, train, tc, bf, lr, pred_in, resp_in) {
         gridTib[x, "train_test_diff"] = model$self.statistics$discrimination - roc
         
         # Calculate predictive deviance
-        gridTib[x, "pred_dev"] = dismo::calc.deviance(family = "bernoulli")
+        gridTib[x, "pred_dev"] = dismo::calc.deviance(test[,resp_in], pred, family = "bernoulli")
         
-        print("Run ", x) # sanity check
+        print(paste0("Run ", x)) # sanity check
         
         x = x + 1
         
