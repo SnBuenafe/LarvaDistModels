@@ -3,9 +3,6 @@
 ###########################
 ## Load preliminaries ##
 ###########################
-# Load preliminaries
-source("00_Utils.R")
-
 # Load YFT data
 source("02a_YFTData.R")
 

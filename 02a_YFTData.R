@@ -36,6 +36,7 @@ YFT_build <- dplyr::bind_rows(YFT_ds1 %>% dplyr::filter(!is.na(abundance)),
 # We divide the data into train (training and validation) and test
 nrow(YFT_build) * 0.9 # = 11890
 
+set.seed(10403)
 train <- slice_sample(YFT_build, n = 11890, replace = FALSE) # 90% training set
 test <- YFT_build[!YFT_build$row %in% train$row, ] # 10% testing set
 

@@ -310,19 +310,19 @@ plotSeasonPredict <- function(train_tmp, test_tmp, season_name, predict_df, mode
     dplyr::select(model) %>% 
     pull()
   
-  ggYFT <- grid_season %>% 
+  gg <- grid_season %>% 
     dplyr::bind_cols(., model = plot_model) %>% 
     dplyr::select(cellID, ocean, model, geometry) %>% 
     sf::st_as_sf(sf_column_name = "geometry", crs = moll)
   
-  ggYFT_abun <- grid_season %>%
+  gg_abun <- grid_season %>%
     dplyr::mutate(abundance_presence = factor(case_when(abundance > 0 ~ 1,
                                                  abundance == 0 ~ 0), levels = c(1, 0))) %>% 
     sf::st_as_sf(sf_column_name = "geometry", crs = moll) %>% 
     sf::st_centroid() 
   
-  results[[1]] <- ggYFT
-  results[[2]] <- ggYFT_abun
+  results[[1]] <- gg
+  results[[2]] <- gg_abun
   
   return(results)
 }

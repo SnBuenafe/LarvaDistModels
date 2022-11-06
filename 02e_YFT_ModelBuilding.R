@@ -3,9 +3,6 @@
 ###########################
 ## Load preliminaries ##
 ###########################
-# Load preliminaries
-source("00_Utils.R")
-
 # Load YFT data
 source("02a_YFTData.R")
 
@@ -221,6 +218,74 @@ ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) +
   plot_annotation("Model 12: Additional predictors with moderate complexity (AUC: 0.82)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model12.png", width = 27, height = 15, dpi = 600)
+
+#### Plot test vs predictors ####
+pdf(file = "Figures/YFT/YFT_Model12_PredictorsTrain.pdf", width = 10, height = 8)
+gbm.plot.fits(YFT_model12)
+dev.off()
+
+longitude <- ggplot() +
+  geom_point(data = test_tmp, aes(x = longitude, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+latitude <- ggplot() +
+  geom_point(data = test_tmp, aes(x = latitude, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+season <- ggplot() +
+  geom_boxplot(data = test_tmp, aes(x = season, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+tos <- ggplot() +
+  geom_point(data = test_tmp, aes(x = tos_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+o2os <- ggplot() +
+  geom_point(data = test_tmp, aes(x = o2os_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+phos <- ggplot() +
+  geom_point(data = test_tmp, aes(x = phos_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+chlos <- ggplot() +
+  geom_point(data = test_tmp, aes(x = chlos_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+sos <- ggplot() +
+  geom_point(data = test_tmp, aes(x = sos_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+mlotst <- ggplot() +
+  geom_point(data = test_tmp, aes(x = mlotst_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+no3os <- ggplot() +
+  geom_point(data = test_tmp, aes(x = no3os_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+po4os <- ggplot() +
+  geom_point(data = test_tmp, aes(x = po4os_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+nh4os <- ggplot() +
+  geom_point(data = test_tmp, aes(x = nh4os_transformed, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+depth <- ggplot() +
+  geom_point(data = test_tmp, aes(x = meanDepth, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+coast <- ggplot() +
+  geom_point(data = test_tmp, aes(x = coastDistance, y = model)) +
+  ylab("fitted values") +
+  theme_bw()
+
+ggpredictors <- (longitude | latitude | season | tos) /
+  (o2os | phos | chlos | sos) /
+  (mlotst | no3os | po4os | nh4os) /
+  (depth | coast | plot_spacer() | plot_spacer())
+ggsave(filename = "Figures/YFT/YFT_Model12_PredictorsTest.pdf", plot = ggpredictors, width = 12, height = 8, dpi = 300)
 
 ###########################################################################
 ## Model 13: Least overfit; moderate complexity (additional predictors) ##
