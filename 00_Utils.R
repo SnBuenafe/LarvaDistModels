@@ -215,28 +215,31 @@ calculateDist2Coast <- function(grid) {
 ##########
 
 # Plot the model
-plotModel <- function(sf, abundance) {
-  palette = brewer.pal(9, "Purples")
+plotModel <- function(sf#, 
+                     # abundance
+                      ) {
+  # palette = brewer.pal(9, "YlGnBu")
   ggmodel <- ggplot() + 
-    geom_sf(data = sf, aes(fill = model), color = NA, size = 0.1) +
-    scale_fill_gradientn(name = "Probabilities",
-                        colors = palette,
-                        aesthetics = c("fill"),
-                          limits = c(0, 1),
-                        na.value = NA
-    ) +
-    # scale_fill_cmocean("Probabilities",
-    #                    name = "tempo",
-    #                    aesthetics = c("fill"),
-    #                    limits = c(0, 1),
-    #                    na.value = NA) +
-    geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
-    geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +
-    scale_fill_manual(name = "",
-                      aesthetics = c("color"),
-                      values = c("#67DBDB", "#143875"),
-                      labels = c("Recorded presence", "Recorded absence", ""),
-                      na.value = NA) +
+    geom_sf(data = sf, aes(fill = model, color = model), size = 0.1) +
+    # scale_fill_gradientn(name = "Probabilities",
+    #                     colors = palette,
+    #                     aesthetics = c("fill"),
+    #                       limits = c(0, 1),
+    #                     na.value = NA
+    # ) +
+    scale_fill_cmocean("Probabilities",
+                       name = "deep",
+                       aesthetics = c("fill", "color"),
+                       direction = -1, 
+                       limits = c(0, 1),
+                       na.value = NA) +
+    geom_sf(data = landmass, fill = "gray92", color = NA, size = 0.01) +
+    # geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +
+    # scale_fill_manual(name = "",
+    #                   aesthetics = c("color"),
+    #                   values = c("#67DBDB", "#143875"),
+    #                   labels = c("Recorded presence", "Recorded absence", ""),
+    #                   na.value = NA) +
     xlab("Longitude") +
     ylab("Latitude") +
     theme_bw()
@@ -405,7 +408,6 @@ CVgridSearch <- function(test, train, tc, bf, lr, pred_in, resp_in) {
                                  bag.fraction = bf[b],
                                  family = "bernoulli",
                                  n.folds = 5, # Use a 5-fold cross-validation
-                                 max.trees = 1000 # Solely for grid search
                                  )
         
         # Populate the grid tibble
@@ -434,4 +436,71 @@ CVgridSearch <- function(test, train, tc, bf, lr, pred_in, resp_in) {
   }
   
   return(gridTib)
+}
+
+# Plot test fitted values vs predictors
+plotPredictors <- function(test_tmp) {
+  longitude <- ggplot() +
+    geom_point(data = test_tmp, aes(x = longitude, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  latitude <- ggplot() +
+    geom_point(data = test_tmp, aes(x = latitude, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  season <- ggplot() +
+    geom_boxplot(data = test_tmp, aes(x = season, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  tos <- ggplot() +
+    geom_point(data = test_tmp, aes(x = tos_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  o2os <- ggplot() +
+    geom_point(data = test_tmp, aes(x = o2os_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  phos <- ggplot() +
+    geom_point(data = test_tmp, aes(x = phos_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  chlos <- ggplot() +
+    geom_point(data = test_tmp, aes(x = chlos_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  sos <- ggplot() +
+    geom_point(data = test_tmp, aes(x = sos_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  mlotst <- ggplot() +
+    geom_point(data = test_tmp, aes(x = mlotst_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  no3os <- ggplot() +
+    geom_point(data = test_tmp, aes(x = no3os_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  po4os <- ggplot() +
+    geom_point(data = test_tmp, aes(x = po4os_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  nh4os <- ggplot() +
+    geom_point(data = test_tmp, aes(x = nh4os_transformed, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  depth <- ggplot() +
+    geom_point(data = test_tmp, aes(x = meanDepth, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  coast <- ggplot() +
+    geom_point(data = test_tmp, aes(x = coastDistance, y = model)) +
+    ylab("fitted values") +
+    theme_bw()
+  
+  ggpredictors <- (longitude | latitude | season | tos) /
+    (o2os | phos | chlos | sos) /
+    (mlotst | no3os | po4os | nh4os) /
+    (depth | coast | plot_spacer() | plot_spacer())
+  
+  return(ggpredictors)
 }

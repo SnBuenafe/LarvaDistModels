@@ -7,9 +7,9 @@
 # Fish data #
 ####################
 species_code <- tibble::tribble(~species, ~code,
-                                # "yellowfin-tuna", "YFT",
+                                "yellowfin-tuna", "YFT",
                                 "albacore", "ALB",
-                                # "skipjack-tuna", "SKP",
+                                "skipjack-tuna", "SKP",
                                 "swordfish", "SWO",
                                 "blue-marlin", "BLUM",
                                 "shortbill-spearfish", "SHOS",
@@ -84,34 +84,34 @@ for(p in 1:length(predictors)) {
 }
 
 # Load present data
-# for(p in 1:length(predictors)) {
-#   for(s in 1:length(seasons)) {
-#     df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_present_", seasons[s], "_interpolated.rds")) %>% 
-#       dplyr::select(-geometry)
-#     
-#     assign(paste(predictors[p], "present", seasons[s], sep = "_"), df)
-#   }
-# }
+for(p in 1:length(predictors)) {
+  for(s in 1:length(seasons)) {
+    df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_present_", seasons[s], "_interpolated.rds")) %>%
+      dplyr::select(-geometry)
 
-# Load mid-century data
-# for(p in 1:length(predictors)) {
-#   for(s in 1:length(seasons)) {
-#     df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_midCentury_", seasons[s], "_interpolated.rds")) %>% 
-#       dplyr::select(-geometry)
-#     
-#     assign(paste(predictors[p], "midCentury", seasons[s], sep = "_"), df)
-#   }
-# }
+    assign(paste(predictors[p], "present", seasons[s], sep = "_"), df)
+  }
+}
+
+#Load mid-century data
+for(p in 1:length(predictors)) {
+  for(s in 1:length(seasons)) {
+    df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_midCentury_", seasons[s], "_interpolated.rds")) %>%
+      dplyr::select(-geometry)
+
+    assign(paste(predictors[p], "midCentury", seasons[s], sep = "_"), df)
+  }
+}
 
 # Load end of the century data
-# for(p in 1:length(predictors)) {
-#   for(s in 1:length(seasons)) {
-#     df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_endCentury_", seasons[s], "_interpolated.rds")) %>% 
-#       dplyr::select(-geometry)
-#     
-#     assign(paste(predictors[p], "endCentury", seasons[s], sep = "_"), df)
-#   }
-# }
+for(p in 1:length(predictors)) {
+  for(s in 1:length(seasons)) {
+    df <- readRDS(paste0("Data/Climatology/sf/", predictors[p], "_endCentury_", seasons[s], "_interpolated.rds")) %>%
+      dplyr::select(-geometry)
+
+    assign(paste(predictors[p], "endCentury", seasons[s], sep = "_"), df)
+  }
+}
 
 ##########################
 # Load other predictors #
@@ -172,61 +172,61 @@ for(f in 1:nrow(species_code)) {
 }
 
 # Joining all the data with the species data for each season (PRESENT)
-# for(f in 1:nrow(species_code)) {
-#   for(s in 1:length(seasons)) {
-#     df <- joinPredictors(grid = eval(sym(paste("grid", species_code$code[f], seasons[s], sep = "_"))),
-#                          tos = eval(sym(paste("tos_present", seasons[s], sep = "_"))),
-#                          o2os = eval(sym(paste("o2os_present", seasons[s], sep = "_"))),
-#                          phos = eval(sym(paste("phos_present", seasons[s], sep = "_"))),
-#                          chlos = eval(sym(paste("chlos_present", seasons[s], sep = "_"))),
-#                          sos = eval(sym(paste("sos_present", seasons[s], sep = "_"))),
-#                          mlotst = eval(sym(paste("mlotst_present", seasons[s], sep = "_"))),
-#                          no3os = eval(sym(paste("no3os_present", seasons[s], sep = "_"))),
-#                          po4os = eval(sym(paste("po4os_present", seasons[s], sep = "_"))),
-#                          nh4os = eval(sym(paste("nh4os_present", seasons[s], sep = "_"))),
-#                          bathy = bathy,
-#                          dist2coast = dist2coast)
-#     
-#     write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_present_", seasons[s], ".csv"))
-#   }
-# }
+for(f in 1:nrow(species_code)) {
+  for(s in 1:length(seasons)) {
+    df <- joinPredictors(grid = eval(sym(paste("grid", species_code$code[f], seasons[s], sep = "_"))),
+                         tos = eval(sym(paste("tos_present", seasons[s], sep = "_"))),
+                         o2os = eval(sym(paste("o2os_present", seasons[s], sep = "_"))),
+                         phos = eval(sym(paste("phos_present", seasons[s], sep = "_"))),
+                         chlos = eval(sym(paste("chlos_present", seasons[s], sep = "_"))),
+                         sos = eval(sym(paste("sos_present", seasons[s], sep = "_"))),
+                         mlotst = eval(sym(paste("mlotst_present", seasons[s], sep = "_"))),
+                         no3os = eval(sym(paste("no3os_present", seasons[s], sep = "_"))),
+                         po4os = eval(sym(paste("po4os_present", seasons[s], sep = "_"))),
+                         nh4os = eval(sym(paste("nh4os_present", seasons[s], sep = "_"))),
+                         bathy = bathy,
+                         dist2coast = dist2coast)
+
+    write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_present_", seasons[s], ".csv"))
+  }
+}
 
 # Joining all the data with the species data for each season (MID-CENTURY)
-# for(f in 1:nrow(species_code)) {
-#   for(s in 1:length(seasons)) {
-#     df <- joinPredictors(grid = eval(sym(paste("grid", species_code$code[f], seasons[s], sep = "_"))),
-#                          tos = eval(sym(paste("tos_midCentury", seasons[s], sep = "_"))),
-#                          o2os = eval(sym(paste("o2os_midCentury", seasons[s], sep = "_"))),
-#                          phos = eval(sym(paste("phos_midCentury", seasons[s], sep = "_"))),
-#                          chlos = eval(sym(paste("chlos_midCentury", seasons[s], sep = "_"))),
-#                          sos = eval(sym(paste("sos_midCentury", seasons[s], sep = "_"))),
-#                          mlotst = eval(sym(paste("mlotst_midCentury", seasons[s], sep = "_"))),
-#                          no3os = eval(sym(paste("no3os_midCentury", seasons[s], sep = "_"))),
-#                          po4os = eval(sym(paste("po4os_midCentury", seasons[s], sep = "_"))),
-#                          nh4os = eval(sym(paste("nh4os_midCentury", seasons[s], sep = "_"))),
-#                          bathy = bathy,
-#                          dist2coast = dist2coast)
-#     
-#     write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_midCentury_", seasons[s], ".csv"))
-#   }
-# }
+for(f in 1:nrow(species_code)) {
+  for(s in 1:length(seasons)) {
+    df <- joinPredictors(grid = eval(sym(paste("grid", species_code$code[f], seasons[s], sep = "_"))),
+                         tos = eval(sym(paste("tos_midCentury", seasons[s], sep = "_"))),
+                         o2os = eval(sym(paste("o2os_midCentury", seasons[s], sep = "_"))),
+                         phos = eval(sym(paste("phos_midCentury", seasons[s], sep = "_"))),
+                         chlos = eval(sym(paste("chlos_midCentury", seasons[s], sep = "_"))),
+                         sos = eval(sym(paste("sos_midCentury", seasons[s], sep = "_"))),
+                         mlotst = eval(sym(paste("mlotst_midCentury", seasons[s], sep = "_"))),
+                         no3os = eval(sym(paste("no3os_midCentury", seasons[s], sep = "_"))),
+                         po4os = eval(sym(paste("po4os_midCentury", seasons[s], sep = "_"))),
+                         nh4os = eval(sym(paste("nh4os_midCentury", seasons[s], sep = "_"))),
+                         bathy = bathy,
+                         dist2coast = dist2coast)
+
+    write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_midCentury_", seasons[s], ".csv"))
+  }
+}
 
 # Joining all the data with the species data for each season (END OF THE CENTURY)
-# for(f in 1:nrow(species_code)) {
-#   for(s in 1:length(seasons)) {
-#     df <- joinPredictors(grid = eval(sym(paste("grid", species_code$code[f], seasons[s], sep = "_"))),
-#                          tos = eval(sym(paste("tos_endCentury", seasons[s], sep = "_"))),
-#                          o2os = eval(sym(paste("o2os_endCentury", seasons[s], sep = "_"))),
-#                          phos = eval(sym(paste("phos_endCentury", seasons[s], sep = "_"))),
-#                          chlos = eval(sym(paste("chlos_endCentury", seasons[s], sep = "_"))),
-#                          sos = eval(sym(paste("sos_endCentury", seasons[s], sep = "_"))),
-#                          mlotst = eval(sym(paste("mlotst_endCentury", seasons[s], sep = "_"))),
-#                          no3os = eval(sym(paste("no3os_endCentury", seasons[s], sep = "_"))),
-#                          po4os = eval(sym(paste("po4os_endCentury", seasons[s], sep = "_"))),
-#                          nh4os = eval(sym(paste("nh4os_endCentury", seasons[s], sep = "_"))),
-#                          bathy = bathy,
-#                          dist2coast = dist2coast)
-#     
-#     write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_endCentury_", seasons[s], ".csv"))
-#   }
-# }
+for(f in 1:nrow(species_code)) {
+  for(s in 1:length(seasons)) {
+    df <- joinPredictors(grid = eval(sym(paste("grid", species_code$code[f], seasons[s], sep = "_"))),
+                         tos = eval(sym(paste("tos_endCentury", seasons[s], sep = "_"))),
+                         o2os = eval(sym(paste("o2os_endCentury", seasons[s], sep = "_"))),
+                         phos = eval(sym(paste("phos_endCentury", seasons[s], sep = "_"))),
+                         chlos = eval(sym(paste("chlos_endCentury", seasons[s], sep = "_"))),
+                         sos = eval(sym(paste("sos_endCentury", seasons[s], sep = "_"))),
+                         mlotst = eval(sym(paste("mlotst_endCentury", seasons[s], sep = "_"))),
+                         no3os = eval(sym(paste("no3os_endCentury", seasons[s], sep = "_"))),
+                         po4os = eval(sym(paste("po4os_endCentury", seasons[s], sep = "_"))),
+                         nh4os = eval(sym(paste("nh4os_endCentury", seasons[s], sep = "_"))),
+                         bathy = bathy,
+                         dist2coast = dist2coast)
+
+    write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_endCentury_", seasons[s], ".csv"))
+  }
+}
