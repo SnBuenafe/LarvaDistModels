@@ -49,7 +49,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jan-mar` # grid of species for specific season
                         )
 
-ggseason1 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason1 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("January-March")
 
 #### April-June
@@ -61,7 +61,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_apr-jun` # grid of species for specific season
 )
 
-ggseason2 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason2 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("April-June")
 
 #### July-September
@@ -73,7 +73,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jul-sept` # grid of species for specific season
 )
 
-ggseason3 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason3 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("July-September")
 
 #### October-December
@@ -85,13 +85,13 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_oct-dec` # grid of species for specific season
 )
 
-ggseason4 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason4 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("October-December")
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 0: No geographical location (AUC: 0.76)")
+  plot_annotation("Model 0: No geographical location (AUC: 0.74)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model0.png", width = 27, height = 15, dpi = 600)
 
@@ -130,7 +130,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jan-mar` # grid of species for specific season
 )
 
-ggseason1 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason1 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("January-March")
 
 #### April-June
@@ -142,7 +142,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_apr-jun` # grid of species for specific season
 )
 
-ggseason2 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason2 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("April-June")
 
 #### July-September
@@ -154,7 +154,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jul-sept` # grid of species for specific season
 )
 
-ggseason3 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason3 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("July-September")
 
 #### October-December
@@ -166,13 +166,13 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_oct-dec` # grid of species for specific season
 )
 
-ggseason4 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason4 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("October-December")
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 1: Ocean basins (AUC: 0.78)")
+  plot_annotation("Model 1: Ocean basins (AUC: 0.75)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model1.png", width = 27, height = 15, dpi = 600)
 ###########################
@@ -210,7 +210,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jan-mar` # grid of species for specific season
 )
 
-ggseason1 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason1 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("January-March")
 
 #### April-June
@@ -222,7 +222,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_apr-jun` # grid of species for specific season
 )
 
-ggseason2 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason2 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("April-June")
 
 #### July-September
@@ -234,7 +234,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jul-sept` # grid of species for specific season
 )
 
-ggseason3 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason3 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("July-September")
 
 #### October-December
@@ -246,13 +246,13 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_oct-dec` # grid of species for specific season
 )
 
-ggseason4 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason4 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("October-December")
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 2: Longitude (AUC: 0.77)")
+  plot_annotation("Model 2: Longitude (AUC: 0.75)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model2.png", width = 27, height = 15, dpi = 600)
 
@@ -291,7 +291,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jan-mar` # grid of species for specific season
 )
 
-ggseason1 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason1 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("January-March")
 
 #### April-June
@@ -303,7 +303,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_apr-jun` # grid of species for specific season
 )
 
-ggseason2 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason2 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("April-June")
 
 #### July-September
@@ -315,7 +315,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jul-sept` # grid of species for specific season
 )
 
-ggseason3 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason3 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("July-September")
 
 #### October-December
@@ -327,13 +327,13 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_oct-dec` # grid of species for specific season
 )
 
-ggseason4 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason4 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("October-December")
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 3: Latitude (AUC: 0.78)")
+  plot_annotation("Model 3: Latitude (AUC: 0.76)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model3.png", width = 27, height = 15, dpi = 600)
 
@@ -371,7 +371,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jan-mar` # grid of species for specific season
 )
 
-ggseason1 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason1 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("January-March")
 
 #### April-June
@@ -383,7 +383,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_apr-jun` # grid of species for specific season
 )
 
-ggseason2 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason2 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("April-June")
 
 #### July-September
@@ -395,7 +395,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jul-sept` # grid of species for specific season
 )
 
-ggseason3 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason3 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("July-September")
 
 #### October-December
@@ -407,12 +407,12 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_YFT_oct-dec` # grid of species for specific season
 )
 
-ggseason4 <- plotModel(gg[[1]], gg[[2]]) + # Plot the model
+ggseason4 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("October-December")
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 4: Longitude and Latitude (AUC: 0.79)")
+  plot_annotation("Model 4: Longitude and Latitude (AUC: 0.77)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model4.png", width = 27, height = 15, dpi = 600)
