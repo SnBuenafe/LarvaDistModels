@@ -36,7 +36,7 @@ SKP_build <- dplyr::bind_rows(SKP_ds1 %>% dplyr::filter(!is.na(abundance)),
 # We divide the data into train (training and validation) and test
 nrow(SKP_build) * 0.9 # = 11890
 
-set.seed(217)
+set.seed(2170)
 train <- slice_sample(SKP_build, n = 11890, replace = FALSE) # 90% training set
 test <- SKP_build[!SKP_build$row %in% train$row, ] # 10% testing set
 
