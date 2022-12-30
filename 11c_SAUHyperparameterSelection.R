@@ -7,7 +7,7 @@
 source("11a_SAUData.R")
 
 #### Grid search with a max # of trees ####
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.008, 0.001), pred_in = c(7:20), resp_in = 5) # Using only until 0.007 because algorithm can't find a converged solution in all iterations for lr > 0.008
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.008, 0.001), pred_in = c(7:20), resp_in = 5) # Using only until 0.008 because algorithm can't find a converged solution in all iterations for lr > 0.008
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n =1) # BEST TEST AUC
 
