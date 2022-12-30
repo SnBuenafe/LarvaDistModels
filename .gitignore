@@ -52,3 +52,8 @@ Data/Climatology/newfreq/
 Data/Climatology/selectyears/
 Data/Climatology/temporary/
 Data/Climatology/remapped
+Data/Climatology/sf/
+Output/CSV/
+Output/Models/
+Output/Test/
+Output/Train/
