@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load YFT data
-source("04a_ALBData.R")
+source("04a_ALB_Data.R")
 
 ##########################
 ## Additional predictors ##
@@ -21,7 +21,7 @@ print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
 ALB_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.009
+                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.01
 )
 saveRDS(ALB_model2, "Output/Models/ALB_model2.rds")
 

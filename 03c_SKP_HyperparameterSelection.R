@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load YFT data
-source("03a_SKPData.R")
+source("03a_SKP_Data.R")
 
 #### Grid search with a max # of trees ####
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:20), resp_in = 5)

@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load ALB data
-source("04a_ALBData.R")
+source("04a_ALB_Data.R")
 
 ###########################################################################
 ## Model 2: Best test AUC (original predictors) ##
@@ -73,7 +73,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 2: Original predictors with best test AUC (AUC: 0.89)")
+  plot_annotation("Model 2: Original predictors with best test AUC (AUC: 0.88)")
 
 ggsave(plot = ggseasons, filename = "Figures/ALB/ALB_model2.png", width = 27, height = 15, dpi = 600)
 

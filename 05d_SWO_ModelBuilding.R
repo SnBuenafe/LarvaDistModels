@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load SWO data
-source("05a_SWOData.R")
+source("05a_SWO_Data.R")
 
 ###########################################################################
 ## Model 2: Best test AUC (additional predictors) ##

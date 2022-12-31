@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load dfs
-source("05a_SWOData.R")
+source("05a_SWO_Data.R")
 
 #######################################################
 ## Model 1: Restricted plots (Additional predictors) ##
