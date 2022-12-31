@@ -1,31 +1,24 @@
+# DESCRIPTION: Plotting potential models for LESC
+
 ###########################
 ## Load preliminaries ##
 ###########################
-# Load LESC Data
+# Load LESC data
 source("13a_LESCData.R")
 
-#######################################################
-## Model 1: Restricted plots (Additional predictors) ##
-#######################################################
+###########################################################################
+## Model 3: Reasonable AUC without overfitting ##
+###########################################################################
+# Load the model 2
+LESC_model3 <- readRDS("Output/Models/LESC_model3.rds")
 
-LESC_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
-                               gbm.y = 5, family = "bernoulli", n.folds = 5)
-saveRDS(LESC_model1, "Output/Models/LESC_model1.rds") # save the model
-#LESC_model1 <- readRDS("Output/Models/LESC_model1.rds") # load the model
+# What are the min and max latitudes?
+min(LESC_build$latitude)
+max(LESC_build$latitude)
 
-summary(LESC_model1) # get the relative importance of each of the predictors
-
-# AUCs
-LESC_model1$self.statistics$discrimination # Training AUC Score
-LESC_model1$cv.statistics$discrimination.mean # Validation AUC Score
-
-##### Plotting ##### 
 train_tmp <- train %>% 
-  dplyr::mutate(model = LESC_model1$fitted)
-preds <- gbm::predict.gbm(LESC_model1, test, n.trees = LESC_model1$gbm.call$best.trees, type = "response") # predict to test
-
-dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
-.roc(test$abundance_presence, preds) # Get testing AUC
+  dplyr::mutate(model = LESC_model3$fitted)
+preds <- gbm::predict.gbm(LESC_model3, test, n.trees = LESC_model3$gbm.call$best.trees, type = "response") # predict to test
 
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
@@ -35,8 +28,8 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jan-mar", # season
                         LESC_predict_season1 %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)), # rest of the ocean cells
-                        LESC_model1, # BRT model
-                        `grid_LESC_jan-mar` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season
+                        LESC_model3, # BRT model
+                        `grid_LESC_jan-mar` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 ggseason1 <- plotModel(gg[[1]]) + # Plot the model
@@ -47,8 +40,8 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "apr-jun", # season
                         LESC_predict_season2 %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)), # rest of the ocean cells
-                        LESC_model1, # BRT model
-                        `grid_LESC_apr-jun` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season
+                        LESC_model3, # BRT model
+                        `grid_LESC_apr-jun` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude))# grid of species for specific season
 )
 
 ggseason2 <- plotModel(gg[[1]]) + # Plot the model
@@ -59,7 +52,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jul-sept", # season
                         LESC_predict_season3 %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)), # rest of the ocean cells
-                        LESC_model1, # BRT model
+                        LESC_model3, # BRT model
                         `grid_LESC_jul-sept` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season
 )
 
@@ -71,16 +64,34 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "oct-dec", # season
                         LESC_predict_season4 %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)), # rest of the ocean cells
-                        LESC_model1, # BRT model
-                        `grid_LESC_oct-dec` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season
+                        LESC_model3, # BRT model
+                        `grid_LESC_oct-dec` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude))# grid of species for specific season
 )
 
 ggseason4 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("October-December")
 
-#### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 1: Additional Predictors (AUC: 0.80)")
+  plot_annotation("Model 3: Reasonable AUC without overfitting (AUC: 0.80)")
 
-ggsave(plot = ggseasons, filename = "Figures/LESC/LESC_model1.png", width = 27, height = 15, dpi = 600)
+ggsave(plot = ggseasons, filename = "Figures/LESC/LESC_model3.png", width = 27, height = 15, dpi = 600)
+
+#### Plot relative importance of variables ####
+rel_imp <- summary(LESC_model3)
+
+ggrel <- ggplot(data = rel_imp, aes(x = reorder(var, rel.inf), y = rel.inf)) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(expand = c(0,0)) +
+  coord_flip() +
+  theme_classic()
+
+ggsave(plot = ggrel, filename = "Figures/LESC/LESC_model3_RelImportance.png", width = 7, height = 5, dpi = 300)
+
+#### Plot test vs predictors ####
+pdf(file = "Figures/LESC/LESC_model3_PredictorsTrain.pdf", width = 10, height = 8)
+gbm.plot.fits(LESC_model3)
+dev.off()
+
+ggpredictors <- plotPredictors(test_tmp)
+ggsave(filename = "Figures/LESC/LESC_model3_PredictorsTest.pdf", plot = ggpredictors, width = 12, height = 8, dpi = 300)
