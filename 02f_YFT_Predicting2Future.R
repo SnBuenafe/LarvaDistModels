@@ -3,7 +3,7 @@
 # Use the Best Test AUC model (complete predictors)
 
 # Load the model 13
-YFT_model12 <- readRDS("Output/Models/YFT_model12.rds")
+YFT_model13 <- readRDS("Output/Models/YFT_model13.rds")
 
 # What are the min and max latitudes?
 min(YFT_build$latitude)
@@ -49,8 +49,8 @@ YFT_predict_season4 <- YFT_ds4 %>% dplyr::filter(is.na(abundance)) %>%
 # Plotting
 
 train_tmp <- train %>% 
-  dplyr::mutate(model = YFT_model12$fitted)
-preds <- gbm::predict.gbm(YFT_model12, test, n.trees = YFT_model12$gbm.call$best.trees, type = "response") # predict to test
+  dplyr::mutate(model = YFT_model13$fitted)
+preds <- gbm::predict.gbm(YFT_model13, test, n.trees = YFT_model13$gbm.call$best.trees, type = "response") # predict to test
 
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
@@ -60,7 +60,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jan-mar", # season
                         YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
@@ -72,7 +72,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "apr-jun", # season
                         YFT_predict_season2 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_apr-jun` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))# grid of species for specific season
 )
 
@@ -84,7 +84,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jul-sept", # season
                         YFT_predict_season3 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_jul-sept` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season
 )
 
@@ -96,7 +96,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "oct-dec", # season
                         YFT_predict_season4 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_oct-dec` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))# grid of species for specific season
 )
 
@@ -105,9 +105,9 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 12 (Present: 2017-2026)")
+  plot_annotation("Model 13 (Present: 2017-2026)")
 
-ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model12_Present.png", width = 27, height = 15, dpi = 600)
+ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_model13_Present.png", width = 27, height = 15, dpi = 600)
 
 #### For 2046-2055 ####
 YFT_ds1 <- read_csv("Output/CSV/YFT_midCentury_jan-mar.csv", show_col_types = FALSE)
@@ -149,8 +149,8 @@ YFT_predict_season4 <- YFT_ds4 %>% dplyr::filter(is.na(abundance)) %>%
 # Plotting
 
 train_tmp <- train %>% 
-  dplyr::mutate(model = YFT_model12$fitted)
-preds <- gbm::predict.gbm(YFT_model12, test, n.trees = YFT_model12$gbm.call$best.trees, type = "response") # predict to test
+  dplyr::mutate(model = YFT_model13$fitted)
+preds <- gbm::predict.gbm(YFT_model13, test, n.trees = YFT_model13$gbm.call$best.trees, type = "response") # predict to test
 
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
@@ -160,7 +160,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jan-mar", # season
                         YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
@@ -172,7 +172,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "apr-jun", # season
                         YFT_predict_season2 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_apr-jun` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))# grid of species for specific season
 )
 
@@ -184,7 +184,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jul-sept", # season
                         YFT_predict_season3 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_jul-sept` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season
 )
 
@@ -196,7 +196,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "oct-dec", # season
                         YFT_predict_season4 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_oct-dec` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))# grid of species for specific season
 )
 
@@ -205,9 +205,9 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 12 (Mid-century: 2046-2055)")
+  plot_annotation("Model 13 (Mid-century: 2046-2055)")
 
-ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model12_MidCentury.png", width = 27, height = 15, dpi = 600)
+ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_model13_MidCentury.png", width = 27, height = 15, dpi = 600)
 
 #### For 2091-2100 ####
 YFT_ds1 <- read_csv("Output/CSV/YFT_endCentury_jan-mar.csv", show_col_types = FALSE)
@@ -249,8 +249,8 @@ YFT_predict_season4 <- YFT_ds4 %>% dplyr::filter(is.na(abundance)) %>%
 # Plotting
 
 train_tmp <- train %>% 
-  dplyr::mutate(model = YFT_model12$fitted)
-preds <- gbm::predict.gbm(YFT_model12, test, n.trees = YFT_model12$gbm.call$best.trees, type = "response") # predict to test
+  dplyr::mutate(model = YFT_model13$fitted)
+preds <- gbm::predict.gbm(YFT_model13, test, n.trees = YFT_model13$gbm.call$best.trees, type = "response") # predict to test
 
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
@@ -260,7 +260,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jan-mar", # season
                         YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
@@ -272,7 +272,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "apr-jun", # season
                         YFT_predict_season2 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_apr-jun` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))# grid of species for specific season
 )
 
@@ -284,7 +284,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "jul-sept", # season
                         YFT_predict_season3 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_jul-sept` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season
 )
 
@@ -296,7 +296,7 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         test_tmp, # testing object with model column (predictions)
                         "oct-dec", # season
                         YFT_predict_season4 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
+                        YFT_model13, # BRT model
                         `grid_YFT_oct-dec` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))# grid of species for specific season
 )
 
@@ -305,6 +305,6 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 12 (End-of-the-century: 2091-2100)")
+  plot_annotation("Model 13 (End-of-the-century: 2091-2100)")
 
-ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model12_EndCentury.png", width = 27, height = 15, dpi = 600)
+ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_model13_EndCentury.png", width = 27, height = 15, dpi = 600)

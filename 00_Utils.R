@@ -408,6 +408,7 @@ CVgridSearch <- function(test, train, tc, bf, lr, pred_in, resp_in) {
                                  bag.fraction = bf[b],
                                  family = "bernoulli",
                                  n.folds = 5, # Use a 5-fold cross-validation
+                                 n.trees = 10
                                  )
         
         # Populate the grid tibble

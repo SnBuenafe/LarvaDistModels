@@ -25,7 +25,7 @@ print(CVGrid %>% dplyr::filter(tree_complexity == 3) %>% dplyr::arrange(train_te
 
 YFT_model6 <- dismo::gbm.step(data = train, gbm.x = c(7:13, 19:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 3, bag.fraction = 0.75, learning.rate = 0.01
+                              tree.complexity = 3, bag.fraction = 0.5, learning.rate = 0.007
                               )
 summary(YFT_model6) # get the relative importance of each of the predictors
 
@@ -45,7 +45,7 @@ print(CVGrid %>% dplyr::filter(tree_complexity == 2) %>% dplyr::arrange(train_te
 
 YFT_model7 <- dismo::gbm.step(data = train, gbm.x = c(7:13, 19:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.009
+                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.008
 )
 saveRDS(YFT_model7, "Output/Models/YFT_model7.rds") # save this model
 summary(YFT_model7) # get the relative importance of each of the predictors
@@ -66,7 +66,7 @@ print(CVGrid %>% dplyr::filter(tree_complexity == 2 & learning_rate == 0.01) %>%
 
 YFT_model8 <- dismo::gbm.step(data = train, gbm.x = c(7:13, 19:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.01
+                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.01
 )
 summary(YFT_model8) # get the relative importance of each of the predictors
 
@@ -85,7 +85,7 @@ dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 
 YFT_model9 <- dismo::gbm.step(data = train, gbm.x = c(7:13, 19:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 3, bag.fraction = 0.5, learning.rate = 0.009
+                              tree.complexity = 3, bag.fraction = 0.75, learning.rate = 0.01
 )
 summary(YFT_model9) # get the relative importance of each of the predictors
 
@@ -105,7 +105,7 @@ print(CVGrid %>% dplyr::filter(tree_complexity == 2) %>% dplyr::arrange(desc(tes
 
 YFT_model10 <- dismo::gbm.step(data = train, gbm.x = c(7:13, 19:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.005
+                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.007
 )
 saveRDS(YFT_model10, "Output/Models/YFT_model10.rds") # save this model
 
@@ -125,7 +125,7 @@ dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 ###################
 YFT_model11 <- dismo::gbm.step(data = train, gbm.x = c(7:13, 19:20),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.008
+                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.006
 )
 
 summary(YFT_model11) # get the relative importance of each of the predictors
@@ -156,7 +156,7 @@ print(CVGrid %>% dplyr::arrange(train_test_diff)) # LEAST OVERFIT
 
 YFT_model12 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.008
+                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.01
 )
 saveRDS(YFT_model12, "Output/Models/YFT_model12.rds") # save this model
 
@@ -179,7 +179,7 @@ print(CVGrid %>% dplyr::filter(tree_complexity == 2) %>% dplyr::arrange(train_te
 
 YFT_model13 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.006
+                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.005
 )
 saveRDS(YFT_model13, "Output/Models/YFT_model13.rds") # save this model
 
@@ -200,7 +200,7 @@ dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 
 YFT_model14 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.01
+                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.005
 )
 
 summary(YFT_model14) # get the relative importance of each of the predictors

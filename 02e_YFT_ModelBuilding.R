@@ -73,7 +73,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 7: Original predictors with moderate complexity (AUC: 0.79)")
+  plot_annotation("Model 7: Original predictors with moderate complexity (AUC: 0.81)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model7.png", width = 27, height = 15, dpi = 600)
 
@@ -144,7 +144,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 10: Original predictors with best test AUC (AUC: 0.79)")
+  plot_annotation("Model 10: Original predictors with best test AUC (AUC: 0.81)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model10.png", width = 27, height = 15, dpi = 600)
 
@@ -215,7 +215,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 12: Additional predictors with moderate complexity (AUC: 0.79)")
+  plot_annotation("Model 12: Additional predictors with moderate complexity (AUC: 0.82)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model12.png", width = 27, height = 15, dpi = 600)
 
@@ -305,6 +305,6 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 13: Additional predictors; least overfit (AUC: 0.79)")
+  plot_annotation("Model 13: Additional predictors; least overfit (AUC: 0.82)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model13.png", width = 27, height = 15, dpi = 600)
