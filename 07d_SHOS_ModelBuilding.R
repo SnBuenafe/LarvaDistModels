@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load SHOS data
-source("07a_SHOSData.R")
+source("07a_SHOS_Data.R")
 
 ###########################################################################
 ## Model 2: Best test AUC (additional predictors) ##
@@ -73,7 +73,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 2: Additional predictors with best test AUC (AUC: 0.83)")
+  plot_annotation("Model 2: Additional predictors with best test AUC (AUC: 0.84)")
 
 ggsave(plot = ggseasons, filename = "Figures/SHOS/SHOS_model2.png", width = 27, height = 15, dpi = 600)
 
