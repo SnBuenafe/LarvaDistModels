@@ -34,9 +34,9 @@ test_tmp <- test %>%
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "jan-mar", # season
-                        SKP_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
+                        SKP_predict_season1 %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)), # rest of the ocean cells
                         SKP_model1, # BRT model
-                        `grid_SKP_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season
+                        `grid_SKP_jan-mar` %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)) # grid of species for specific season
 )
 
 ggseason1 <- plotModel(gg[[1]]) + # Plot the model
@@ -46,9 +46,9 @@ ggseason1 <- plotModel(gg[[1]]) + # Plot the model
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "apr-jun", # season
-                        SKP_predict_season2 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
+                        SKP_predict_season2 %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)), # rest of the ocean cells
                         SKP_model1, # BRT model
-                        `grid_SKP_apr-jun` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season
+                        `grid_SKP_apr-jun` %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)) # grid of species for specific season
 )
 
 ggseason2 <- plotModel(gg[[1]]) + # Plot the model
@@ -58,9 +58,9 @@ ggseason2 <- plotModel(gg[[1]]) + # Plot the model
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "jul-sept", # season
-                        SKP_predict_season3 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
+                        SKP_predict_season3 %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)), # rest of the ocean cells
                         SKP_model1, # BRT model
-                        `grid_SKP_jul-sept` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season
+                        `grid_SKP_jul-sept` %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)) # grid of species for specific season
 )
 
 ggseason3 <- plotModel(gg[[1]]) + # Plot the model
@@ -70,9 +70,9 @@ ggseason3 <- plotModel(gg[[1]]) + # Plot the model
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "oct-dec", # season
-                        SKP_predict_season4 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
+                        SKP_predict_season4 %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)), # rest of the ocean cells
                         SKP_model1, # BRT model
-                        `grid_SKP_oct-dec` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season
+                        `grid_SKP_oct-dec` %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)) # grid of species for specific season
 )
 
 ggseason4 <- plotModel(gg[[1]]) + # Plot the model
