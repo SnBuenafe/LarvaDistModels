@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load FRI data
-source("08a_FRIData.R")
+source("08a_FRI_Data.R")
 
 ###########################################################################
 ## Model 2: Best test AUC (additional predictors) ##
@@ -73,7 +73,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 2: Additional predictors with best test AUC (AUC: 0.92)")
+  plot_annotation("Model 2: Additional predictors with best test AUC (AUC: 0.89)")
 
 ggsave(plot = ggseasons, filename = "Figures/FRI/FRI_model2.png", width = 27, height = 15, dpi = 600)
 
