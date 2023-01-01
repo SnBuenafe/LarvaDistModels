@@ -2,7 +2,7 @@
 ## Load preliminaries ##
 ###########################
 # Load STRM Data
-source("10a_STRMData.R")
+source("10a_STRM_Data.R")
 
 #######################################################
 ## Model 1: Restricted plots (Additional predictors) ##

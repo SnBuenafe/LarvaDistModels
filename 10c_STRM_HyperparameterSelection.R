@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load YFT data
-source("010a_STRMData.R")
+source("10a_STRM_Data.R")
 
 #### Grid search with a max # of trees ####
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:20), resp_in = 5)
@@ -18,7 +18,7 @@ print(CVGrid %>% dplyr::arrange(train_test_diff)) # Least overfitting, but diffe
 
 STRM_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.009
+                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.009
 )
 saveRDS(STRM_model2, "Output/Models/STRM_model2.rds")
 
@@ -39,7 +39,7 @@ dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 
 STRM_model3 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.005
+                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.007
 )
 saveRDS(STRM_model3, "Output/Models/STRM_model3.rds")
 
@@ -60,7 +60,7 @@ dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 
 STRM_model4 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.008
+                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.009
 )
 saveRDS(STRM_model4, "Output/Models/STRM_model4.rds")
 

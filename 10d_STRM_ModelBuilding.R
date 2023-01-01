@@ -4,12 +4,12 @@
 ## Load preliminaries ##
 ###########################
 # Load STRM data
-source("10a_STRMData.R")
+source("10a_STRM_Data.R")
 
 ###########################################################################
 ## Model 4: Less overfitting with considerable AUC ##
 ###########################################################################
-# Load the model 2
+# Load the model 4
 STRM_model4 <- readRDS("Output/Models/STRM_model4.rds")
 
 # What are the min and max latitudes?
