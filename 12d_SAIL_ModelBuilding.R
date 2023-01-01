@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load SAIL data
-source("12a_SAILData.R")
+source("12a_SAIL_Data.R")
 
 ###########################################################################
 ## Model 2: Best test AUC ##
@@ -73,7 +73,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
-  plot_annotation("Model 2: Best Test AUC (AUC: 0.89)")
+  plot_annotation("Model 2: Best Test AUC (AUC: 0.86)")
 
 ggsave(plot = ggseasons, filename = "Figures/SAIL/SAIL_model2.png", width = 27, height = 15, dpi = 600)
 
