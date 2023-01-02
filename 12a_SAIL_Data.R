@@ -14,7 +14,7 @@ for(s in 1:length(seasons)) {
   assign(paste("grid", "SAIL", seasons[s], sep = "_"), gridded)
 }
 
-# Load yellowfin tuna datasets
+# Load sailfish datasets
 SAIL_ds1 <- read_csv("Output/CSV/SAIL_historical_jan-mar.csv", show_col_types = FALSE)
 SAIL_ds2 <- read_csv("Output/CSV/SAIL_historical_apr-jun.csv", show_col_types = FALSE)
 SAIL_ds3 <- read_csv("Output/CSV/SAIL_historical_jul-sept.csv", show_col_types = FALSE)

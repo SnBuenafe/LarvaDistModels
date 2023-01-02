@@ -14,7 +14,7 @@ for(s in 1:length(seasons)) {
   assign(paste("grid", "STRM", seasons[s], sep = "_"), gridded)
 }
 
-# Load yellowfin tuna datasets
+# Load striped marlin datasets
 STRM_ds1 <- read_csv("Output/CSV/STRM_historical_jan-mar.csv", show_col_types = FALSE)
 STRM_ds2 <- read_csv("Output/CSV/STRM_historical_apr-jun.csv", show_col_types = FALSE)
 STRM_ds3 <- read_csv("Output/CSV/STRM_historical_jul-sept.csv", show_col_types = FALSE)

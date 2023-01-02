@@ -14,7 +14,7 @@ for(s in 1:length(seasons)) {
   assign(paste("grid", "BET", seasons[s], sep = "_"), gridded)
 }
 
-# Load BETgate tuna datasets
+# Load bigeye tuna datasets
 BET_ds1 <- read_csv("Output/CSV/BET_historical_jan-mar.csv", show_col_types = FALSE)
 BET_ds2 <- read_csv("Output/CSV/BET_historical_apr-jun.csv", show_col_types = FALSE)
 BET_ds3 <- read_csv("Output/CSV/BET_historical_jul-sept.csv", show_col_types = FALSE)

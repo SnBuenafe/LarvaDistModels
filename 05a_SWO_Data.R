@@ -14,7 +14,7 @@ for(s in 1:length(seasons)) {
   assign(paste("grid", "SWO", seasons[s], sep = "_"), gridded)
 }
 
-# Load skipjack tuna datasets
+# Load swordfish datasets
 SWO_ds1 <- read_csv("Output/CSV/SWO_historical_jan-mar.csv", show_col_types = FALSE)
 SWO_ds2 <- read_csv("Output/CSV/SWO_historical_apr-jun.csv", show_col_types = FALSE)
 SWO_ds3 <- read_csv("Output/CSV/SWO_historical_jul-sept.csv", show_col_types = FALSE)

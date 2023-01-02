@@ -14,7 +14,7 @@ for(s in 1:length(seasons)) {
   assign(paste("grid", "SBFT", seasons[s], sep = "_"), gridded)
 }
 
-# Load southern bluefin tuna tuna datasets
+# Load southern bluefin tuna datasets
 SBFT_ds1 <- read_csv("Output/CSV/SBFT_historical_jan-mar.csv", show_col_types = FALSE)
 SBFT_ds2 <- read_csv("Output/CSV/SBFT_historical_apr-jun.csv", show_col_types = FALSE)
 SBFT_ds3 <- read_csv("Output/CSV/SBFT_historical_jul-sept.csv", show_col_types = FALSE)

@@ -14,7 +14,7 @@ for(s in 1:length(seasons)) {
   assign(paste("grid", "LESC", seasons[s], sep = "_"), gridded)
 }
 
-# Load yellowfin tuna datasets
+# Load longfin escolar datasets
 LESC_ds1 <- read_csv("Output/CSV/LESC_historical_jan-mar.csv", show_col_types = FALSE)
 LESC_ds2 <- read_csv("Output/CSV/LESC_historical_apr-jun.csv", show_col_types = FALSE)
 LESC_ds3 <- read_csv("Output/CSV/LESC_historical_jul-sept.csv", show_col_types = FALSE)
