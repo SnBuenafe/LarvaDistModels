@@ -17,7 +17,7 @@ print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n =1 ) # BEST TEST AUC
 
 BFT_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.007
+                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.006
 )
 saveRDS(BFT_model2, "Output/Models/BFT_model2.rds")
 
