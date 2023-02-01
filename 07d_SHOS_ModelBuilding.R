@@ -35,6 +35,9 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
 ggseason1 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("January-March")
 
+ggsquish1 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
+  ggtitle("January-March")
+
 #### April-June
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
@@ -45,6 +48,9 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
 )
 
 ggseason2 <- plotModel(gg[[1]]) + # Plot the model
+  ggtitle("April-June")
+
+ggsquish2 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
   ggtitle("April-June")
 
 #### July-September
@@ -59,6 +65,9 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
 ggseason3 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("July-September")
 
+ggsquish3 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
+  ggtitle("July-September")
+
 #### October-December
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
@@ -71,11 +80,19 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
 ggseason4 <- plotModel(gg[[1]]) + # Plot the model
   ggtitle("October-December")
 
+ggsquish4 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
+  ggtitle("October-December")
+
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
   plot_layout(guides = "collect") +
   plot_annotation("Model 2: Additional predictors with best test AUC (AUC: 0.84)")
 
 ggsave(plot = ggseasons, filename = "Figures/SHOS/SHOS_model2.png", width = 27, height = 15, dpi = 600)
+
+ggsquished <- (ggsquish1 + ggsquish2) / (ggsquish3 + ggsquish4) +
+  plot_annotation("Best model (squished); AUC: 0.84")
+
+ggsave(plot = ggsquished, filename = "Figures/SHOS/SHOS_model2_squished.png", width = 27, height = 15, dpi = 600)
 
 #### Plot relative importance of variables ####
 rel_imp <- summary(SHOS_model2)
