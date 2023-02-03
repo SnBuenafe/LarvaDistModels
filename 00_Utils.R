@@ -22,7 +22,7 @@ landmass <- rnaturalearth::ne_countries(scale = "medium") %>%
   sf::st_transform(crs = moll)
 
 # Load worldwide ocean
-oceans <- rnaturalearth::ne_download(scale = "medium", category = "physical", type = "geography_marine_polys", returnclass = "sf") %>% 
+oceans <- sf::read_sf("Data/ne_50m_geography_marine_polys/ne_50m_geography_marine_polys.shp") %>% 
   dplyr::filter(label %in% c("ARCTIC OCEAN", 'SOUTHERN OCEAN', "NORTH ATLANTIC OCEAN", "NORTH PACIFIC OCEAN",
                              "SOUTH PACIFIC OCEAN", "INDIAN OCEAN", "SOUTH ATLANTIC OCEAN")) %>% 
   dplyr::select(label) %>% 
@@ -504,4 +504,64 @@ plotPredictors <- function(test_tmp) {
     (depth | coast | plot_spacer() | plot_spacer())
   
   return(ggpredictors)
+}
+
+# Plot squished model results
+# Plot the model
+plotSquishedModel <- function(sf#, 
+                      # abundance
+) {
+  # palette = brewer.pal(9, "YlGnBu")
+  ggmodel <- ggplot() + 
+    geom_sf(data = sf, aes(fill = model, color = model), size = 0.1) +
+    # scale_fill_gradientn(name = "Probabilities",
+    #                     colors = palette,
+    #                     aesthetics = c("fill"),
+    #                       limits = c(0, 1),
+    #                     na.value = NA
+    # ) +
+    scale_fill_cmocean("Probabilities",
+                       name = "deep",
+                       aesthetics = c("fill", "color"),
+                       direction = -1, 
+                       limits = c(0, as.numeric(quantile(sf$model, 0.99))),
+                       na.value = NA,
+                       oob = scales::squish) +
+    geom_sf(data = landmass, fill = "gray92", color = NA, size = 0.01) +
+    # geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +
+    # scale_fill_manual(name = "",
+    #                   aesthetics = c("color"),
+    #                   values = c("#67DBDB", "#143875"),
+    #                   labels = c("Recorded presence", "Recorded absence", ""),
+    #                   na.value = NA) +
+    xlab("Longitude") +
+    ylab("Latitude") +
+    theme_bw()
+  
+  return(ggmodel)
+}
+
+# Crop the predictor data to just 50N-50S
+crop_predictor <- function(x) {
+  # Get coordinates
+  coord <- sf::st_centroid(x) %>% 
+    sf::st_coordinates()
+  
+  x %<>%
+    dplyr::mutate(longitude = coord[cellID, "X"],
+                  latitude = coord[cellID, "Y"]) %>% 
+    dplyr::filter((latitude < 5821011) & (latitude > -5821011))
+}
+
+# Adding text annotations to plot
+gg_add_text <- function(x, color = "black") {
+  list(annotate("text", x=15000000, y=1234041, label= "Western\n Pacific Ocean", size = 5, color = color),
+       annotate("text", x=-11483937, y=1234041, label= "Eastern\n Pacific Ocean", size = 5, color = color),
+       annotate("text", x=-3474813, y=1234041, label= "Atlantic Ocean", size = 4.5, color = color),
+       annotate("text", x=7942430, y=-1234041, label= "Indian Ocean", size = 5, color = color),
+       theme(legend.position = "bottom",
+             axis.title = element_blank(),
+             legend.text = element_text(size = 12),
+             legend.title = element_text(size = 18),
+             panel.border = element_blank()))
 }
