@@ -215,34 +215,25 @@ calculateDist2Coast <- function(grid) {
 ##########
 
 # Plot the model
-plotModel <- function(sf#, 
-                     # abundance
-                      ) {
-  # palette = brewer.pal(9, "YlGnBu")
+plotModel <- function(sf) {
   ggmodel <- ggplot() + 
-    geom_sf(data = sf, aes(fill = model, color = model), size = 0.1) +
-    # scale_fill_gradientn(name = "Probabilities",
-    #                     colors = palette,
-    #                     aesthetics = c("fill"),
-    #                       limits = c(0, 1),
-    #                     na.value = NA
-    # ) +
-    scale_fill_cmocean("Probabilities",
-                       name = "deep",
-                       aesthetics = c("fill", "color"),
+    geom_sf(data = sf, aes(fill = model), color = NA, size = 0.1) +
+    scale_fill_cmocean(name = "ice",
+                       aesthetics = c("fill"),
                        direction = -1, 
                        limits = c(0, 1),
-                       na.value = NA) +
-    geom_sf(data = landmass, fill = "gray92", color = NA, size = 0.01) +
-    # geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +
-    # scale_fill_manual(name = "",
-    #                   aesthetics = c("color"),
-    #                   values = c("#67DBDB", "#143875"),
-    #                   labels = c("Recorded presence", "Recorded absence", ""),
-    #                   na.value = NA) +
+                       na.value = NA,
+                       guide = guide_colourbar(
+                         title.hjust = -1,
+                         barheight = grid::unit(0.01, "npc"),
+                         barwidth = grid::unit(0.25, "npc"),
+                         frame.colour = "black")) +
+    geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
+    labs(fill = "Probability ") +
     xlab("Longitude") +
     ylab("Latitude") +
-    theme_bw()
+    theme_bw() +
+    gg_add_text()
   
   return(ggmodel)
 }
@@ -513,21 +504,19 @@ plotSquishedModel <- function(sf#,
 ) {
   # palette = brewer.pal(9, "YlGnBu")
   ggmodel <- ggplot() + 
-    geom_sf(data = sf, aes(fill = model, color = model), size = 0.1) +
-    # scale_fill_gradientn(name = "Probabilities",
-    #                     colors = palette,
-    #                     aesthetics = c("fill"),
-    #                       limits = c(0, 1),
-    #                     na.value = NA
-    # ) +
+    geom_sf(data = sf, aes(fill = model), color = NA, size = 0.1) +
     scale_fill_cmocean("Probabilities",
-                       name = "deep",
-                       aesthetics = c("fill", "color"),
+                       name = "ice",
                        direction = -1, 
                        limits = c(0, as.numeric(quantile(sf$model, 0.99))),
                        na.value = NA,
-                       oob = scales::squish) +
-    geom_sf(data = landmass, fill = "gray92", color = NA, size = 0.01) +
+                       oob = scales::squish,
+                       guide = guide_colourbar(
+                         title.vjust = 0.5,
+                         barheight = grid::unit(0.01, "npc"),
+                         barwidth = grid::unit(0.25, "npc"),
+                         frame.colour = "black")) +
+    geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
     # geom_sf(data = abundance, aes(color = as.factor(abundance_presence)), size = 0.5) +
     # scale_fill_manual(name = "",
     #                   aesthetics = c("color"),
@@ -536,7 +525,8 @@ plotSquishedModel <- function(sf#,
     #                   na.value = NA) +
     xlab("Longitude") +
     ylab("Latitude") +
-    theme_bw()
+    theme_bw() +
+    gg_add_text()
   
   return(ggmodel)
 }
