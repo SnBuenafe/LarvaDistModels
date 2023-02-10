@@ -545,7 +545,8 @@ crop_predictor <- function(x) {
 
 # Adding text annotations to plot
 gg_add_text <- function(x, color = "black") {
-  list(annotate("text", x=15000000, y=1234041, label= "Western\n Pacific Ocean", size = 5, color = color),
+  list(annotate("text", x=15000000, y=1600000, label= "Western\n Pacific Ocean", size = 5, color = color),
+       #annotate("text", x=15000000, y=1234041, label= "Western\n Pacific Ocean", size = 5, color = color), (for all except habitat suitability maps)
        annotate("text", x=-11483937, y=1234041, label= "Eastern\n Pacific Ocean", size = 5, color = color),
        annotate("text", x=-3474813, y=1234041, label= "Atlantic Ocean", size = 4.5, color = color),
        annotate("text", x=7942430, y=-1234041, label= "Indian Ocean", size = 5, color = color),
