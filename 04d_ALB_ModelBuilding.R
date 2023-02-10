@@ -32,11 +32,9 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_ALB_jan-mar` %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
-ggseason1 <- plotModel(gg[[1]]) + # Plot the model
-  ggtitle("January-March")
+ggseason1 <- plotModel(gg[[1]]) # Plot the model
 
-ggsquish1 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
-  ggtitle("January-March")
+ggsquish1 <- plotSquishedModel(gg[[1]]) # Plot the squished model
 
 #### April-June
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
@@ -47,11 +45,9 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_ALB_apr-jun` %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude))# grid of species for specific season
 )
 
-ggseason2 <- plotModel(gg[[1]]) + # Plot the model
-  ggtitle("April-June")
+ggseason2 <- plotModel(gg[[1]]) # Plot the model
 
-ggsquish2 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
-  ggtitle("April-June")
+ggsquish2 <- plotSquishedModel(gg[[1]]) # Plot the squished model
 
 #### July-September
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
@@ -62,11 +58,9 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_ALB_jul-sept` %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude)) # grid of species for specific season
 )
 
-ggseason3 <- plotModel(gg[[1]]) + # Plot the model
-  ggtitle("July-September")
+ggseason3 <- plotModel(gg[[1]]) # Plot the model
 
-ggsquish3 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
-  ggtitle("July-September")
+ggsquish3 <- plotSquishedModel(gg[[1]]) # Plot the squished model
 
 #### October-December
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
@@ -77,20 +71,19 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_ALB_oct-dec` %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude))# grid of species for specific season
 )
 
-ggseason4 <- plotModel(gg[[1]]) + # Plot the model
-  ggtitle("October-December")
+ggseason4 <- plotModel(gg[[1]]) # Plot the model
 
-ggsquish4 <- plotSquishedModel(gg[[1]]) + # Plot the squished model
-  ggtitle("October-December")
+ggsquish4 <- plotSquishedModel(gg[[1]]) # Plot the squished model
 
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
-  plot_annotation("Model 2: Original predictors with best test AUC (AUC: 0.88)")
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
 
 ggsave(plot = ggseasons, filename = "Figures/ALB/ALB_model2.png", width = 27, height = 15, dpi = 600)
 
 ggsquished <- (ggsquish1 + ggsquish2) / (ggsquish3 + ggsquish4) +
-  plot_annotation("Best model (squished); AUC: 0.88")
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
 
 ggsave(plot = ggsquished, filename = "Figures/ALB/ALB_model2_squished.png", width = 27, height = 15, dpi = 600)
 
