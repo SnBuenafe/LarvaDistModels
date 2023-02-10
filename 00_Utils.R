@@ -505,7 +505,7 @@ plotSquishedModel <- function(sf#,
   # palette = brewer.pal(9, "YlGnBu")
   ggmodel <- ggplot() + 
     geom_sf(data = sf, aes(fill = model), color = NA, size = 0.1) +
-    scale_fill_cmocean("Probabilities",
+    scale_fill_cmocean("Probability ",
                        name = "ice",
                        direction = -1, 
                        limits = c(0, as.numeric(quantile(sf$model, 0.99))),
