@@ -1,17 +1,4 @@
 # Description: Using PCA to determine hotspots for January-March
-source("00_Utils.R")
-
-#### Creating dummy sf object for PCA ####
-dummy <- plotSeasonPredict(train_tmp,
-                           test_tmp,
-                           "jan-mar", # season
-                           YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)),
-                           YFT_model12, # BRT model
-                           `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))
-)
-
-dummy <- dummy[[1]] %>% 
-  dplyr::select(-ocean, -model)
 
 #### Prepare components for data frame ####
 # ---- YFT ----
@@ -328,7 +315,18 @@ PC_scores <- PCA$scores[,1:2] %>%
 write.csv(PC_scores, file = "Output/PCA/hotspots_jan-mar_scores.csv")
 write.csv(PCA$loadings, file = "Output/PCA/hotspots_jan-mar_loadings.csv")
 
-dummy %<>% cbind(., PC_scores)
+# Creating dummy sf for PCA
+dummy <- plotSeasonPredict(train_tmp,
+                           test_tmp,
+                           "jan-mar", # season
+                           YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)),
+                           YFT_model12, # BRT model
+                           `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))
+)
+
+dummy <- dummy[[1]] %>% 
+  dplyr::select(-ocean, -model) %>% 
+  cbind(., PC_scores)
 
 # Plot PC1
 pc1 <- ggplot() + 
