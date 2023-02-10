@@ -1,4 +1,4 @@
-# Description: Using PCA to determine hotspots for January-March
+# Description: Using PCA to determine hotspots for July-September
 
 #### Prepare components for data frame ####
 # ---- YFT ----
