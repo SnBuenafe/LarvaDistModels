@@ -13,11 +13,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 yft <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                        YFT_model12, # BRT model
-                        `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season with restricted ranges
+                         test_tmp, # testing object with model column (predictions)
+                         "jan-mar", # season
+                         YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
+                         YFT_model12, # BRT model
+                         `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 yft <- yft[[1]] %>% 
@@ -38,11 +38,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 skp <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        SKP_predict_season1 %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)), # rest of the ocean cells
-                        SKP_model2, # BRT model
-                        `grid_SKP_jan-mar` %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)) # grid of species for specific season with restricted ranges
+                         test_tmp, # testing object with model column (predictions)
+                         "jan-mar", # season
+                         SKP_predict_season1 %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)), # rest of the ocean cells
+                         SKP_model2, # BRT model
+                         `grid_SKP_jan-mar` %>% dplyr::filter(latitude >= min(SKP_build$latitude) & latitude <= max(SKP_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 skp <- skp[[1]] %>% 
@@ -63,11 +63,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 alb <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        ALB_predict_season1 %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude)), # rest of the ocean cells
-                        ALB_model2, # BRT model
-                        `grid_ALB_jan-mar` %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude)) # grid of species for specific season with restricted ranges
+                         test_tmp, # testing object with model column (predictions)
+                         "jan-mar", # season
+                         ALB_predict_season1 %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude)), # rest of the ocean cells
+                         ALB_model2, # BRT model
+                         `grid_ALB_jan-mar` %>% dplyr::filter(latitude >= min(ALB_build$latitude) & latitude <= max(ALB_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 alb <- alb[[1]] %>% 
@@ -88,11 +88,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 swo <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        SWO_predict_season1 %>% dplyr::filter(latitude >= min(SWO_build$latitude) & latitude <= max(SWO_build$latitude)), # rest of the ocean cells
-                        SWO_model2, # BRT model
-                        `grid_SWO_jan-mar` %>% dplyr::filter(latitude >= min(SWO_build$latitude) & latitude <= max(SWO_build$latitude)) # grid of species for specific season with restricted ranges
+                         test_tmp, # testing object with model column (predictions)
+                         "jan-mar", # season
+                         SWO_predict_season1 %>% dplyr::filter(latitude >= min(SWO_build$latitude) & latitude <= max(SWO_build$latitude)), # rest of the ocean cells
+                         SWO_model2, # BRT model
+                         `grid_SWO_jan-mar` %>% dplyr::filter(latitude >= min(SWO_build$latitude) & latitude <= max(SWO_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 swo <- swo[[1]] %>% 
@@ -113,11 +113,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 blum <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        BLUM_predict_season1 %>% dplyr::filter(latitude >= min(BLUM_build$latitude) & latitude <= max(BLUM_build$latitude)), # rest of the ocean cells
-                        BLUM_model2, # BRT model
-                        `grid_BLUM_jan-mar` %>% dplyr::filter(latitude >= min(BLUM_build$latitude) & latitude <= max(BLUM_build$latitude)) # grid of species for specific season with restricted ranges
+                          test_tmp, # testing object with model column (predictions)
+                          "jan-mar", # season
+                          BLUM_predict_season1 %>% dplyr::filter(latitude >= min(BLUM_build$latitude) & latitude <= max(BLUM_build$latitude)), # rest of the ocean cells
+                          BLUM_model2, # BRT model
+                          `grid_BLUM_jan-mar` %>% dplyr::filter(latitude >= min(BLUM_build$latitude) & latitude <= max(BLUM_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 blum <- blum[[1]] %>% 
@@ -138,11 +138,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 shos <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        SHOS_predict_season1 %>% dplyr::filter(latitude >= min(SHOS_build$latitude) & latitude <= max(SHOS_build$latitude)), # rest of the ocean cells
-                        SHOS_model2, # BRT model
-                        `grid_SHOS_jan-mar` %>% dplyr::filter(latitude >= min(SHOS_build$latitude) & latitude <= max(SHOS_build$latitude)) # grid of species for specific season with restricted ranges
+                          test_tmp, # testing object with model column (predictions)
+                          "jan-mar", # season
+                          SHOS_predict_season1 %>% dplyr::filter(latitude >= min(SHOS_build$latitude) & latitude <= max(SHOS_build$latitude)), # rest of the ocean cells
+                          SHOS_model2, # BRT model
+                          `grid_SHOS_jan-mar` %>% dplyr::filter(latitude >= min(SHOS_build$latitude) & latitude <= max(SHOS_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 shos <- shos[[1]] %>% 
@@ -163,11 +163,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 fri <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        FRI_predict_season1 %>% dplyr::filter(latitude >= min(FRI_build$latitude) & latitude <= max(FRI_build$latitude)), # rest of the ocean cells
-                        FRI_model2, # BRT model
-                        `grid_FRI_jan-mar` %>% dplyr::filter(latitude >= min(FRI_build$latitude) & latitude <= max(FRI_build$latitude)) # grid of species for specific season with restricted ranges
+                         test_tmp, # testing object with model column (predictions)
+                         "jan-mar", # season
+                         FRI_predict_season1 %>% dplyr::filter(latitude >= min(FRI_build$latitude) & latitude <= max(FRI_build$latitude)), # rest of the ocean cells
+                         FRI_model2, # BRT model
+                         `grid_FRI_jan-mar` %>% dplyr::filter(latitude >= min(FRI_build$latitude) & latitude <= max(FRI_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 fri <- fri[[1]] %>% 
@@ -188,11 +188,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 bet <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        BET_predict_season1 %>% dplyr::filter(latitude >= min(BET_build$latitude) & latitude <= max(BET_build$latitude)), # rest of the ocean cells
-                        BET_model2, # BRT model
-                        `grid_BET_jan-mar` %>% dplyr::filter(latitude >= min(BET_build$latitude) & latitude <= max(BET_build$latitude)) # grid of species for specific season with restricted ranges
+                         test_tmp, # testing object with model column (predictions)
+                         "jan-mar", # season
+                         BET_predict_season1 %>% dplyr::filter(latitude >= min(BET_build$latitude) & latitude <= max(BET_build$latitude)), # rest of the ocean cells
+                         BET_model2, # BRT model
+                         `grid_BET_jan-mar` %>% dplyr::filter(latitude >= min(BET_build$latitude) & latitude <= max(BET_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 bet <- bet[[1]] %>% 
@@ -213,11 +213,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 strm <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        STRM_predict_season1 %>% dplyr::filter(latitude >= min(STRM_build$latitude) & latitude <= max(STRM_build$latitude)), # rest of the ocean cells
-                        STRM_model4, # BRT model
-                        `grid_STRM_jan-mar` %>% dplyr::filter(latitude >= min(STRM_build$latitude) & latitude <= max(STRM_build$latitude)) # grid of species for specific season with restricted ranges
+                          test_tmp, # testing object with model column (predictions)
+                          "jan-mar", # season
+                          STRM_predict_season1 %>% dplyr::filter(latitude >= min(STRM_build$latitude) & latitude <= max(STRM_build$latitude)), # rest of the ocean cells
+                          STRM_model4, # BRT model
+                          `grid_STRM_jan-mar` %>% dplyr::filter(latitude >= min(STRM_build$latitude) & latitude <= max(STRM_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 strm <- strm[[1]] %>% 
@@ -238,11 +238,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 sau <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        SAU_predict_season1 %>% dplyr::filter(latitude >= min(SAU_build$latitude) & latitude <= max(SAU_build$latitude)), # rest of the ocean cells
-                        SAU_model2, # BRT model
-                        `grid_SAU_jan-mar` %>% dplyr::filter(latitude >= min(SAU_build$latitude) & latitude <= max(SAU_build$latitude)) # grid of species for specific season with restricted ranges
+                         test_tmp, # testing object with model column (predictions)
+                         "jan-mar", # season
+                         SAU_predict_season1 %>% dplyr::filter(latitude >= min(SAU_build$latitude) & latitude <= max(SAU_build$latitude)), # rest of the ocean cells
+                         SAU_model2, # BRT model
+                         `grid_SAU_jan-mar` %>% dplyr::filter(latitude >= min(SAU_build$latitude) & latitude <= max(SAU_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 sau <- sau[[1]] %>% 
@@ -263,11 +263,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 sail <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        SAIL_predict_season1 %>% dplyr::filter(latitude >= min(SAIL_build$latitude) & latitude <= max(SAIL_build$latitude)), # rest of the ocean cells
-                        SAIL_model2, # BRT model
-                        `grid_SAIL_jan-mar` %>% dplyr::filter(latitude >= min(SAIL_build$latitude) & latitude <= max(SAIL_build$latitude)) # grid of species for specific season with restricted ranges
+                          test_tmp, # testing object with model column (predictions)
+                          "jan-mar", # season
+                          SAIL_predict_season1 %>% dplyr::filter(latitude >= min(SAIL_build$latitude) & latitude <= max(SAIL_build$latitude)), # rest of the ocean cells
+                          SAIL_model2, # BRT model
+                          `grid_SAIL_jan-mar` %>% dplyr::filter(latitude >= min(SAIL_build$latitude) & latitude <= max(SAIL_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 sail <- sail[[1]] %>% 
@@ -288,11 +288,11 @@ test_tmp <- test %>%
   dplyr::mutate(model = preds)
 
 lesc <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
-                        test_tmp, # testing object with model column (predictions)
-                        "jan-mar", # season
-                        LESC_predict_season1 %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)), # rest of the ocean cells
-                        LESC_model2, # BRT model
-                        `grid_LESC_jan-mar` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season with restricted ranges
+                          test_tmp, # testing object with model column (predictions)
+                          "jan-mar", # season
+                          LESC_predict_season1 %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)), # rest of the ocean cells
+                          LESC_model2, # BRT model
+                          `grid_LESC_jan-mar` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
 lesc <- lesc[[1]] %>% 
@@ -301,9 +301,23 @@ lesc <- lesc[[1]] %>%
   dplyr::select(model) %>% 
   pull()
 
-#### Set up the data frame ####
-df <- list(yft, skp, alb, swo, blum, shos, fri, bet, strm, sau, sail, lesc) %>% 
-  do.call(cbind, .)
+#### Assembling data frame ####
+
+df <- list(yft = yft, 
+           skp = skp, 
+           alb = alb, 
+           swo = swo, 
+           blum = blum, 
+           shos = shos, 
+           fri = fri, 
+           bet = bet, 
+           strm = strm, 
+           sau = sau, 
+           sail = sail, 
+           lesc = lesc) %>% 
+  do.call(bind_cols, .)
+
+write.csv(df, file = "Output/CSV/FULL_predictions_jan-mar.csv")
 
 #### Run PCA ####
 PCA <- princomp(df, cor = FALSE)
@@ -371,5 +385,47 @@ pc_plot <- (pc1 + pc2) +
   theme(plot.tag = element_text(size = 25))
 
 ggsave(plot = pc_plot, filename = "Figures/PC_plot_jan-mar.png", width = 27, height = 7.5, dpi = 300)
+
+#### Pearson's correlation ####
+
+file_path_test = "Figures/CorrMatrix_PC1_jan-mar.png"
+png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")
+
+mat <- dplyr::bind_cols(PC_scores$Comp.1, df) %>% 
+  dplyr::rename(Comp = `...1`) %>% 
+  dplyr::select(Comp, yft, skp, alb, fri, bet, swo, blum, shos, strm, sail, sau, lesc) %>% # reorder the columns
+  as.matrix()
+
+res <- rcorr(mat)
+
+corrplot(res$r, 
+         type = "upper", 
+         order = "original", 
+         tl.col = "white", 
+         # addCoef.col = "black", 
+         tl.srt = 45, 
+         insig = "blank", 
+         col = COL2('BrBG', 200))
+
+dev.off()
+
+file_path_test = "Figures/CorrMatrix_PC2_jan-mar.png"
+png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")
+
+mat <- dplyr::bind_cols(PC_scores$Comp.2, df) %>% 
+  dplyr::rename(Comp = `...1`) %>% 
+  dplyr::select(Comp, yft, skp, alb, fri, bet, swo, blum, shos, strm, sail, sau, lesc) %>% # reorder the columns
+  as.matrix()
+
+res <- rcorr(mat)
+
+corrplot(res$r, type = "lower", order = "original", 
+         tl.col = "white", 
+         #addCoef.col = "black", 
+         tl.srt = 45, 
+         insig = "blank", 
+         col = COL2('BrBG', 200))
+
+dev.off()
 
 rm(list=ls())  # free up environment

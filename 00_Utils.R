@@ -11,6 +11,8 @@ suppressPackageStartupMessages({
   library(dismo) # for boosted regression trees
   library(RColorBrewer)
   library(patchwork)
+  library(Hmisc)
+  library(corrplot)
 })
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"

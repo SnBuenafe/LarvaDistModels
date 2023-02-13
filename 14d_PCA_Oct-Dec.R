@@ -301,9 +301,23 @@ lesc <- lesc[[1]] %>%
   dplyr::select(model) %>% 
   pull()
 
-#### Set up the data frame ####
-df <- list(yft, skp, alb, swo, blum, shos, fri, bet, strm, sau, sail, lesc) %>% 
-  do.call(cbind, .)
+#### Assembling data frame ####
+
+df <- list(yft = yft, 
+           skp = skp, 
+           alb = alb, 
+           swo = swo, 
+           blum = blum, 
+           shos = shos, 
+           fri = fri, 
+           bet = bet, 
+           strm = strm, 
+           sau = sau, 
+           sail = sail, 
+           lesc = lesc) %>% 
+  do.call(bind_cols, .)
+
+write.csv(df, file = "Output/CSV/FULL_predictions_oct-dec.csv")
 
 #### Run PCA ####
 PCA <- princomp(df, cor = FALSE)
@@ -371,5 +385,47 @@ pc_plot <- (pc1 + pc2) +
   theme(plot.tag = element_text(size = 25))
 
 ggsave(plot = pc_plot, filename = "Figures/PC_plot_oct-dec.png", width = 27, height = 7.5, dpi = 300)
+
+#### Pearson's correlation ####
+
+file_path_test = "Figures/CorrMatrix_PC1_oct-dec.png"
+png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")
+
+mat <- dplyr::bind_cols(PC_scores$Comp.1, df) %>% 
+  dplyr::rename(Comp = `...1`) %>% 
+  dplyr::select(Comp, yft, skp, alb, fri, bet, swo, blum, shos, strm, sail, sau, lesc) %>% # reorder the columns
+  as.matrix()
+
+res <- rcorr(mat)
+
+corrplot(res$r, 
+         type = "upper", 
+         order = "original", 
+         tl.col = "white", 
+         # addCoef.col = "black", 
+         tl.srt = 45, 
+         insig = "blank", 
+         col = COL2('BrBG', 200))
+
+dev.off()
+
+file_path_test = "Figures/CorrMatrix_PC2_oct-dec.png"
+png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")
+
+mat <- dplyr::bind_cols(PC_scores$Comp.2, df) %>% 
+  dplyr::rename(Comp = `...1`) %>% 
+  dplyr::select(Comp, yft, skp, alb, fri, bet, swo, blum, shos, strm, sail, sau, lesc) %>% # reorder the columns
+  as.matrix()
+
+res <- rcorr(mat)
+
+corrplot(res$r, type = "lower", order = "original", 
+         tl.col = "white", 
+         #addCoef.col = "black", 
+         tl.srt = 45, 
+         insig = "blank", 
+         col = COL2('BrBG', 200))
+
+dev.off()
 
 rm(list=ls())  # free up environment
