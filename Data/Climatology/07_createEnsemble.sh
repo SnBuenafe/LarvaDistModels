@@ -21,9 +21,9 @@ mkdir ensemble
 files=($(ls ${indir}/*$var*$expt*$yearmin*$yearmax*$frequency*))
 echo ${files[@]}
 
-# if [[ "$ensopt" == "mean" ]]
-# 	then
-# 	cdo -ensmean $files "ensemble/${var}_${expt}_${yearmin}_${yearmax}_${frequency}_ensemble.nc"
-# else
-# 	cdo -ensmedian $files "ensemble/${var}_${expt}_${yearmin}_${yearmax}_${frequency}_ensemble.nc"
-# fi
+if [[ "$ensopt" == "mean" ]]
+	then
+	cdo -ensmean $files "ensemble/${var}_${expt}_${yearmin}_${yearmax}_${frequency}_ensemble.nc"
+else
+	cdo -ensmedian $files "ensemble/${var}_${expt}_${yearmin}_${yearmax}_${frequency}_ensemble.nc"
+fi
