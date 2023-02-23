@@ -36,7 +36,6 @@ for((i=0; i<=num_files-1; i++)); do
 	curr_file=${curr_files[i]}
 
 	# Remove extra grids
-	# Change directory
 	tmpname=${curr_file/$indir/$tmpdir} # Change directory
 	cdo -selgrid,$gridname $curr_file $tmpname
 
