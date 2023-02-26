@@ -16,7 +16,7 @@ colnames(train)
 
 # higher AUC better. A model with AUC values closer to 0 have more wrong predictions.
 # see: https://rspatial.org/raster/sdm/9_sdm_brt.html for interpreting results
-YFT_model0 <- dismo::gbm.step(data = train, gbm.x = c(9:20),
+YFT_model0 <- dismo::gbm.step(data = train, gbm.x = c(9:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5)
 saveRDS(YFT_model0, "Output/Models/YFT_model0.rds") # save the model
 #YFT_model0 <- readRDS("Output/Models/YFT_model0.rds") # load the model
@@ -90,8 +90,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
-  plot_annotation("Model 0: No geographical location (AUC: 0.74)")
+  plot_annotation("Model 0: No geographical location (AUC: 0.75)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model0.png", width = 27, height = 15, dpi = 600)
 
@@ -99,7 +98,7 @@ ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model0.png", width = 27, he
 ## Model 1: Oceans ##
 ###########################
 
-YFT_model1 <- dismo::gbm.step(data = train, gbm.x = c(6, 9:20),
+YFT_model1 <- dismo::gbm.step(data = train, gbm.x = c(6, 9:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5)
 saveRDS(YFT_model1, "Output/Models/YFT_model1.rds") # save the model
 #YFT_model1 <- readRDS("Output/Models/YFT_model1.rds") # load the model
@@ -171,15 +170,15 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
-  plot_annotation("Model 1: Ocean basins (AUC: 0.75)")
+  plot_annotation("Model 1: Ocean basins (AUC: 0.76)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model1.png", width = 27, height = 15, dpi = 600)
+
 ###########################
 ## Model 2: Longitude ##
 ###########################
 
-YFT_model2 <- dismo::gbm.step(data = train, gbm.x = c(7, 9:20),
+YFT_model2 <- dismo::gbm.step(data = train, gbm.x = c(7, 9:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5)
 saveRDS(YFT_model2, "Output/Models/YFT_model2.rds") # save the model
 #YFT_model2 <- readRDS("Output/Models/YFT_model2.rds") # load the model
@@ -251,8 +250,7 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
-  plot_annotation("Model 2: Longitude (AUC: 0.75)")
+  plot_annotation("Model 2: Longitude (AUC: 0.78)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model2.png", width = 27, height = 15, dpi = 600)
 
@@ -260,7 +258,7 @@ ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model2.png", width = 27, he
 ## Model 3: Latitude ##
 ###########################
 
-YFT_model3 <- dismo::gbm.step(data = train, gbm.x = c(8:20),
+YFT_model3 <- dismo::gbm.step(data = train, gbm.x = c(8:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5)
 saveRDS(YFT_model3, "Output/Models/YFT_model3.rds") # save the model
 #YFT_model3 <- readRDS("Output/Models/YFT_model3.rds") # load the model
@@ -332,7 +330,6 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
   plot_annotation("Model 3: Latitude (AUC: 0.76)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model3.png", width = 27, height = 15, dpi = 600)
@@ -340,7 +337,7 @@ ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model3.png", width = 27, he
 #####################################
 ## Model 4: Longitude and Latitude ##
 #####################################
-YFT_model4 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+YFT_model4 <- dismo::gbm.step(data = train, gbm.x = c(7:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5)
 saveRDS(YFT_model4, "Output/Models/YFT_model4.rds") # save the model
 #YFT_model4 <- readRDS("Output/Models/YFT_model4.rds") # load the model
@@ -412,7 +409,6 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
-  plot_annotation("Model 4: Longitude and Latitude (AUC: 0.77)")
+  plot_annotation("Model 4: Longitude and Latitude (AUC: 0.79)")
 
 ggsave(plot = ggseasons, filename = "Figures/YFT/YFT_Model4.png", width = 27, height = 15, dpi = 600)

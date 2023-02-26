@@ -1,4 +1,4 @@
-# DESCRIPTION: ALB Dataset
+# DESCRIPTION: Assembling albacore dataset
 
 # Load preliminaries
 source("00_Utils.R")

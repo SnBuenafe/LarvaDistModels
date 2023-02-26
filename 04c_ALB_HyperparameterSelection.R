@@ -11,7 +11,7 @@ source("04a_ALB_Data.R")
 ##########################
 
 #### Grid search with a max # of trees ####
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:20), resp_in = 5)
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:21, 23:24), resp_in = 5)
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
@@ -21,7 +21,7 @@ print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
 ALB_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.01
+                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.01
 )
 saveRDS(ALB_model2, "Output/Models/ALB_model2.rds")
 

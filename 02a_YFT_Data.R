@@ -1,4 +1,4 @@
-# DESCRIPTION: YFT Dataset
+# DESCRIPTION: Assembling yellowfin tuna dataset
 
 # Load preliminaries
 source("00_Utils.R")
@@ -36,7 +36,7 @@ YFT_build <- dplyr::bind_rows(YFT_ds1 %>% dplyr::filter(!is.na(abundance)),
 # We divide the data into train (training and validation) and test
 nrow(YFT_build) * 0.9 # = 11890
 
-set.seed(1234) # rerun this
+set.seed(1234)
 train <- slice_sample(YFT_build, n = 11890, replace = FALSE) # 90% training set
 saveRDS(train, "Output/Train/YFT_train.csv")
 test <- YFT_build[!YFT_build$row %in% train$row, ] # 10% testing set

@@ -13,6 +13,7 @@ suppressPackageStartupMessages({
   library(patchwork)
   library(Hmisc)
   library(corrplot)
+  library(VoCC)
 })
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
@@ -67,6 +68,25 @@ rs2sf <- function(rs) {
     dplyr::select(mean)
 
   return(fin)
+}
+
+# Convert spatial gradients to sf objects
+spat2sf <- function(rs) {
+  sf <- rs %>% 
+    terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm=FALSE) %>% # Convert to sf polygon
+    sf::st_as_sf()
+  sf::st_crs(sf) <- lonlat # set the CRS
+  
+  sf %<>% sf::st_transform(crs = moll) # then transform
+  
+  # Removing degree grids that wholly or partially intersect with the landmass object.
+  logi_Reg <- sf::st_centroid(sf) %>%
+    sf::st_intersects(landmass) %>%
+    lengths > 0 # Get logical vector instead of sparse geometry binary
+  
+  int <- sf[!logi_Reg, ]
+  
+  return(int)
 }
 
 # combine seasonal data.frames of species into one sf object
@@ -324,7 +344,7 @@ plotSeasonPredict <- function(train_tmp, test_tmp, season_name, predict_df, mode
 }
 
 # Joining predictors and response
-joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4os, nh4os, bathy, dist2coast, season = TRUE) {
+joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4os, nh4os, tf, sf, mesoscale, bathy, dist2coast, season = TRUE) {
   df <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
     dplyr::left_join(., phos, by = "cellID") %>% 
     dplyr::left_join(., chlos, by = "cellID") %>% 
@@ -333,14 +353,17 @@ joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4
     dplyr::left_join(., no3os, by = "cellID") %>% 
     dplyr::left_join(., po4os, by = "cellID") %>% 
     dplyr::left_join(., nh4os, by = "cellID") %>% 
+    dplyr::left_join(., tf, by = "cellID") %>% 
+    dplyr::left_join(., sf, by = "cellID") %>% 
+    dplyr::left_join(., mesoscale, by = "cellID") %>% 
     dplyr::left_join(., bathy, by = "cellID") %>% 
     dplyr::left_join(., dist2coast, by = "cellID") %>% 
     dplyr::left_join(grid, ., by = "cellID") # Join with species data
   
   if(isTRUE(season)) {
-    df %<>% dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, meanDepth, coastDistance, geometry) # arrange columns
+    df %<>% dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, thermal_front_transformed, salinity_front_transformed, eke, vel, meanDepth, coastDistance, geometry) # arrange columns
   } else {
-    df %<>% dplyr::select(cellID, species, abundance, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, meanDepth, coastDistance, geometry) # arrange columns
+    df %<>% dplyr::select(cellID, species, abundance, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, thermal_front_transformed, salinity_front_transformed, eke, vel, meanDepth, coastDistance, geometry) # arrange columns
   }
 
   

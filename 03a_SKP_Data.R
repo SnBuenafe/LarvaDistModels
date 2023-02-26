@@ -1,4 +1,4 @@
-# DESCRIPTION: SKP Dataset
+# DESCRIPTION: Assembling skipjack tuna dataset
 
 # Load preliminaries
 source("00_Utils.R")
