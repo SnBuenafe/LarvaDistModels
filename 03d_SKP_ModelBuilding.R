@@ -23,10 +23,6 @@ preds <- gbm::predict.gbm(SKP_model2, test, n.trees = SKP_model2$gbm.call$best.t
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
 
-# Find the limits we want to use for squished
-quantile(train_tmp$model, 0.99)
-quantile(test_tmp$model, 0.99)
-
 #### January-March
 gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
@@ -108,4 +104,4 @@ ggpredictors <- plotPredictors(train_tmp)
 ggsave(file = "Figures/SKP/SKP_model2_PredictorsTrain.png", plot = ggpredictors, width = 12, height = 8, dpi = 300)
 
 ggpredictors <- plotPredictors(test_tmp)
-ggsave(filename = "Figures/SKP/SKP_model2_PredictorsTest.pdf", plot = ggpredictors, width = 12, height = 8, dpi = 300)
+ggsave(filename = "Figures/SKP/SKP_model2_PredictorsTest.png", plot = ggpredictors, width = 12, height = 8, dpi = 300)

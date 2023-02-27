@@ -6,9 +6,9 @@
 # Load SWO data
 source("05a_SWO_Data.R")
 
-###########################################################################
-## Model 2: Best test AUC (additional predictors) ##
-###########################################################################
+############################
+## Model 2: Best test AUC ##
+############################
 # Load the model 2
 SWO_model2 <- readRDS("Output/Models/SWO_model2.rds")
 
@@ -99,10 +99,9 @@ ggrel <- ggplot(data = rel_imp, aes(x = reorder(var, rel.inf), y = rel.inf)) +
 ggsave(plot = ggrel, filename = "Figures/SWO/SWO_Model2_RelImportance.png", width = 7, height = 5, dpi = 300)
 
 #### Plot test vs predictors ####
-pdf(file = "Figures/SWO/SWO_model2_PredictorsTrain.pdf", width = 10, height = 8)
-gbm.plot.fits(SWO_model2)
-dev.off()
+ggpredictors <- plotPredictors(train_tmp)
+ggsave(file = "Figures/SWO/SWO_model2_PredictorsTrain.png", plot = ggpredictors, width = 12, height = 8, dpi = 300)
 
 ggpredictors <- plotPredictors(test_tmp)
-ggsave(filename = "Figures/SWO/SWO_model2_PredictorsTest.pdf", plot = ggpredictors, width = 12, height = 8, dpi = 300)
+ggsave(filename = "Figures/SWO/SWO_model2_PredictorsTest.png", plot = ggpredictors, width = 12, height = 8, dpi = 300)
 

@@ -1,4 +1,4 @@
-# DESCRIPTION: SHOS (shortbill spearfish) Dataset
+# DESCRIPTION: Assembling shortbill spearfish dataset
 
 # Load preliminaries
 source("00_Utils.R")

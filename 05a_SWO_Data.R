@@ -1,4 +1,4 @@
-# DESCRIPTION: SWO Dataset
+# DESCRIPTION: Assembling swordfish dataset
 
 # Load preliminaries
 source("00_Utils.R")

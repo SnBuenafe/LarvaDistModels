@@ -1,4 +1,4 @@
-# DESCRIPTION: BLUM (Blue Marlin) Dataset
+# DESCRIPTION: Assembling blue marlin Dataset
 
 # Load preliminaries
 source("00_Utils.R")

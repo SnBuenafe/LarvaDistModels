@@ -101,7 +101,7 @@ ggsave(plot = ggrel, filename = "Figures/ALB/ALB_Model2_RelImportance.png", widt
 
 #### Plot test vs predictors ####
 ggpredictors <- plotPredictors(train_tmp)
-ggsave(file = "Figures/ALB/ALB_Model2_PredictorsTrain.pdf", plot = ggpredictors, width = 12, height = 8, dpi = 300)
+ggsave(file = "Figures/ALB/ALB_Model2_PredictorsTrain.png", plot = ggpredictors, width = 12, height = 8, dpi = 300)
 
 ggpredictors <- plotPredictors(test_tmp)
-ggsave(filename = "Figures/ALB/ALB_model2_PredictorsTest.pdf", plot = ggpredictors, width = 12, height = 8, dpi = 300)
+ggsave(filename = "Figures/ALB/ALB_model2_PredictorsTest.png", plot = ggpredictors, width = 12, height = 8, dpi = 300)

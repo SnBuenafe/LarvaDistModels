@@ -11,7 +11,7 @@ source("05a_SWO_Data.R")
 ##########################
 
 #### Grid search with a max # of trees ####
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.009, 0.001), pred_in = c(7:20), resp_in = 5) # Using learning rates until 0.009 because anything > 0.009 will not allow the algorithm to converge on a result
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.009, 0.001), pred_in = c(7:21, 23:24), resp_in = 5) # Using learning rates until 0.009 because anything > 0.009 will not allow the algorithm to converge on a result
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
@@ -19,9 +19,9 @@ print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 ## Best test AUC ##
 ##########################
 
-SWO_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+SWO_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.007
+                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.008
 )
 saveRDS(SWO_model2, "Output/Models/SWO_model2.rds")
 

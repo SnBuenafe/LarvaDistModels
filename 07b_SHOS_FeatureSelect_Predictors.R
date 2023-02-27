@@ -6,11 +6,11 @@
 # Load dfs
 source("07a_SHOS_Data.R")
 
-#######################################################
-## Model 1: Restricted plots (Additional predictors) ##
-#######################################################
+###############################
+## Model 1: Restricted plots ##
+###############################
 
-SHOS_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+SHOS_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                                gbm.y = 5, family = "bernoulli", n.folds = 5)
 saveRDS(SHOS_model1, "Output/Models/SHOS_model1.rds") # save the model
 #SHOS_model1 <- readRDS("Output/Models/SHOS_model1.rds") # load the model
@@ -82,7 +82,6 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
   plot_annotation("Model 1: Additional Predictors (AUC: 0.82)")
 
 ggsave(plot = ggseasons, filename = "Figures/SHOS/SHOS_model1.png", width = 27, height = 15, dpi = 600)
