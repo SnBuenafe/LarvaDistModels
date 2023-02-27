@@ -1,4 +1,4 @@
-# DESCRIPTION: FRI (frigate tuna) Dataset
+# DESCRIPTION: Assembling frigate tuna dataset
 
 # Load preliminaries
 source("00_Utils.R")

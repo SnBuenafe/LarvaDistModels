@@ -7,18 +7,18 @@
 source("10a_STRM_Data.R")
 
 #### Grid search with a max # of trees ####
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:20), resp_in = 5)
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:21, 23:24), resp_in = 5)
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n =1) # BEST TEST AUC
 print(CVGrid %>% dplyr::arrange(train_test_diff)) # Least overfitting, but difference is still > 0.1
 
-##########################
+###################
 ## Best test AUC ##
-##########################
+###################
 
-STRM_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+STRM_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.009
+                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.007
 )
 saveRDS(STRM_model2, "Output/Models/STRM_model2.rds")
 
@@ -33,13 +33,13 @@ preds <- gbm::predict.gbm(STRM_model2, test, n.trees = STRM_model2$gbm.call$best
 dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 .roc(test$abundance_presence, preds) # Get testing AUC
 
-##########################
+########################
 ## Least overfitting ##
-##########################
+#######################
 
 STRM_model3 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.007
+                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.008
 )
 saveRDS(STRM_model3, "Output/Models/STRM_model3.rds")
 
@@ -58,9 +58,9 @@ dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 ## Less overfitting with considerable AUC ##
 ####################################################
 
-STRM_model4 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+STRM_model4 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.009
+                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.01
 )
 saveRDS(STRM_model4, "Output/Models/STRM_model4.rds")
 

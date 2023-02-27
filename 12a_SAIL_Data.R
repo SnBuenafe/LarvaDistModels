@@ -1,4 +1,4 @@
-# DESCRIPTION: SAIL Dataset
+# DESCRIPTION: Assembling sailfish dataset
 
 # Load preliminaries
 source("00_Utils.R")

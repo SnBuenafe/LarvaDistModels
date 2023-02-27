@@ -1,4 +1,4 @@
-# DESCRIPTION: LESC Dataset
+# DESCRIPTION: Assembling longfin escolar dataset
 
 # Load preliminaries
 source("00_Utils.R")

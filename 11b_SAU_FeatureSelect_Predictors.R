@@ -4,11 +4,11 @@
 # Load SAU Data
 source("11a_SAU_Data.R")
 
-#######################################################
-## Model 1: Restricted plots (Additional predictors) ##
-#######################################################
+###############################
+## Model 1: Restricted plots ##
+###############################
 
-SAU_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+SAU_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                                gbm.y = 5, family = "bernoulli", n.folds = 5)
 saveRDS(SAU_model1, "Output/Models/SAU_model1.rds") # save the model
 #SAU_model1 <- readRDS("Output/Models/SAU_model1.rds") # load the model
@@ -80,7 +80,6 @@ ggseason4 <- plotModel(gg[[1]]) + # Plot the model
 
 #### Arrange seasonal plots
 ggseasons <- (ggseason1 + ggseason2) / (ggseason3 + ggseason4) + 
-  plot_layout(guides = "collect") +
   plot_annotation("Model 1: Additional Predictors (AUC: 0.92)")
 
 ggsave(plot = ggseasons, filename = "Figures/SAU/SAU_model1.png", width = 27, height = 15, dpi = 600)

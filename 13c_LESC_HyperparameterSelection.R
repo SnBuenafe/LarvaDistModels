@@ -7,7 +7,7 @@
 source("13a_LESC_Data.R")
 
 #### Grid search with a max # of trees ####
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:20), resp_in = 5)
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:21, 23:24), resp_in = 5)
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n =1 ) # BEST TEST AUC
 print(CVGrid %>% dplyr::arrange(train_test_diff))
@@ -16,9 +16,9 @@ print(CVGrid %>% dplyr::arrange(train_test_diff))
 ## Best test AUC ##
 ##########################
 
-LESC_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+LESC_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.007
+                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.009
 )
 saveRDS(LESC_model2, "Output/Models/LESC_model2.rds")
 
@@ -34,12 +34,12 @@ dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 .roc(test$abundance_presence, preds) # Get testing AUC
 
 ###############################################
-## Reasonable AUC without overfitting ##
+## Least overfitting with reasonable AUC ##
 ###############################################
 
-LESC_model3 <- dismo::gbm.step(data = train, gbm.x = c(7:20),
+LESC_model3 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.008
+                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.006
 )
 saveRDS(LESC_model3, "Output/Models/LESC_model3.rds")
 

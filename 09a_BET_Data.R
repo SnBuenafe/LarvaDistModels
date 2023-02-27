@@ -1,4 +1,4 @@
-# DESCRIPTION: BET (bigeye tuna) Dataset
+# DESCRIPTION: Assembling bigeye tuna dataset
 
 # Load preliminaries
 source("00_Utils.R")

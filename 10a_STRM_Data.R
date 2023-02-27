@@ -1,4 +1,4 @@
-# DESCRIPTION: STRM Dataset
+# DESCRIPTION: Assembling striped marlin dataset
 
 # Load preliminaries
 source("00_Utils.R")

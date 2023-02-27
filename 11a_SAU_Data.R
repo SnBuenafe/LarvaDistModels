@@ -1,4 +1,4 @@
-# DESCRIPTION: SAU Dataset
+# DESCRIPTION: Assembling sauries dataset
 
 # Load preliminaries
 source("00_Utils.R")
