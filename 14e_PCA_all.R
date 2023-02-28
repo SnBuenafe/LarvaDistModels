@@ -1,4 +1,17 @@
-source("02a_YFT_Data.R") # load dummy data
+# Description: Plot all seasonal PC scores for components 1 and 2.
+
+
+# load dummy data
+source("02a_YFT_Data.R")
+
+YFT_model6 <- readRDS("Output/Models/YFT_model6.rds") # load model
+
+train_tmp <- train %>% 
+  dplyr::mutate(model = YFT_model6$fitted)
+preds <- gbm::predict.gbm(YFT_model6, test, n.trees = YFT_model6$gbm.call$best.trees, type = "response") # predict to test
+
+test_tmp <- test %>% 
+  dplyr::mutate(model = preds)
 
 # Function for plotting PC1
 plot_PC1 <- function(dummy) {
@@ -51,7 +64,7 @@ dummy <- plotSeasonPredict(train_tmp,
                            test_tmp,
                            "jan-mar", # season
                            YFT_predict_season1 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)),
-                           YFT_model12, # BRT model
+                           YFT_model6, # BRT model
                            `grid_YFT_jan-mar` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))
 )
 
@@ -74,7 +87,7 @@ dummy <- plotSeasonPredict(train_tmp,
                            test_tmp,
                            "apr-jun", # season
                            YFT_predict_season2 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)),
-                           YFT_model12, # BRT model
+                           YFT_model6, # BRT model
                            `grid_YFT_apr-jun` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))
 )
 
@@ -97,7 +110,7 @@ dummy <- plotSeasonPredict(train_tmp,
                            test_tmp,
                            "jul-sept", # season
                            YFT_predict_season3 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)),
-                           YFT_model12, # BRT model
+                           YFT_model6, # BRT model
                            `grid_YFT_jul-sept` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))
 )
 
@@ -120,7 +133,7 @@ dummy <- plotSeasonPredict(train_tmp,
                            test_tmp,
                            "oct-dec", # season
                            YFT_predict_season4 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)),
-                           YFT_model12, # BRT model
+                           YFT_model6, # BRT model
                            `grid_YFT_oct-dec` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))
 )
 

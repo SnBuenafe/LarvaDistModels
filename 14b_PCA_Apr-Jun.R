@@ -3,11 +3,11 @@
 #### Prepare components for data frame ####
 # ---- YFT ----
 source("02a_YFT_Data.R") # Load YFT data
-YFT_model12 <- readRDS("Output/Models/YFT_model12.rds") # load model
+YFT_model6 <- readRDS("Output/Models/YFT_model6.rds") # load model
 
 train_tmp <- train %>% 
-  dplyr::mutate(model = YFT_model12$fitted)
-preds <- gbm::predict.gbm(YFT_model12, test, n.trees = YFT_model12$gbm.call$best.trees, type = "response") # predict to test
+  dplyr::mutate(model = YFT_model6$fitted)
+preds <- gbm::predict.gbm(YFT_model6, test, n.trees = YFT_model6$gbm.call$best.trees, type = "response") # predict to test
 
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
@@ -16,7 +16,7 @@ yft <- plotSeasonPredict(train_tmp, # training object with model column (fitted 
                          test_tmp, # testing object with model column (predictions)
                          "apr-jun", # season
                          YFT_predict_season2 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)), # rest of the ocean cells
-                         YFT_model12, # BRT model
+                         YFT_model6, # BRT model
                          `grid_YFT_apr-jun` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
@@ -203,11 +203,11 @@ bet <- bet[[1]] %>%
 
 # ---- STRM ----
 source("10a_STRM_Data.R") # Load STRM data
-STRM_model4 <- readRDS("Output/Models/STRM_model4.rds") # load model
+STRM_model3 <- readRDS("Output/Models/STRM_model3.rds") # load model
 
 train_tmp <- train %>% 
-  dplyr::mutate(model = STRM_model4$fitted)
-preds <- gbm::predict.gbm(STRM_model4, test, n.trees = STRM_model4$gbm.call$best.trees, type = "response") # predict to test
+  dplyr::mutate(model = STRM_model3$fitted)
+preds <- gbm::predict.gbm(STRM_model3, test, n.trees = STRM_model3$gbm.call$best.trees, type = "response") # predict to test
 
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
@@ -216,7 +216,7 @@ strm <- plotSeasonPredict(train_tmp, # training object with model column (fitted
                           test_tmp, # testing object with model column (predictions)
                           "apr-jun", # season
                           STRM_predict_season2 %>% dplyr::filter(latitude >= min(STRM_build$latitude) & latitude <= max(STRM_build$latitude)), # rest of the ocean cells
-                          STRM_model4, # BRT model
+                          STRM_model3, # BRT model
                           `grid_STRM_apr-jun` %>% dplyr::filter(latitude >= min(STRM_build$latitude) & latitude <= max(STRM_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
@@ -278,11 +278,11 @@ sail <- sail[[1]] %>%
 
 # ---- LESC ----
 source("13a_LESC_Data.R") # Load LESC data
-LESC_model2 <- readRDS("Output/Models/LESC_model2.rds") # load model
+LESC_model3 <- readRDS("Output/Models/LESC_model3.rds") # load model
 
 train_tmp <- train %>% 
-  dplyr::mutate(model = LESC_model2$fitted)
-preds <- gbm::predict.gbm(LESC_model2, test, n.trees = LESC_model2$gbm.call$best.trees, type = "response") # predict to test
+  dplyr::mutate(model = LESC_model3$fitted)
+preds <- gbm::predict.gbm(LESC_model3, test, n.trees = LESC_model3$gbm.call$best.trees, type = "response") # predict to test
 
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
@@ -291,7 +291,7 @@ lesc <- plotSeasonPredict(train_tmp, # training object with model column (fitted
                           test_tmp, # testing object with model column (predictions)
                           "apr-jun", # season
                           LESC_predict_season2 %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)), # rest of the ocean cells
-                          LESC_model2, # BRT model
+                          LESC_model3, # BRT model
                           `grid_LESC_apr-jun` %>% dplyr::filter(latitude >= min(LESC_build$latitude) & latitude <= max(LESC_build$latitude)) # grid of species for specific season with restricted ranges
 )
 
@@ -334,7 +334,7 @@ dummy <- plotSeasonPredict(train_tmp,
                            test_tmp,
                            "apr-jun", # season
                            YFT_predict_season2 %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude)),
-                           YFT_model12, # BRT model
+                           YFT_model6, # BRT model
                            `grid_YFT_apr-jun` %>% dplyr::filter(latitude >= min(YFT_build$latitude) & latitude <= max(YFT_build$latitude))
 )
 
