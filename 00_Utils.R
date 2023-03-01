@@ -14,6 +14,8 @@ suppressPackageStartupMessages({
   library(Hmisc)
   library(corrplot)
   library(VoCC)
+  library(stars)
+  library(spatialplanr)
 })
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
