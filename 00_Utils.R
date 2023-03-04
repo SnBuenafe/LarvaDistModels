@@ -16,36 +16,52 @@ suppressPackageStartupMessages({
   library(VoCC)
   library(stars)
   library(spatialplanr)
+  library(ggpattern)
 })
+
+source("fSpatPlan_Convert2PacificCentered.R")
 
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 moll <- "+proj=moll +lon_0=0 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
+moll_pacific <- "+proj=moll +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 
 # Load worldwide landmass
 landmass <- rnaturalearth::ne_countries(scale = "medium") %>% 
   sf::st_as_sf(crs = lonlat) %>% 
-  sf::st_transform(crs = moll)
+  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific)
 
 # Load worldwide ocean
-oceans <- sf::read_sf("Data/ne_50m_geography_marine_polys/ne_50m_geography_marine_polys.shp") %>% 
-  dplyr::filter(label %in% c("ARCTIC OCEAN", 'SOUTHERN OCEAN', "NORTH ATLANTIC OCEAN", "NORTH PACIFIC OCEAN",
-                             "SOUTH PACIFIC OCEAN", "INDIAN OCEAN", "SOUTH ATLANTIC OCEAN")) %>% 
+oceans <- sf::read_sf("Data/ne_50m_geography_marine_polys/ne_50m_geography_marine_polys.shp") %>%
   dplyr::select(label) %>% 
   sf::st_as_sf(crs = lonlat) %>% 
-  sf::st_transform(crs = moll)
+  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific)
 
 # Establish the grid
-# Using the mollweide projection (moll)
-Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = "Global",
-                                             Type = NA)
-
+# Using the Mollweide projection (moll)
+Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = c(xmin = -40, xmax = 40, ymax = 85, ymin = -85),
+                                             cCRS = moll_pacific) 
+  
 grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
-                                                 landmass,
+                                                 oceans,
                                                  CellArea = 2500, # let's do half a degree? (~ 50 km x 50 km)
                                                  Shape = "square",
-                                                 inverse = FALSE)
+                                                 inverse = TRUE)
+
 tmp <- sf::st_nearest_feature(grid, oceans)
-grid %<>% dplyr::mutate(ocean = oceans$label[tmp[cellID]])
+grid %<>%
+  dplyr::mutate(ocean = oceans$label[tmp[cellID]]) %>% 
+  dplyr::filter(ocean %in% c('Andaman Sea', 'Arabian Sea', 'Arafura Sea', 'Banda Sea', 'Bay of Bengal', 
+                              'Bay of Plenty', 'Bering Sea', 'Bismarck Sea', 'Bo Hai', 'Bristol Bay',
+                             'Celebes Sea', 'Ceram Sea', 'Coral Sea', 'East China Sea', 
+                             'INDIAN OCEAN', 'Java Sea', 'Korea Strait', 'Laccadive Sea', 'Golfo de California',
+                             'Great Australian Bight', 'Gulf of Alaska', 'Gulf of Carpentaria', 'Gulf of Kutch',
+                             'Gulf of Mannar', 'Golfo de Panamá', 'Gulf of Thailand', 'Gulf of Tonkin',
+                             'Makassar Strait', 'Molucca Sea', 'Mozambique Channel', 'NORTH PACIFIC OCEAN',
+                             'Philippine Sea', 'Sea of Japan', 'Sea of Okhotsk', 'Shelikhova Gulf',
+                             'Solomon Sea', 'South China Sea', 'Strait of Singapore',
+                             'SOUTH PACIFIC OCEAN', 'Strait of Malacca',
+                             'Sulu Sea', 'Taiwan Strait', 'Tasman Sea', 'Timor Sea', 'Yellow Sea')) %>% 
+  dplyr::mutate(cellID = row_number())
 
 #### Helper functions ####
 
@@ -56,7 +72,7 @@ rs2sf <- function(rs) {
     sf::st_as_sf()
   sf::st_crs(sf) <- lonlat # set the CRS
   
-  sf %<>% sf::st_transform(crs = moll) # then transform
+  sf %<>% fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) # then transform
 
  # Removing degree grids that wholly or partially intersect with the landmass object.
   logi_Reg <- sf::st_centroid(sf) %>%
@@ -79,7 +95,7 @@ spat2sf <- function(rs) {
     sf::st_as_sf()
   sf::st_crs(sf) <- lonlat # set the CRS
   
-  sf %<>% sf::st_transform(crs = moll) # then transform
+  sf %<>% sf::st_transform(crs = moll_pacific) # then transform
   
   # Removing degree grids that wholly or partially intersect with the landmass object.
   logi_Reg <- sf::st_centroid(sf) %>%
@@ -257,7 +273,12 @@ plotModel <- function(sf) {
     xlab("Longitude") +
     ylab("Latitude") +
     theme_bw() +
-    gg_add_text()
+    theme(legend.position = "bottom",
+          axis.title = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.title = element_text(size = 18),
+          panel.border = element_blank()) +
+    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
   
   return(ggmodel)
 }
@@ -331,12 +352,12 @@ plotSeasonPredict <- function(train_tmp, test_tmp, season_name, predict_df, mode
   gg <- grid_season %>% 
     dplyr::bind_cols(., model = plot_model) %>% 
     dplyr::select(cellID, ocean, model, geometry) %>% 
-    sf::st_as_sf(sf_column_name = "geometry", crs = moll)
+    sf::st_as_sf(sf_column_name = "geometry")
   
   gg_abun <- grid_season %>%
     dplyr::mutate(abundance_presence = factor(case_when(abundance > 0 ~ 1,
                                                  abundance == 0 ~ 0), levels = c(1, 0))) %>% 
-    sf::st_as_sf(sf_column_name = "geometry", crs = moll) %>% 
+    sf::st_as_sf(sf_column_name = "geometry") %>% 
     sf::st_centroid() 
   
   results[[1]] <- gg
@@ -346,7 +367,7 @@ plotSeasonPredict <- function(train_tmp, test_tmp, season_name, predict_df, mode
 }
 
 # Joining predictors and response
-joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4os, nh4os, tf, sf, mesoscale, bathy, dist2coast, season = TRUE) {
+joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4os, nh4os, tf, sf, mesoscale, bathy, dist2coast, species, season = TRUE) {
   df <- dplyr::left_join(tos, o2os, by = "cellID") %>% 
     dplyr::left_join(., phos, by = "cellID") %>% 
     dplyr::left_join(., chlos, by = "cellID") %>% 
@@ -360,12 +381,13 @@ joinPredictors <- function(grid, tos, o2os, phos, chlos, sos, mlotst, no3os, po4
     dplyr::left_join(., mesoscale, by = "cellID") %>% 
     dplyr::left_join(., bathy, by = "cellID") %>% 
     dplyr::left_join(., dist2coast, by = "cellID") %>% 
+    dplyr::left_join(., species, by = "cellID") %>% 
     dplyr::left_join(grid, ., by = "cellID") # Join with species data
   
   if(isTRUE(season)) {
-    df %<>% dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, thermal_front_transformed, salinity_front_transformed, eke, vel, meanDepth, coastDistance, geometry) # arrange columns
+    df %<>% dplyr::select(cellID, species, abundance, season, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, thermal_front_transformed, salinity_front_transformed, eke, vel, meanDepth, coastDistance, Thunnus_albacares, Katsuwonus_pelamis, Thunnus_alalunga, Thunnus_obesus, Thunnus_atlanticus, Auxis_rochei, Auxis_thazard, Xiphias_gladius, Makaira_nigricans, Tetrapturus_angustirostris, Kajikia_audax, Kajikia_albida, Istiophorus_platypterus, Cololabis_saira, Cololabis_adocetus, Scomberesox_saurus, Scombrolabrax_heterolepis, geometry) # arrange columns
   } else {
-    df %<>% dplyr::select(cellID, species, abundance, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, thermal_front_transformed, salinity_front_transformed, eke, vel, meanDepth, coastDistance, geometry) # arrange columns
+    df %<>% dplyr::select(cellID, species, abundance, longitude, latitude, ocean, tos_transformed, o2os_transformed, phos_transformed, chlos_transformed, sos_transformed, mlotst_transformed, no3os_transformed, po4os_transformed, nh4os_transformed, thermal_front_transformed, salinity_front_transformed, eke, vel, meanDepth, coastDistance, Thunnus_albacares, Katsuwonus_pelamis, Thunnus_alalunga, Thunnus_obesus, Thunnus_atlanticus, Auxis_rochei, Auxis_thazard, Xiphias_gladius, Makaira_nigricans, Tetrapturus_angustirostris, Kajikia_audax, Kajikia_albida, Istiophorus_platypterus, Cololabis_saira, Cololabis_adocetus, Scomberesox_saurus, Scombrolabrax_heterolepis, geometry) # arrange columns
   }
 
   
@@ -526,12 +548,18 @@ plotPredictors <- function(test_tmp) {
 
 # Plot squished model results
 # Plot the model
-plotSquishedModel <- function(sf#, 
+plotSquishedModel <- function(sf, df 
                       # abundance
 ) {
+  # x <- sf %>% 
+  #   restrict_adult(df, .) %>% 
+  #   dplyr::filter(adult_cat == 0) %>% 
+  #   sf::st_union()
+  
   # palette = brewer.pal(9, "YlGnBu")
   ggmodel <- ggplot() + 
-    geom_sf(data = sf, aes(fill = model), color = NA, size = 0.1) +
+    geom_sf(data = sf, aes(fill = model),
+                               color = NA, size = 0.1) +
     scale_fill_cmocean("Probability ",
                        name = "ice",
                        direction = -1, 
@@ -553,7 +581,21 @@ plotSquishedModel <- function(sf#,
     xlab("Longitude") +
     ylab("Latitude") +
     theme_bw() +
-    gg_add_text()
+    theme(legend.position = "bottom",
+          axis.title = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.title = element_text(size = 18),
+          panel.border = element_blank()) +
+    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) # +
+    # geom_sf_pattern(data = x, 
+    #                 pattern = "stripe", 
+    #                 pattern_fill = "grey55", 
+    #                 pattern_color = "grey55", 
+    #                 fill = NA, 
+    #                 color = "grey55", 
+    #                 size = 0.5, 
+    #                 pattern_size = 0.5)
+
   
   return(ggmodel)
 }
@@ -571,15 +613,35 @@ crop_predictor <- function(x) {
 }
 
 # Adding text annotations to plot
-gg_add_text <- function(x, color = "black") {
-  list(annotate("text", x=15000000, y=1600000, label= "Western\n Pacific Ocean", size = 5, color = color),
+# gg_add_text <- function(x, color = "black") {
+ # list(#annotate("text", x=15000000, y=1600000, label= "Western\n Pacific Ocean", size = 5, color = color),
        #annotate("text", x=15000000, y=1234041, label= "Western\n Pacific Ocean", size = 5, color = color), (for all except habitat suitability maps)
-       annotate("text", x=-11483937, y=1234041, label= "Eastern\n Pacific Ocean", size = 5, color = color),
-       annotate("text", x=-3474813, y=1234041, label= "Atlantic Ocean", size = 4.5, color = color),
-       annotate("text", x=7942430, y=-1234041, label= "Indian Ocean", size = 5, color = color),
-       theme(legend.position = "bottom",
-             axis.title = element_blank(),
-             legend.text = element_text(size = 12),
-             legend.title = element_text(size = 18),
-             panel.border = element_blank()))
+       #annotate("text", x=-11483937, y=1234041, label= "Eastern\n Pacific Ocean", size = 5, color = color),
+       #annotate("text", x=-3474813, y=1234041, label= "Atlantic Ocean", size = 4.5, color = color),
+       #annotate("text", x=7942430, y=-1234041, label= "Indian Ocean", size = 5, color = color),
+#        theme(legend.position = "bottom",
+#              axis.title = element_blank(),
+#              legend.text = element_text(size = 12),
+#              legend.title = element_text(size = 18),
+#              panel.border = element_blank()),
+#        coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim))
+# }
+
+# Organizing data set for building model
+organize_build <- function(x) {
+  x %<>%
+    dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
+    dplyr::mutate(abundance_presence = case_when(abundance > 0 ~ 1,
+                                                 abundance == 0 ~ 0), 
+                  row = row_number()) %>%  # mutate the abundance data into 1s and 0s
+    dplyr::select(-geometry) %>% 
+    dplyr::select(row, cellID, species, abundance, abundance_presence, ocean, longitude, latitude, season, everything()) %>% # arrange columns
+    as.data.frame() #gbm.step doesn't work if it's a tibble...
+}
+
+# Organizing data set for predicting
+organize_predict <- function(x) {
+  x %<>%
+    dplyr::filter(is.na(abundance)) %>% 
+    organize_build()
 }

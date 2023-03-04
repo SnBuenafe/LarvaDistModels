@@ -3,74 +3,54 @@
 # Load preliminaries
 source("00_Utils.R")
 
+# Function to restrict adult distribution predictor to just yellowfin tunas
+restrict_predictor <- function(x){
+  x %<>%
+    dplyr::select(c(1:19, 21:23, 40)) %>%  # restrict the predictors
+    dplyr::mutate(Thunnus_albacares = ifelse(is.na(Thunnus_albacares), yes = 0, no = Thunnus_albacares)) # replace NAs of adult predictions to 0s
+}
+
 sf <- combineFish(species = "yellowfin-tuna") %>% 
-  sf::st_transform(crs = moll) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 for(s in 1:length(seasons)) {
-  gridded <- assembleGrid(grid, sf %>% dplyr::filter(season == seasons[s]))
+  gridded <- assembleGrid(grid, sf %>% dplyr::filter(season == seasons[s])) 
   
   assign(paste("grid", "YFT", seasons[s], sep = "_"), gridded)
 }
 
 # Load yellowfin tuna datasets
-YFT_ds1 <- read_csv("Output/CSV/YFT_historical_jan-mar.csv", show_col_types = FALSE)
-YFT_ds2 <- read_csv("Output/CSV/YFT_historical_apr-jun.csv", show_col_types = FALSE)
-YFT_ds3 <- read_csv("Output/CSV/YFT_historical_jul-sept.csv", show_col_types = FALSE)
-YFT_ds4 <- read_csv("Output/CSV/YFT_historical_oct-dec.csv", show_col_types = FALSE)
+YFT_ds1 <- read_csv("Output/CSV/YFT_historical_jan-mar.csv", show_col_types = FALSE)  %>% # January-March
+  restrict_predictor()
+
+YFT_ds2 <- read_csv("Output/CSV/YFT_historical_apr-jun.csv", show_col_types = FALSE)  %>% 
+  restrict_predictor()
+  
+YFT_ds3 <- read_csv("Output/CSV/YFT_historical_jul-sept.csv", show_col_types = FALSE)  %>% 
+  restrict_predictor()
+
+YFT_ds4 <- read_csv("Output/CSV/YFT_historical_oct-dec.csv", show_col_types = FALSE)  %>% 
+  restrict_predictor()
 
 # Build model with known data only
 YFT_build <- dplyr::bind_rows(YFT_ds1 %>% dplyr::filter(!is.na(abundance)),
                               YFT_ds2 %>% dplyr::filter(!is.na(abundance)),
                               YFT_ds3 %>% dplyr::filter(!is.na(abundance)),
                               YFT_ds4 %>% dplyr::filter(!is.na(abundance))) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::mutate(abundance_presence = case_when(abundance > 0 ~ 1,
-                                               abundance == 0 ~ 0), 
-                row = row_number()) %>%  # mutate the abundance data into 1s and 0s
-  dplyr::select(-geometry) %>% 
-  dplyr::select(row, cellID, species, abundance, abundance_presence, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
+  organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(YFT_build) * 0.9 # = 11890
+nrow(YFT_build) * 0.9 # = 11079
 
 set.seed(1234)
-train <- slice_sample(YFT_build, n = 11890, replace = FALSE) # 90% training set
-saveRDS(train, "Output/Train/YFT_train.csv")
+train <- slice_sample(YFT_build, n = 11079, replace = FALSE) # 90% training set
 test <- YFT_build[!YFT_build$row %in% train$row, ] # 10% testing set
-saveRDS(test, "Output/Test/YFT_test.csv")
 
-# Data.frame for predictions
-# January-March predictions
-YFT_predict_season1 <- YFT_ds1 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "jan-mar") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# April-June
-YFT_predict_season2 <- YFT_ds2 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "apr-jun") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# July-September
-YFT_predict_season3 <- YFT_ds3 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "jul-sept") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# October-December
-YFT_predict_season4 <- YFT_ds4 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "oct-dec") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
+# Prepare data frame for predictions
+YFT_predict_season1 <- organize_predict(YFT_ds1) # January-March
+YFT_predict_season2 <- organize_predict(YFT_ds2) # April -June
+YFT_predict_season3 <- organize_predict(YFT_ds3) # July-September
+YFT_predict_season4 <- organize_predict(YFT_ds4) # October-December
+  

@@ -20,6 +20,7 @@ SAU_model2 <- dismo::gbm.step(data = train, gbm.x = c(7:21, 23:24),
                                tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.005
 )
 saveRDS(SAU_model2, "Output/Models/SAU_model2.rds")
+#SAU_model2 <- readRDS("Output/Models/SAU_model2.rds")
 
 summary(SAU_model2) # get the relative importance of each of the predictors
 

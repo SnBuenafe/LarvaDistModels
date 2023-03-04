@@ -1,9 +1,9 @@
 # Load preliminaries
 source("00_Utils.R")
 
-####################
+#############
 # Fish data #
-####################
+#############
 species_code <- tibble::tribble(~species, ~code,
                                 "yellowfin-tuna", "YFT",
                                 "albacore", "ALB",
@@ -28,7 +28,7 @@ species_code <- tibble::tribble(~species, ~code,
 # Grid per season
 for(i in 1:nrow(species_code)) {
   sf <- combineFish(species = species_code$species[i]) %>% 
-    sf::st_transform(crs = moll) %>% 
+    fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
     sf::st_centroid() # transform into point data
   
   seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -69,6 +69,11 @@ dist2coast <- readRDS("Data/CoastDistance.rds") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(-geometry)
 
+# AquaMaps
+aqua <- readRDS("Data/AquaMaps_sf.rds") %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(-geometry)
+
 ###############################################################
 # Joining all predictor and response per fish species #
 ###############################################################
@@ -90,7 +95,8 @@ for(f in 1:nrow(species_code)) {
                          sf = eval(sym(paste("salinity_front_historical", seasons[s], sep = "_"))),
                          mesoscale = eval(sym(paste("mesoscale_features_historical", seasons[s], sep = "_"))),
                          bathy = bathy,
-                         dist2coast = dist2coast)
+                         dist2coast = dist2coast,
+                         species = aqua)
     
     write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_historical_", seasons[s], ".csv"))
   }

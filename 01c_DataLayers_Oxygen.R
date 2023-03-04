@@ -12,7 +12,7 @@ o2os <- rs2sf(o2os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "o2os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, o2os_transformed, geometry)
@@ -27,7 +27,7 @@ o2os <- rs2sf(o2os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "o2os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, o2os_transformed, geometry)
@@ -42,7 +42,7 @@ o2os <- rs2sf(o2os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "o2os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, o2os_transformed, geometry)
@@ -57,7 +57,7 @@ o2os <- rs2sf(o2os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "o2os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, o2os_transformed, geometry)
@@ -85,7 +85,12 @@ ox1 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = ox1, filename = "Figures/global_historical_oxygen_jan-mar.png", width = 15, height = 8, dpi = 300)
 
@@ -109,7 +114,12 @@ ox2 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = ox2, filename = "Figures/global_historical_oxygen_apr-jun.png", width = 15, height = 8, dpi = 300)
 
@@ -133,7 +143,12 @@ ox3 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = ox3, filename = "Figures/global_historical_oxygen_jul-sept.png", width = 15, height = 8, dpi = 300)
 
@@ -157,7 +172,12 @@ ox4 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = ox4, filename = "Figures/global_historical_oxygen_oct-dec.png", width = 15, height = 8, dpi = 300)
 

@@ -12,7 +12,7 @@ tos <- rs2sf(tos_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "tos") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, tos_transformed, geometry)  
@@ -27,7 +27,7 @@ tos <- rs2sf(tos_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "tos") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, tos_transformed, geometry)  
@@ -42,7 +42,7 @@ tos <- rs2sf(tos_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "tos") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, tos_transformed, geometry)  
@@ -57,7 +57,7 @@ tos <- rs2sf(tos_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "tos") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, tos_transformed, geometry)  
@@ -66,7 +66,7 @@ saveRDS(tos, "Data/Climatology/sf/tos_historical_oct-dec_interpolated.rds")
 #### Plotting ####
 
 # January-March
-dataTmp <- readRDS("Data/Climatology/sf/tos_historical_jan-mar_interpolated.rds") %>% 
+dataTmp <- tos %>% 
   sf::st_as_sf(sf_column_name = "geometry") %>% 
   crop_predictor()
 
@@ -85,7 +85,12 @@ tmp1 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression(''^"o"*'C')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = tmp1, filename = "Figures/global_historical_temp_jan-mar.png", width = 15, height = 8, dpi = 300)
 
@@ -109,7 +114,12 @@ tmp2 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression(''^"o"*'C')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = tmp2, filename = "Figures/global_historical_temp_apr-jun.png", width = 15, height = 8, dpi = 300)
 
@@ -133,7 +143,12 @@ tmp3 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression(''^"o"*'C')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = tmp3, filename = "Figures/global_historical_temp_jul-sept.png", width = 15, height = 8, dpi = 300)
 
@@ -157,7 +172,12 @@ tmp4 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression(''^"o"*'C')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = tmp4, filename = "Figures/global_historical_temp_oct-dec.png", width = 15, height = 8, dpi = 300)
 

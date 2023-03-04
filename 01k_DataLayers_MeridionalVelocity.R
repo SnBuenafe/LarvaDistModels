@@ -12,7 +12,7 @@ vo <- rs2sf(vo_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "vo") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, vo_transformed, geometry)
@@ -27,7 +27,7 @@ vo <- rs2sf(vo_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "vo") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, vo_transformed, geometry)
@@ -42,7 +42,7 @@ vo <- rs2sf(vo_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "vo") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, vo_transformed, geometry)
@@ -57,7 +57,7 @@ vo <- rs2sf(vo_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "vo") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, vo_transformed, geometry)
@@ -83,7 +83,12 @@ vo1 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vo1, filename = "Figures/global_historical_vo_jan-mar.png", width = 15, height = 8, dpi = 300)
 
@@ -105,7 +110,12 @@ vo2 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vo2, filename = "Figures/global_historical_vo_apr-jun.png", width = 15, height = 8, dpi = 300)
 
@@ -127,7 +137,12 @@ vo3 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vo3, filename = "Figures/global_historical_vo_jul-sept.png", width = 15, height = 8, dpi = 300)
 
@@ -149,7 +164,12 @@ vo4 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vo4, filename = "Figures/global_historical_vo_oct-dec.png", width = 15, height = 8, dpi = 300)
 

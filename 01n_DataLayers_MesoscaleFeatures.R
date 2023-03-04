@@ -71,7 +71,12 @@ eke1 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'^"2"*'s'^"-2"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = eke1, filename = "Figures/global_historical_eke_jan-mar.png", width = 15, height = 8, dpi = 300)
 
@@ -90,7 +95,12 @@ vel1 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'*' s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vel1, filename = "Figures/global_historical_vel_jan-mar.png", width = 15, height = 8, dpi = 300)
 
@@ -112,7 +122,12 @@ eke2 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'^"2"*'s'^"-2"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = eke2, filename = "Figures/global_historical_eke_apr-jun.png", width = 15, height = 8, dpi = 300)
 
@@ -131,7 +146,12 @@ vel2 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'*' s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vel2, filename = "Figures/global_historical_vel_apr-jun.png", width = 15, height = 8, dpi = 300)
 
@@ -152,8 +172,13 @@ eke3 <- ggplot() +
                          frame.colour = "black")) +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'^"2"*'s'^"-2"*'')) +
-  theme_bw() +
-  gg_add_text(., "white")
+  theme_bw()  +
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = eke3, filename = "Figures/global_historical_eke_jul-sept.png", width = 15, height = 8, dpi = 300)
 
@@ -172,7 +197,12 @@ vel3 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'*' s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vel3, filename = "Figures/global_historical_vel_jul-sept.png", width = 15, height = 8, dpi = 300)
 
@@ -194,7 +224,12 @@ eke4 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'^"2"*'s'^"-2"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = eke4, filename = "Figures/global_historical_eke_oct-dec.png", width = 15, height = 8, dpi = 300)
 
@@ -213,7 +248,12 @@ vel4 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m'*' s'^"-1"*'')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = vel4, filename = "Figures/global_historical_vel_oct-dec.png", width = 15, height = 8, dpi = 300)
 

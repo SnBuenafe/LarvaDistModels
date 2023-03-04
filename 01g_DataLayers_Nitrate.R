@@ -12,7 +12,7 @@ no3os <- rs2sf(no3os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "no3os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, no3os_transformed, geometry)
@@ -27,7 +27,7 @@ no3os <- rs2sf(no3os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "no3os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, no3os_transformed, geometry)
@@ -42,7 +42,7 @@ no3os <- rs2sf(no3os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "no3os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, no3os_transformed, geometry)
@@ -57,7 +57,7 @@ no3os <- rs2sf(no3os_rs) %>%
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   replaceNN(., grid, "no3os") %>%
   dplyr::as_tibble() %>% 
   dplyr::select(cellID, no3os_transformed, geometry)
@@ -83,7 +83,12 @@ nit1 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = nit1, filename = "Figures/global_historical_nitrate_jan-mar.png", width = 15, height = 8, dpi = 300)
 
@@ -105,7 +110,12 @@ nit2 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = nit2, filename = "Figures/global_historical_nitrate_apr-jun.png", width = 15, height = 8, dpi = 300)
 
@@ -127,7 +137,12 @@ nit3 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = nit3, filename = "Figures/global_historical_nitrate_jul-sept.png", width = 15, height = 8, dpi = 300)
 
@@ -149,7 +164,12 @@ nit4 <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('mol m'^"-3"*'')) +
   theme_bw() +
-  gg_add_text()
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = nit4, filename = "Figures/global_historical_nitrate_oct-dec.png", width = 15, height = 8, dpi = 300)
 
