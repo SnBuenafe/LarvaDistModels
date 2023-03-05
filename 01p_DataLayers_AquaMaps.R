@@ -68,11 +68,11 @@ PUextent <- grid %>% # Get the extent for AquaMaps from the Bndry extent
 ex_sf <- PUextent + c(-1, -1, 1, 1) # Pad the limits by 1 degree
 
 AquaMaps_sf <- SpatPlan_Crop_AQM(AquaMaps_sf, aqm, ex_sf) %>%
-  sf::st_transform(sf::st_crs(grid)) %>%  # Transform to PU units
+  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>%  # Transform to PU units
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll) %>% 
+  sf::st_as_sf(crs = moll_pacific) %>% 
   dplyr::select(-ocean)
 
 saveRDS(AquaMaps_sf, "Data/AquaMaps_sf.rds") # save file

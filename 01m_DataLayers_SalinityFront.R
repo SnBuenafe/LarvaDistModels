@@ -190,7 +190,7 @@ dataSalinity <- readRDS("Data/Climatology/sf/salinity_front_historical_oct-dec_i
 
 sf4 <- ggplot() +
   geom_sf(data = dataSalinity, aes(fill = salinity_front_transformed), color = NA, size = 0.01) +
-  scale_fill_gradientn(colors = brewer.pal(9, "PuBuGn"),
+  scale_fill_gradientn(colors = rev(brewer.pal(9, "PuBuGn")),
                        na.value = "grey64",
                        guide = guide_colourbar(
                          title.vjust = 0.5,

@@ -11,13 +11,16 @@ dist2coast <- calculateDist2Coast(grid) # distance to coast is calculated depend
 
 # Distance to coast
 dataCoast <- readRDS("Data/CoastDistance.rds") %>% 
-  crop_predictor()
+  dplyr::as_tibble() %>% 
+  dplyr::select(-geometry) %>% 
+  dplyr::left_join(., grid) %>% 
+  sf::st_as_sf(crs = moll_pacific)
 
 ggCoast <- ggplot() +
-  geom_sf(data = dataCoast, aes(color = coastDistance/1000), size = 0.2) +
-  scale_color_cmocean(name = "deep",
+  geom_sf(data = dataCoast, aes(fill = coastDistance/1000), color = NA, size = 0.2) +
+  scale_fill_cmocean(name = "deep",
                       #   alpha = 1,
-                      aesthetics = c("color"),
+                      aesthetics = c("fill"),
                       direction = -1,
                       na.value = "grey64",
                       guide = guide_colourbar(
@@ -26,15 +29,19 @@ ggCoast <- ggplot() +
                         barwidth = grid::unit(0.25, "npc"),
                         frame.colour = "black")) +
   geom_sf(data = landmass, fill = "white", color = "white") +
-  labs(color = expression('km')) +
+  labs(fill = expression('km')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = ggCoast, filename = "Figures/global_coast.png", width = 15, height = 8, dpi = 300)
 
 # Bathymetry
-dataBathy <- readRDS("Data/GEBCO/gebco2500.rds") %>% 
-  crop_predictor()
+dataBathy <- readRDS("Data/GEBCO/gebco2500.rds")
 
 ggBathy <- ggplot() +
   geom_sf(data = dataBathy, aes(fill = meanDepth), color = NA, size = 0.2) +
@@ -51,6 +58,11 @@ ggBathy <- ggplot() +
   geom_sf(data = landmass, fill = "black", color = "black") +
   labs(fill = expression('m')) +
   theme_bw() +
-  gg_add_text(., "white")
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 18),
+        panel.border = element_blank()) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
 ggsave(plot = ggBathy, filename = "Figures/global_bathy.png", width = 15, height = 8, dpi = 300)

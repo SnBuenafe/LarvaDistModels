@@ -72,6 +72,7 @@ dist2coast <- readRDS("Data/CoastDistance.rds") %>%
 # AquaMaps
 aqua <- readRDS("Data/AquaMaps_sf.rds") %>% 
   dplyr::as_tibble() %>% 
+  dplyr::left_join(., grid) %>% 
   dplyr::select(-geometry)
 
 ###############################################################

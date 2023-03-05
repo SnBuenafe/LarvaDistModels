@@ -38,7 +38,7 @@ oceans <- sf::read_sf("Data/ne_50m_geography_marine_polys/ne_50m_geography_marin
 
 # Establish the grid
 # Using the Mollweide projection (moll)
-Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = c(xmin = -40, xmax = 40, ymax = 85, ymin = -85),
+Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = c(xmin = -40, xmax = 40, ymax = 40, ymin = -40),
                                              cCRS = moll_pacific) 
   
 grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
@@ -95,7 +95,7 @@ spat2sf <- function(rs) {
     sf::st_as_sf()
   sf::st_crs(sf) <- lonlat # set the CRS
   
-  sf %<>% sf::st_transform(crs = moll_pacific) # then transform
+  sf %<>% fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) # then transform
   
   # Removing degree grids that wholly or partially intersect with the landmass object.
   logi_Reg <- sf::st_centroid(sf) %>%
@@ -177,7 +177,7 @@ gebcoConvert <- function(grid, area) {
     gebco_reclassified_sf <- gebco %>% 
       terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm = FALSE) %>% 
       sf::st_as_sf(crs = lonlat) %>% 
-      sf::st_transform(crs = moll)
+      fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific)
     
     colnames(gebco_reclassified_sf)[1] <- "depth" # change column name of the first column
     
@@ -194,7 +194,9 @@ gebcoConvert <- function(grid, area) {
     # rename columns
     for(i in 1:8) {
       name = paste0("depth", i)
-      grid_filled[[i]] %<>% dplyr::rename(!!sym(name) := depth)
+      grid_filled[[i]] %<>% 
+        dplyr::rename(!!sym(name) := depth) %>% 
+        dplyr::select(-ocean)
     }
     
     joined <- purrr::reduce(grid_filled, left_join, by = c("cellID", "geometry")) # join all 8 files
@@ -228,7 +230,7 @@ calculateDist2Coast <- function(grid) {
   # Load coast
   coast <- rnaturalearth::ne_coastline(scale = 'large') %>% 
     sf::st_as_sf(crs = lonlat) %>% 
-    sf::st_transform(crs = moll)
+    fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific)
   
   # Convert grid to points (centroids)
   grid_centroid <- grid %>% 
