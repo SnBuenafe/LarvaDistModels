@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load BET data
-source("09a_BET_Data.R")
+source("08a_BET_Data.R")
 
 #################
 ## Build model ##

@@ -4,7 +4,7 @@
 ## Load preliminaries ##
 ###########################
 # Load FRI data
-source("08a_FRI_Data.R")
+source("07a_FRI_Data.R")
 
 #################
 ## Build model ##

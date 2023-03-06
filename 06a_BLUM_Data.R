@@ -1,10 +1,26 @@
-# DESCRIPTION: Assembling blue marlin Dataset
+# DESCRIPTION: Assembling blue marlin dataset
 
 # Load preliminaries
 source("00_Utils.R")
 
+# Function to restrict adult distribution predictor to just blue marlin
+restrict_predictor <- function(x){
+  x %<>%
+    dplyr::select(c(1:19, 21:22, 31, 40)) %>%  # restrict the predictors
+    dplyr::mutate(Makaira_nigricans = ifelse(is.na(Makaira_nigricans), yes = 0, no = Makaira_nigricans)) # replace NAs of adult predictions to 0s
+}
+
+# Function to hatch areas where adults are unlikely to be found
+restrict_adult <- function(x, y) {
+  sf <- x %>% 
+    dplyr::mutate(adult_cat = ifelse(Makaira_nigricans >= 0.01, yes = 1, no = 0)) %>% 
+    dplyr::select(-geometry) %>% 
+    dplyr::left_join(., y) %>% 
+    sf::st_as_sf(crs = moll_pacific)
+}
+
 sf <- combineFish(species = "blue-marlin") %>% 
-  sf::st_transform(crs = moll) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -15,60 +31,31 @@ for(s in 1:length(seasons)) {
 }
 
 # Load blue marlin datasets
-BLUM_ds1 <- read_csv("Output/CSV/BLUM_historical_jan-mar.csv", show_col_types = FALSE)
-BLUM_ds2 <- read_csv("Output/CSV/BLUM_historical_apr-jun.csv", show_col_types = FALSE)
-BLUM_ds3 <- read_csv("Output/CSV/BLUM_historical_jul-sept.csv", show_col_types = FALSE)
-BLUM_ds4 <- read_csv("Output/CSV/BLUM_historical_oct-dec.csv", show_col_types = FALSE)
+BLUM_ds1 <- read_csv("Output/CSV/BLUM_historical_jan-mar.csv", show_col_types = FALSE) %>% # January-March
+  restrict_predictor()
+BLUM_ds2 <- read_csv("Output/CSV/BLUM_historical_apr-jun.csv", show_col_types = FALSE) %>% # April-June
+  restrict_predictor()
+BLUM_ds3 <- read_csv("Output/CSV/BLUM_historical_jul-sept.csv", show_col_types = FALSE) %>% # July-September
+  restrict_predictor()
+BLUM_ds4 <- read_csv("Output/CSV/BLUM_historical_oct-dec.csv", show_col_types = FALSE) %>% # October-December
+  restrict_predictor()
 
 # Build model with known data only
 BLUM_build <- dplyr::bind_rows(BLUM_ds1 %>% dplyr::filter(!is.na(abundance)),
                                BLUM_ds2 %>% dplyr::filter(!is.na(abundance)),
                                BLUM_ds3 %>% dplyr::filter(!is.na(abundance)),
                                BLUM_ds4 %>% dplyr::filter(!is.na(abundance))) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::mutate(abundance_presence = case_when(abundance > 0 ~ 1,
-                                               abundance == 0 ~ 0), 
-                row = row_number()) %>%  # mutate the abundance data into 1s and 0s
-  dplyr::select(-geometry) %>% 
-  dplyr::select(row, cellID, species, abundance, abundance_presence, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
+  organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(BLUM_build) * 0.9 # = 11890
+nrow(BLUM_build) * 0.9 # = 11051.1
 
 set.seed(5533285)
-train <- slice_sample(BLUM_build, n = 11890, replace = FALSE) # 90% training set
+train <- slice_sample(BLUM_build, n = 11051, replace = FALSE) # 90% training set
 test <- BLUM_build[!BLUM_build$row %in% train$row, ] # 10% testing set
 
-# Data.frame for predictions
-# January-March predictions
-BLUM_predict_season1 <- BLUM_ds1 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "jan-mar") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# April-June
-BLUM_predict_season2 <- BLUM_ds2 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "apr-jun") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# July-September
-BLUM_predict_season3 <- BLUM_ds3 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "jul-sept") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# October-December
-BLUM_predict_season4 <- BLUM_ds4 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "oct-dec") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
+# Prepare data frame for predictions
+BLUM_predict_season1 <- organize_predict(BLUM_ds1) # January-March
+BLUM_predict_season2 <- organize_predict(BLUM_ds2) # April-June
+BLUM_predict_season3 <- organize_predict(BLUM_ds3) # July-September
+BLUM_predict_season4 <- organize_predict(BLUM_ds4) # October-December
