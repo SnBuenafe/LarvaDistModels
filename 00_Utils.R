@@ -589,15 +589,15 @@ plotSquishedModel <- function(sf, df
           legend.text = element_text(size = 12),
           legend.title = element_text(size = 18),
           panel.border = element_blank()) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) # +
     geom_sf_pattern(data = x,
                     pattern = "stripe",
                     pattern_fill = "grey55",
                     pattern_color = "grey55",
                     fill = NA,
                     color = "grey55",
-                    size = 0.5,
-                    pattern_size = 0.5)
+                    size = 0.1,
+                    pattern_size = 0.05) +
+    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
 
   
   return(ggmodel)

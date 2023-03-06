@@ -1,4 +1,4 @@
-# DESCRIPTION: Building optimal model for skipjack tuna
+# DESCRIPTION: Building optimal model for bigeye tuna
 
 ###########################
 ## Load preliminaries ##
