@@ -3,8 +3,24 @@
 # Load preliminaries
 source("00_Utils.R")
 
+# Function to restrict adult distribution predictor to just skipjack tunas
+restrict_predictor <- function(x){
+  x %<>%
+    dplyr::select(c(1:19, 21:22, 24, 40)) %>%  # restrict the predictors
+    dplyr::mutate(Katsuwonus_pelamis = ifelse(is.na(Katsuwonus_pelamis), yes = 0, no = Katsuwonus_pelamis)) # replace NAs of adult predictions to 0s
+}
+
+# Function to hatch areas where adults are unlikely to be found
+restrict_adult <- function(x, y) {
+  sf <- x %>% 
+    dplyr::mutate(adult_cat = ifelse(Katsuwonus_pelamis >= 0.01, yes = 1, no = 0)) %>% 
+    dplyr::select(-geometry) %>% 
+    dplyr::left_join(., y) %>% 
+    sf::st_as_sf(crs = moll_pacific)
+}
+
 sf <- combineFish(species = "skipjack-tuna") %>% 
-  sf::st_transform(crs = moll) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -15,60 +31,34 @@ for(s in 1:length(seasons)) {
 }
 
 # Load skipjack tuna datasets
-SKP_ds1 <- read_csv("Output/CSV/SKP_historical_jan-mar.csv", show_col_types = FALSE)
-SKP_ds2 <- read_csv("Output/CSV/SKP_historical_apr-jun.csv", show_col_types = FALSE)
-SKP_ds3 <- read_csv("Output/CSV/SKP_historical_jul-sept.csv", show_col_types = FALSE)
-SKP_ds4 <- read_csv("Output/CSV/SKP_historical_oct-dec.csv", show_col_types = FALSE)
+SKP_ds1 <- read_csv("Output/CSV/SKP_historical_jan-mar.csv", show_col_types = FALSE) %>% # January-March
+  restrict_predictor()
+
+SKP_ds2 <- read_csv("Output/CSV/SKP_historical_apr-jun.csv", show_col_types = FALSE) %>% # April-June
+  restrict_predictor()
+
+SKP_ds3 <- read_csv("Output/CSV/SKP_historical_jul-sept.csv", show_col_types = FALSE) %>% # July-September
+  restrict_predictor()
+
+SKP_ds4 <- read_csv("Output/CSV/SKP_historical_oct-dec.csv", show_col_types = FALSE) %>% # October-December
+  restrict_predictor()
 
 # Build model with known data only
 SKP_build <- dplyr::bind_rows(SKP_ds1 %>% dplyr::filter(!is.na(abundance)),
                               SKP_ds2 %>% dplyr::filter(!is.na(abundance)),
                               SKP_ds3 %>% dplyr::filter(!is.na(abundance)),
                               SKP_ds4 %>% dplyr::filter(!is.na(abundance))) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::mutate(abundance_presence = case_when(abundance > 0 ~ 1,
-                                               abundance == 0 ~ 0), 
-                row = row_number()) %>%  # mutate the abundance data into 1s and 0s
-  dplyr::select(-geometry) %>% 
-  dplyr::select(row, cellID, species, abundance, abundance_presence, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
+  organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(SKP_build) * 0.9 # = 11890
+nrow(SKP_build) * 0.9 # = 11051.1
 
 set.seed(2170)
-train <- slice_sample(SKP_build, n = 11890, replace = FALSE) # 90% training set
+train <- slice_sample(SKP_build, n = 11051, replace = FALSE) # 90% training set
 test <- SKP_build[!SKP_build$row %in% train$row, ] # 10% testing set
 
-# Data.frame for predictions
-# January-March predictions
-SKP_predict_season1 <- SKP_ds1 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "jan-mar") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# April-June
-SKP_predict_season2 <- SKP_ds2 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "apr-jun") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# July-September
-SKP_predict_season3 <- SKP_ds3 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "jul-sept") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
-
-# October-December
-SKP_predict_season4 <- SKP_ds4 %>% dplyr::filter(is.na(abundance)) %>% 
-  dplyr::mutate(across(where(is.character), ~factor(.))) %>% # convert all characters to factors
-  dplyr::select(-geometry, -abundance, -species) %>% 
-  dplyr::select(cellID, ocean, longitude, latitude, season, everything()) %>% # arrange columns
-  dplyr::mutate(season = "oct-dec") %>% 
-  as.data.frame() #gbm.step doesn't work if it's a tibble...
+# Prepare data frame for predictions
+SKP_predict_season1 <- organize_predict(SKP_ds1) # January-March
+SKP_predict_season2 <- organize_predict(SKP_ds2) # April-June
+SKP_predict_season3 <- organize_predict(SKP_ds3) # July-September
+SKP_predict_season4 <- organize_predict(SKP_ds4) # October-December

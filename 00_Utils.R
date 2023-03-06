@@ -553,10 +553,11 @@ plotPredictors <- function(test_tmp) {
 plotSquishedModel <- function(sf, df 
                       # abundance
 ) {
-  # x <- sf %>% 
-  #   restrict_adult(df, .) %>% 
-  #   dplyr::filter(adult_cat == 0) %>% 
-  #   sf::st_union()
+  
+  x <- sf %>%
+    restrict_adult(df, .) %>%
+    dplyr::filter(adult_cat == 0) %>%
+    sf::st_union()
   
   # palette = brewer.pal(9, "YlGnBu")
   ggmodel <- ggplot() + 
@@ -589,14 +590,14 @@ plotSquishedModel <- function(sf, df
           legend.title = element_text(size = 18),
           panel.border = element_blank()) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) # +
-    # geom_sf_pattern(data = x, 
-    #                 pattern = "stripe", 
-    #                 pattern_fill = "grey55", 
-    #                 pattern_color = "grey55", 
-    #                 fill = NA, 
-    #                 color = "grey55", 
-    #                 size = 0.5, 
-    #                 pattern_size = 0.5)
+    geom_sf_pattern(data = x,
+                    pattern = "stripe",
+                    pattern_fill = "grey55",
+                    pattern_color = "grey55",
+                    fill = NA,
+                    color = "grey55",
+                    size = 0.5,
+                    pattern_size = 0.5)
 
   
   return(ggmodel)
