@@ -20,7 +20,7 @@ restrict_adult <- function(x, y) {
 }
 
 sf <- combineFish(species = "yellowfin-tuna") %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
