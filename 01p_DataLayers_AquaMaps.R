@@ -1,6 +1,12 @@
 # DESCRIPTION: Preparing aquamaps adult distribution layer
 
-# From spatialplanr
+# Load preliminaries
+source("00_Preliminaries.R")
+input_dir <- file.path("/Volumes", "SeagateHub", "01_Spatial Datasets")
+output_dir <- here::here("Data")
+figure_dir <- here::here("Figures")
+
+# Cropping aquamaps dataset (from spatialplanr)
 SpatPlan_Crop_AQM <- function(df, spp, extent){
   
   cropped <- AquaMaps_sf %>%
@@ -34,9 +40,39 @@ SpatPlan_Crop_AQM <- function(df, spp, extent){
   return(cropped)
 }
 
-Direc <- "/Volumes/SeagateHub/01_Spatial Datasets/"
+# Function to prepare plot
+create_plot <- function(df) {
+  sf <- df %>% 
+    dplyr::select(-cellID) %>% 
+    dplyr::mutate(dplyr::across(tidyselect:::where(is.numeric) & !c(geometry), ~ case_when(. > 0 ~ 1, 
+                                                                       . <= 0 ~ 0))) %>% 
+    dplyr::mutate(FeatureSum = rowSums(dplyr::across(tidyselect:::where(is.numeric) & !c(geometry)), na.rm = TRUE))
+  
+  gg <- ggplot() +
+    geom_sf(data = sf, aes(fill = FeatureSum), color = NA, size = 0.2) +
+    scale_fill_cmocean(name = "deep",
+                       #   alpha = 1,
+                       aesthetics = c("fill"),
+                       direction = 1,
+                       na.value = "grey64",
+                       guide = guide_colourbar(
+                         title.vjust = 0.5,
+                         barheight = grid::unit(0.01, "npc"),
+                         barwidth = grid::unit(0.25, "npc"),
+                         frame.colour = "black")) +
+    geom_sf(data = landmass, fill = "black", color = "black") +
+    labs(fill = expression('Number of features')) +
+    theme_bw() +
+    theme(legend.position = "bottom",
+          axis.title = element_blank(),
+          legend.text = element_text(size = 12),
+          legend.title = element_text(size = 18),
+          panel.border = element_blank(),
+          title = element_blank()) +
+    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+}
 
-aqm <- readRDS(file.path(Direc, "AquaMaps", "AquaMaps_SpeciesInfoFB.rds")) %>%  # Load AquaMaps data
+aqm <- readRDS(file.path(input_dir, "AquaMaps", "AquaMaps_SpeciesInfoFB.rds")) %>%  # Load AquaMaps data
   dplyr::filter(longnames %in% c("Thunnus_albacares", # yellowfin tuna
                                  "Katsuwonus_pelamis", # skipjack tuna
                                  "Thunnus_alalunga", # albacore
@@ -58,8 +94,7 @@ aqm <- readRDS(file.path(Direc, "AquaMaps", "AquaMaps_SpeciesInfoFB.rds")) %>%  
 
 
 # stars code to subset by data by our species list and crop area to the region of PlanUnits
-AquaMaps_sf <- stars::read_stars(file.path(Direc, "AquaMaps","AquaMaps.tif"), proxy = TRUE) # Load
-
+AquaMaps_sf <- stars::read_stars(file.path(input_dir, "AquaMaps","AquaMaps.tif"), proxy = TRUE) # Load
 
 PUextent <- grid %>% # Get the extent for AquaMaps from the Bndry extent
   sf::st_transform(crs = lonlat) %>% # Must be long/lat for AquaMaps
@@ -68,11 +103,18 @@ PUextent <- grid %>% # Get the extent for AquaMaps from the Bndry extent
 ex_sf <- PUextent + c(-1, -1, 1, 1) # Pad the limits by 1 degree
 
 AquaMaps_sf <- SpatPlan_Crop_AQM(AquaMaps_sf, aqm, ex_sf) %>%
-  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>%  # Transform to PU units
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>%  # Transform to PU units
   sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
   dplyr::as_tibble() %>% 
   dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
-  sf::st_as_sf(crs = moll_pacific) %>% 
+  sf::st_as_sf(crs = cCRS) %>% 
   dplyr::select(-ocean)
 
-saveRDS(AquaMaps_sf, "Data/AquaMaps_sf.rds") # save file
+saveRDS(AquaMaps_sf, here::here(output_dir, "AquaMaps_sf.rds")) # save file
+
+# Plot number of features
+ggaq <- AquaMaps_sf %>% 
+  dplyr::select(-Tetrapturus_angustirostris, -Scombrolabrax_heterolepis) %>% # Remove species that will not be included
+  create_plot()
+
+ggsave(plot = ggaq, filename = here::here(figure_dir, "global_AquaMaps.png"), width = 15, height = 8, dpi = 300)

@@ -26,7 +26,7 @@ utils <- list.files(path = here::here("Utils"), pattern = "*.R", full.names = TR
 sapply(X = utils, FUN = source) %>% invisible()
 
 # Define map projections
-#sf_use_s2(FALSE)
+sf_use_s2(FALSE)
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 pc_pacific <- "+proj=eqc +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 cCRS = pc_pacific # Use equidistant projection, Plate Careé
