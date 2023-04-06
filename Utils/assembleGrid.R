@@ -1,3 +1,4 @@
+# TODO: fix this 
 # Description: Assemble the fish data on the grid
 assembleGrid <- function(grid, sf) {
   grid_sf <- sf::st_join(grid, sf, join = st_contains_properly, left = TRUE) # join with the grid data if the centroid is contained within the grid

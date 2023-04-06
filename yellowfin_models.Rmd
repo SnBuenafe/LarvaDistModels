@@ -1,0 +1,331 @@
+---
+title: "Building tuna models"
+author: "Tin Buenafe"
+date: "2023-04-05"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+---
+
+## Base yellowfin tuna model
+
+```{r preliminaries, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+source("02a_YFT_Data.R") # Load YFT data
+output_dir <- here::here("Output", "Models")
+```
+
+First, we build the basic tuna model with all the predictors included. Note that the environmental predictors are mean values over 1956-1981.
+
+1. longitude
+2. latitude
+3. season
+4. temperature ($^{\circ} C$)
+5. oxygen ($mol \; m^{-3}$)
+6. pH
+7. chlorophyll ($mol \; m^{-3}$)
+8. salinity (ppt)
+9. mixed layer thickness (m)
+10. nitrate ($mol \; m^{-3}$)
+11. phosphate ($mol \; m^{-3}$)
+12. ammonium ($mol \; m^{-3}$)
+13. broad-scale thermal gradient ($\Delta  ^{\circ} C \; km^{-1}$)
+14. broad-scale salinity gradient ($ppt \; km^{-1}$)
+15. eddy kinetic energy ($m^{-2} \; s^{-2}$)
+16. depth (m)
+17. distance from nearest coast (km)
+18. probability of adult occurrence
+
+```{r model1, echo = FALSE}
+YFT_model1 <- readRDS("Output/Models/YFT_model1.rds")
+
+print(paste0("training AUC: ", YFT_model1$self.statistics$discrimination)) # Training AUC Score
+
+# Predict to the testing dataset
+preds <- gbm::predict.gbm(YFT_model1, test, n.trees = YFT_model1$gbm.call$best.trees, type = "response")
+print(paste0("testing AUC: ", get_testAUC(test$abundance_presence, preds))) # Print testing AUC
+
+# Plot maps
+train_tmp <- train %>% 
+  dplyr::mutate(model = YFT_model1$fitted)
+test_tmp <- test %>% 
+  dplyr::mutate(model = preds)
+```
+
+Then, we extrapolate for the rest of $40^{\circ}N$-$40^{\circ}S$ and present seasonal distribution maps.
+
+### January-March
+```{r model1_jm, echo = FALSE, warning = FALSE, message=FALSE}
+# January-March
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jan-mar", # season
+                        YFT_predict_season1, # rest of the ocean cells
+                        YFT_model1, # BRT model
+                        `grid_YFT_jan-mar` # grid of species for specific season
+)
+
+gg1 <- plotModel(gg[[1]], YFT_ds1) # Plot the squished model
+gg1
+```
+
+### April-June
+```{r model1_aj, echo = FALSE, warning = FALSE, message = FALSE}
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "apr-jun", # season
+                        YFT_predict_season2, # rest of the ocean cells
+                        YFT_model1, # BRT model
+                        `grid_YFT_apr-jun` # grid of species for specific season
+)
+
+gg2 <- plotModel(gg[[1]], YFT_ds2) # Plot the squished model
+gg2
+```
+
+### July-September
+```{r model1_js, echo = FALSE, warning = FALSE, message = FALSE}
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jul-sept", # season
+                        YFT_predict_season3, # rest of the ocean cells
+                        YFT_model1, # BRT model
+                        `grid_YFT_jul-sept` # grid of species for specific season
+)
+
+gg3 <- plotModel(gg[[1]], YFT_ds3) # Plot the squished model
+gg3
+```
+
+### October-December
+```{r model1_od, echo = FALSE, warning = FALSE, message = FALSE}
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "oct-dec", # season
+                        YFT_predict_season4, # rest of the ocean cells
+                        YFT_model1, # BRT model
+                        `grid_YFT_oct-dec` # grid of species for specific season
+)
+
+gg4 <- plotModel(gg[[1]], YFT_ds4) # Plot the squished model
+gg4
+```
+
+## Model without geographical location
+
+```{r model2, echo = FALSE}
+YFT_model2 <- readRDS("Output/Models/YFT_model2.rds")
+
+print(paste0("training AUC: ", YFT_model2$self.statistics$discrimination)) # Training AUC Score
+
+# Predict to the testing dataset
+preds <- gbm::predict.gbm(YFT_model2, test, n.trees = YFT_model2$gbm.call$best.trees, type = "response")
+print(paste0("testing AUC: ", get_testAUC(test$abundance_presence, preds))) # Print testing AUC
+
+# Plot maps
+train_tmp <- train %>% 
+  dplyr::mutate(model = YFT_model2$fitted)
+test_tmp <- test %>% 
+  dplyr::mutate(model = preds)
+```
+
+### January-March
+```{r model2_jm, echo = FALSE, warning = FALSE, message=FALSE}
+# January-March
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jan-mar", # season
+                        YFT_predict_season1, # rest of the ocean cells
+                        YFT_model2, # BRT model
+                        `grid_YFT_jan-mar` # grid of species for specific season
+)
+
+gg1 <- plotModel(gg[[1]], YFT_ds1) # Plot the squished model
+gg1
+```
+
+### April-June
+```{r model2_aj, echo = FALSE, warning = FALSE, message = FALSE}
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "apr-jun", # season
+                        YFT_predict_season2, # rest of the ocean cells
+                        YFT_model2, # BRT model
+                        `grid_YFT_apr-jun` # grid of species for specific season
+)
+
+gg2 <- plotModel(gg[[1]], YFT_ds2) # Plot the squished model
+gg2
+```
+
+### July-September
+```{r model2_js, echo = FALSE, warning = FALSE, message = FALSE}
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jul-sept", # season
+                        YFT_predict_season3, # rest of the ocean cells
+                        YFT_model2, # BRT model
+                        `grid_YFT_jul-sept` # grid of species for specific season
+)
+
+gg3 <- plotModel(gg[[1]], YFT_ds3) # Plot the squished model
+gg3
+```
+
+### October-December
+```{r model2_od, echo = FALSE, warning = FALSE, message = FALSE}
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "oct-dec", # season
+                        YFT_predict_season4, # rest of the ocean cells
+                        YFT_model2, # BRT model
+                        `grid_YFT_oct-dec` # grid of species for specific season
+)
+
+gg4 <- plotModel(gg[[1]], YFT_ds4) # Plot the squished model
+gg4
+```
+
+## Increasing confidence of distribution maps.
+
+First, we build the $10 \times 10$ grid.
+
+``` {r grid10x10, echo = FALSE}
+# Build the 10x10 grid
+grid_100 <- sf::st_make_grid(Bndry,
+                         square = TRUE,
+                         cellsize = c(10,10),
+                         what = "polygons") %>%
+  sf::st_sf()
+
+# First get all the PUs partially/wholly within the planning region
+logi_Reg <- sf::st_centroid(grid_100) %>%
+  sf::st_intersects(Bndry) %>%
+  lengths > 0 # Get logical vector instead of sparse geometry binary
+
+grid_100 <- grid_100[logi_Reg, ] # Get TRUE
+
+grid_100 %<>%
+  dplyr::mutate(cellID = dplyr::row_number()) # Add a cell ID reference
+
+# Plot
+ggplot() +
+  geom_sf(data = grid, color = "grey71", fill = NA, size = 0.1) +
+  geom_sf(data = grid_100, color = "red", fill = NA, size = 1) +
+  theme_bw()
+```
+
+Then, we associate the $10 \times 10$ grid with the $1 \times 1$ grid cells. This just shows the Jan-March grid. The remaining $10 \times 10$ grid cells are ones that have sampling points in them.
+
+``` {r echo = FALSE}
+# Associate seasonal grids with the 10x10 grid
+season_grid <- `grid_YFT_jan-mar` %>% 
+  sf::st_as_sf()
+tmp <- sf::st_within(season_grid, grid_100) %>% 
+  unlist()
+
+full_grid <- `grid_YFT_jan-mar` %>% 
+  dplyr::mutate(grid_100_category = grid_100$cellID[tmp[cellID]])
+
+new_grid <- full_grid %>% 
+  dplyr::filter(!is.na(abundance)) %>% 
+  sf::st_as_sf()
+
+grid100_samppoint <- new_grid$grid_100_category # Get grid_100 categories that have sampling points in it
+  
+ggplot() +
+  geom_sf(data = landmass, fill = "black", color = "black", size = 1) +
+  geom_sf(data = new_grid, aes(color = grid_100_category, fill = grid_100_category), size = 0.1) +
+  geom_sf(data = grid_100 %>% 
+            dplyr::filter(cellID %in% grid100_samppoint), color = "red", fill = NA, size = 1) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) +
+  theme_bw()
+```
+
+We visualize this filtered grid overlaid with the distribution map for January-March of model 1 (including all predictors).
+
+```{r echo = FALSE}
+# Plot maps
+train_tmp <- train %>% 
+  dplyr::mutate(model = YFT_model1$fitted)
+test_tmp <- test %>% 
+  dplyr::mutate(model = preds)
+
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jan-mar", # season
+                        YFT_predict_season1, # rest of the ocean cells
+                        YFT_model1, # BRT model
+                        `grid_YFT_jan-mar` # grid of species for specific season
+)
+
+plotModel(gg[[1]], YFT_ds1) +
+  geom_sf(data = grid_100 %>% 
+            dplyr::filter(cellID %in% grid100_samppoint), 
+          color = "red", 
+          fill = NA, 
+          size = 1) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+
+# Associate model data with grid100 categories
+gg_new <- gg[[1]] %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::left_join(., full_grid) %>% 
+  dplyr::select(cellID, ocean, model, grid_100_category, geometry) %>% 
+  dplyr::filter(grid_100_category %in% grid100_samppoint) %>% 
+  sf::st_as_sf()
+
+df_new <- YFT_ds1 %>% 
+  dplyr::filter(cellID %in% gg_new$cellID)
+
+plotModel(gg_new, df_new)
+  
+```
+
+Then, we leave only those $10 \times 10$ grid cells with >25% of its area containing sampling points.
+```{r echo = FALSE}
+filt_ngrid <- full_grid %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(cellID, ocean, abundance, grid_100_category, geometry) %>% 
+  dplyr::mutate(samp_point = ifelse(!is.na(abundance), yes = 1, no = abundance)) %>% # counting sampling points
+  dplyr::group_by(grid_100_category) %>% 
+  dplyr::mutate(samp_point = sum(samp_point, na.rm = TRUE), count = n()) %>% 
+  dplyr::mutate(grid_1_perc = samp_point*100/count) %>% # find out how much of each 10x10 grid cell has 1x1 sampling points
+  ungroup()
+  
+filt_ID <- filt_ngrid %>% 
+  dplyr::filter(grid_1_perc > 25) %>% 
+  dplyr::select(grid_100_category) %>% 
+  unique() %>% 
+  pull()
+
+ggplot() +
+  geom_sf(data = landmass, fill = "black", color = "black", size = 1) +
+ # geom_sf(data = new_grid, aes(color = grid_100_category, fill = grid_100_category), size = 0.1) +
+  geom_sf(data = filt_ngrid %>% 
+            sf::st_as_sf() %>% 
+            dplyr::filter(grid_100_category %in% filt_ID), 
+          aes(fill = grid_1_perc),
+          color = NA, size = 0.1) +
+  scale_fill_continuous(name = "% of area") +
+  geom_sf(data = grid_100 %>% 
+            dplyr::filter(cellID %in% filt_ID), color = "red", fill = NA, size = 1) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) +
+  theme_bw()
+
+gg_filt <- gg[[1]] %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::left_join(., full_grid) %>% 
+  dplyr::select(cellID, ocean, model, grid_100_category, geometry) %>% 
+  dplyr::filter(grid_100_category %in% filt_ID) %>% 
+  sf::st_as_sf()
+
+df_filt <- YFT_ds1 %>% 
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+plotModel(gg_filt, df_filt)
+```
+
+Then, we do this separately per season and replicate this method across all the species.

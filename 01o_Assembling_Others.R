@@ -3,7 +3,7 @@ source("00_Preliminaries.R")
 figure_dir <- here::here("Figures")
 
 # Bathymetry
-bathy <- gebcoConvert(grid, 10000) # bathymetry data is extrapolated depending on the grid area provided
+bathy <- gebcoConvert(grid) # bathymetry data is extrapolated depending on the grid area provided
 
 ggBathy <- ggplot() +
   geom_sf(data = bathy, aes(fill = meanDepth), color = NA, size = 0.2) +

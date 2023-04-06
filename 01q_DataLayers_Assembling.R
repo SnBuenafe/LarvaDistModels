@@ -57,7 +57,7 @@ for(p in 1:length(predictors)) {
 
 # Load other predictors
 # Bathymetry
-bathy <- readRDS(here::here(input_dir, "gebco10000.rds")) %>% 
+bathy <- readRDS(here::here(input_dir, "gebco.rds")) %>% 
   dplyr::as_tibble() %>% 
   dplyr::select(-geometry)
 

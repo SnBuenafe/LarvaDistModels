@@ -29,29 +29,47 @@ sapply(X = utils, FUN = source) %>% invisible()
 sf_use_s2(FALSE)
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 pc_pacific <- "+proj=eqc +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
-cCRS = pc_pacific # Use equidistant projection, Plate Careé
+ll_pacific <- "+proj=longlat +lon_0=180 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+cCRS = ll_pacific # Use equidistant projection, Plate Careé
 
 # Load worldwide landmass
 landmass <- rnaturalearth::ne_countries(scale = "medium") %>% 
   sf::st_as_sf(crs = lonlat) %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = pc_pacific)
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS)
 
 # Load worldwide ocean
 oceans <- sf::read_sf("Data/ne_50m_geography_marine_polys/ne_50m_geography_marine_polys.shp") %>%
   dplyr::select(label) %>% 
   sf::st_as_sf(crs = lonlat) %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = pc_pacific)
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS)
 
 # Establish the grid
 Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = c(xmin = -40, xmax = 40, ymax = 40, ymin = -40),
-                                             cCRS = pc_pacific) 
-  
-grid <- spatialplanr::SpatPlan_Get_PlanningUnits(Bndry,
-                                                 oceans,
-                                                 CellArea = 10000, # let's do a degree? (~ 100 km x 100 km)
-                                                 Shape = "square",
-                                                 inverse = TRUE)
+                                             cCRS = cCRS) 
 
+grid <- sf::st_make_grid(Bndry,
+                        square = TRUE,
+                        cellsize = c(1,1),
+                        what = "polygons") %>%
+  sf::st_sf()
+
+# First get all the PUs partially/wholly within the planning region
+logi_Reg <- sf::st_centroid(grid) %>%
+  sf::st_intersects(Bndry) %>%
+  lengths > 0 # Get logical vector instead of sparse geometry binary
+
+grid <- grid[logi_Reg, ] # Get TRUE
+
+# Second, get all the pu's with < 50 % area on land (approximated from the centroid)
+logi_Ocean <- sf::st_centroid(grid) %>%
+  sf::st_intersects(oceans) %>%
+  lengths > 0 # Get logical vector instead of sparse geometry binary
+
+grid <- grid[logi_Ocean==TRUE, ] # Get TRUE
+
+grid <- grid %>%
+  dplyr::mutate(cellID = dplyr::row_number()) # Add a cell ID reference
+  
 # Filter water bodies within the Indian and Pacific Oceans
 tmp <- sf::st_nearest_feature(grid, oceans)
 grid %<>%

@@ -1,5 +1,5 @@
 # Description: Convert bathymetry data (.TIFF) to sf (based on the grid provided)
-gebcoConvert <- function(grid, area) {
+gebcoConvert <- function(grid) {
   
   path <- here::here("Data", "GEBCO")
   list <- list.files(path)
@@ -50,7 +50,7 @@ gebcoConvert <- function(grid, area) {
     sf::st_as_sf(sf_column_name = "geometry") %>% 
     dplyr::select(cellID, meanDepth, geometry)
   
-  saveRDS(joined_sf, here::here("Data", paste0("gebco", area, ".rds")))
+  saveRDS(joined_sf, here::here("Data", paste0("gebco", ".rds")))
   
   return(joined_sf)
   
