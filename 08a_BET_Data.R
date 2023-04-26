@@ -1,12 +1,13 @@
 # DESCRIPTION: Assembling bigeye tuna dataset
 
 # Load preliminaries
-source("00_Utils.R")
+source("00_Preliminaries.R")
+input_dir <- here::here("Output", "CSV")
 
 # Function to restrict adult distribution predictor to just bigeye tunas
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:19, 21:22, 26:27, 40)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 25:26, 39)) %>%  # restrict the predictors
     rowwise() %>% 
     dplyr::mutate(adult = mean(c(Thunnus_obesus, Thunnus_atlanticus), na.rm = TRUE)) %>% 
     ungroup() %>% 
@@ -19,11 +20,12 @@ restrict_adult <- function(x, y) {
     dplyr::mutate(adult_cat = ifelse(adult >= 0.01, yes = 1, no = 0)) %>% 
     dplyr::select(-geometry) %>% 
     dplyr::left_join(., y) %>% 
-    sf::st_as_sf(crs = moll_pacific)
+    sf::st_as_sf(crs = cCRS)
 }
 
+# Create species sf object
 sf <- combineFish(species = "bigeye-tuna") %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -54,10 +56,10 @@ BET_build <- dplyr::bind_rows(BET_ds1 %>% dplyr::filter(!is.na(abundance)),
   organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(BET_build) * 0.9 # = 11051.1
+nrow(BET_build) * 0.9 # = 11063.7
 
 set.seed(2221096)
-train <- slice_sample(BET_build, n = 11051, replace = FALSE) # 90% training set
+train <- slice_sample(BET_build, n = 11063, replace = FALSE) # 90% training set
 test <- BET_build[!BET_build$row %in% train$row, ] # 10% testing set
 
 # Prepare data frame for predictions

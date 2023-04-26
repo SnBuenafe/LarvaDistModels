@@ -1,12 +1,13 @@
 # DESCRIPTION: Assembling skipjack tuna dataset
 
 # Load preliminaries
-source("00_Utils.R")
+source("00_Preliminaries.R")
+input_dir <- here::here("Output", "CSV")
 
 # Function to restrict adult distribution predictor to just skipjack tunas
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:19, 21:22, 24, 40)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 23, 39)) %>%  # restrict the predictors
     dplyr::mutate(Katsuwonus_pelamis = ifelse(is.na(Katsuwonus_pelamis), yes = 0, no = Katsuwonus_pelamis)) # replace NAs of adult predictions to 0s
 }
 
@@ -16,11 +17,12 @@ restrict_adult <- function(x, y) {
     dplyr::mutate(adult_cat = ifelse(Katsuwonus_pelamis >= 0.01, yes = 1, no = 0)) %>% 
     dplyr::select(-geometry) %>% 
     dplyr::left_join(., y) %>% 
-    sf::st_as_sf(crs = moll_pacific)
+    sf::st_as_sf(crs = cCRS)
 }
 
+# Create species sf object
 sf <- combineFish(species = "skipjack-tuna") %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -51,10 +53,10 @@ SKP_build <- dplyr::bind_rows(SKP_ds1 %>% dplyr::filter(!is.na(abundance)),
   organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(SKP_build) * 0.9 # = 11051.1
+nrow(SKP_build) * 0.9 # = 11063.7
 
 set.seed(2170)
-train <- slice_sample(SKP_build, n = 11051, replace = FALSE) # 90% training set
+train <- slice_sample(SKP_build, n = 11063, replace = FALSE) # 90% training set
 test <- SKP_build[!SKP_build$row %in% train$row, ] # 10% testing set
 
 # Prepare data frame for predictions

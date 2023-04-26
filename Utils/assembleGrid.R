@@ -16,6 +16,7 @@ assembleGrid <- function(grid, sf) {
                              latitude = ifelse(!is.na(latitude), 
                                                yes = latitude, 
                                                no = centroid_coordinates[cellID, "Y"])) %>% 
+    dplyr::mutate(longitude = ifelse(longitude < 0, yes = longitude + 360, no = longitude)) %>%  # convert longitude to 0-360
     dplyr::as_tibble()
   
   return(grid_sf)

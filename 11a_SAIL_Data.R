@@ -1,12 +1,13 @@
 # DESCRIPTION: Assembling sailfish dataset
 
 # Load preliminaries
-source("00_Utils.R")
+source("00_Preliminaries.R")
+input_dir <- here::here("Output", "CSV")
 
 # Function to restrict adult distribution predictor to just sailfish
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:19, 21:22, 35, 40)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 34, 39)) %>%  # restrict the predictors
     dplyr::mutate(Istiophorus_platypterus = ifelse(is.na(Istiophorus_platypterus), yes = 0, no = Istiophorus_platypterus)) # replace NAs of adult predictions to 0s
 }
 
@@ -16,11 +17,12 @@ restrict_adult <- function(x, y) {
     dplyr::mutate(adult_cat = ifelse(Istiophorus_platypterus >= 0.01, yes = 1, no = 0)) %>% 
     dplyr::select(-geometry) %>% 
     dplyr::left_join(., y) %>% 
-    sf::st_as_sf(crs = moll_pacific)
+    sf::st_as_sf(crs = cCRS)
 }
 
+# Create species sf object
 sf <- combineFish(species = "sailfish") %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -33,10 +35,13 @@ for(s in 1:length(seasons)) {
 # Load sailfish datasets
 SAIL_ds1 <- read_csv("Output/CSV/SAIL_historical_jan-mar.csv", show_col_types = FALSE) %>% # January-March
   restrict_predictor()
+
 SAIL_ds2 <- read_csv("Output/CSV/SAIL_historical_apr-jun.csv", show_col_types = FALSE) %>% # April-June
   restrict_predictor()
+
 SAIL_ds3 <- read_csv("Output/CSV/SAIL_historical_jul-sept.csv", show_col_types = FALSE) %>% # July-September
   restrict_predictor()
+
 SAIL_ds4 <- read_csv("Output/CSV/SAIL_historical_oct-dec.csv", show_col_types = FALSE) %>% # October-December
   restrict_predictor()
 
@@ -48,10 +53,10 @@ SAIL_build <- dplyr::bind_rows(SAIL_ds1 %>% dplyr::filter(!is.na(abundance)),
   organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(SAIL_build) * 0.9 # = 11051.1
+nrow(SAIL_build) * 0.9 # = 11063.7
 
-set.seed(5492) # rerun this
-train <- slice_sample(SAIL_build, n = 11051, replace = FALSE) # 90% training set
+set.seed(5492) 
+train <- slice_sample(SAIL_build, n = 11063, replace = FALSE) # 90% training set
 test <- SAIL_build[!SAIL_build$row %in% train$row, ] # 10% testing set
 
 # Prepare data frame for predictions

@@ -89,7 +89,19 @@ aqm <- readRDS(file.path(input_dir, "AquaMaps", "AquaMaps_SpeciesInfoFB.rds")) %
                                  "Cololabis_saira", # sauries
                                  "Cololabis_adocetus", # sauries
                                  "Scomberesox_saurus", # Sauries
-                                 "Scombrolabrax_heterolepis" # Longfin escolar
+                                 "Scombrolabrax_heterolepis", # Longfin escolar
+                                 "Thunnus_thynnus", # Atlantic bluefin tuna
+                                 "Thunnus_orientalis", # Pacific bluefin tuna
+                                 "Euthynnus_affinis", # little tuna
+                                 "Euthynnus_alletteratus", # little tuna
+                                 "Euthynnus_lineatus", # little tuna
+                                 "Thunnus_maccoyii", # Southern bluefin tuna
+                                 "Allothunnus_fallai", # slender tuna
+                                 "Sarda_australis", # S. Pacific ocean
+                                 "Sarda_chiliensis", # E. Pacific ocean
+                                 "Sarda_orientalis", # Indo-pacific
+                                 "Sarda_sarda", # Atlantic ocean
+                                 "Istiompax_indica" # Black marlin
                                  ))
 
 
@@ -113,8 +125,10 @@ AquaMaps_sf <- SpatPlan_Crop_AQM(AquaMaps_sf, aqm, ex_sf) %>%
 saveRDS(AquaMaps_sf, here::here(output_dir, "AquaMaps_sf.rds")) # save file
 
 # Plot number of features
-ggaq <- AquaMaps_sf %>% 
-  dplyr::select(-Tetrapturus_angustirostris, -Scombrolabrax_heterolepis) %>% # Remove species that will not be included
+ggaq <- AquaMaps_sf %>%
+   dplyr::select(-Tetrapturus_angustirostris, -Scombrolabrax_heterolepis, 
+                 -Kajikia_audax, -Scombrolabrax_heterolepis, -Euthynnus_affinis, 
+                 -Euthynnus_alletteratus, -Euthynnus_lineatus, -Istiompax_indica) %>% # Remove species that will not be included
   create_plot()
 
 ggsave(plot = ggaq, filename = here::here(figure_dir, "global_AquaMaps.png"), width = 15, height = 8, dpi = 300)

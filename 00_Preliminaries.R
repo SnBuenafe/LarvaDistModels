@@ -87,3 +87,19 @@ grid %<>%
                              'Sulu Sea', 'Taiwan Strait', 'Tasman Sea', 'Timor Sea', 'Yellow Sea')) %>% 
   dplyr::mutate(cellID = row_number())
 
+# Building 10x10 grid for increasing confidence in models
+grid_100 <- sf::st_make_grid(Bndry,
+                             square = TRUE,
+                             cellsize = c(10,10),
+                             what = "polygons") %>%
+  sf::st_sf()
+
+# First get all the PUs partially/wholly within the planning region
+logi_Reg <- sf::st_centroid(grid_100) %>%
+  sf::st_intersects(Bndry) %>%
+  lengths > 0 # Get logical vector instead of sparse geometry binary
+
+grid_100 <- grid_100[logi_Reg, ] # Get TRUE
+
+grid_100 %<>%
+  dplyr::mutate(cellID = dplyr::row_number()) # Add a cell ID reference

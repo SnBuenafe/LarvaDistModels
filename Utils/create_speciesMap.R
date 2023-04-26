@@ -7,8 +7,6 @@ create_speciesMap <- function(train_tmp, # train object
                               grid_season # full grid
                               ) {
   
-  results <- list()
-  
   plot_df <- dplyr::bind_rows(train_tmp, test_tmp) %>% 
     dplyr::arrange(cellID) %>% 
     dplyr::filter(season %in% season_name)
@@ -29,14 +27,11 @@ create_speciesMap <- function(train_tmp, # train object
     dplyr::select(cellID, ocean, model, geometry) %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
-  gg_abun <- grid_season %>%
-    dplyr::mutate(abundance_presence = factor(case_when(abundance > 0 ~ 1,
-                                                        abundance == 0 ~ 0), levels = c(1, 0))) %>% 
-    sf::st_as_sf(sf_column_name = "geometry") %>% 
-    sf::st_centroid() 
+  # gg_abun <- grid_season %>%
+  #   dplyr::mutate(abundance_presence = factor(case_when(abundance > 0 ~ 1,
+  #                                                       abundance == 0 ~ 0), levels = c(1, 0))) %>% 
+  #   sf::st_as_sf(sf_column_name = "geometry") %>% 
+  #   sf::st_centroid() 
   
-  results[[1]] <- gg
-  results[[2]] <- gg_abun
-  
-  return(results)
+  return(gg)
 }

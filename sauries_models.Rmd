@@ -1,0 +1,721 @@
+---
+title: "Building sauries models"
+author: "Tin Buenafe"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    css: "css.css"
+---
+
+```{r preliminaries, include = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, out.width = '100%', fig.align = 'center', fig.height = 3)
+source("10a_SAU_Data.R") # Load SAU data
+output_dir <- here::here("Output", "Models")
+```
+
+## Nishikawa plots
+
+First, we plot the presence/absence data from the Nishikawa dataset for sauries.
+
+### January-March
+
+```{r nish_jm, echo = FALSE}
+df <- `grid_SAU_jan-mar` %>% 
+  dplyr::select(cellID, abundance, geometry) %>% 
+  na.omit() %>% 
+  dplyr::mutate(abundance_presence = ifelse(abundance > 0, yes = 1, no = 0)) %>% 
+  sf::st_as_sf() %>% 
+  dplyr::select(cellID, abundance_presence, everything()) # arrange
+
+nish1 <- ggplot() +
+  geom_sf(data = df, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence))) +
+  scale_discrete_manual(name = "Presence/Absence",
+                        values = c(`1` = "#016450", `0` = "#a6bddb"),
+                        aesthetics = c("fill", "color")) +
+  geom_sf(data = landmass, fill = "black", color = "black", size = 1) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        panel.border = element_blank(),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+nish1
+```
+
+### April-June
+
+```{r nish_aj, echo = FALSE}
+df <- `grid_SAU_apr-jun` %>% 
+  dplyr::select(cellID, abundance, geometry) %>% 
+  na.omit() %>% 
+  dplyr::mutate(abundance_presence = ifelse(abundance > 0, yes = 1, no = 0)) %>% 
+  sf::st_as_sf() %>% 
+  dplyr::select(cellID, abundance_presence, everything()) # arrange
+
+nish2 <- ggplot() +
+  geom_sf(data = df, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence))) +
+  scale_discrete_manual(name = "Presence/Absence",
+                        values = c(`1` = "#016450", `0` = "#a6bddb"),
+                        aesthetics = c("fill", "color")) +
+  geom_sf(data = landmass, fill = "black", color = "black", size = 1) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) +
+  theme_bw() +
+  theme(legend.position = "bottom",
+        axis.title = element_blank(),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        panel.border = element_blank(),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+nish2
+```
+
+### July-September
+
+```{r nish_js, echo = FALSE}
+df <- `grid_SAU_jul-sept` %>%
+  dplyr::select(cellID, abundance, geometry) %>%
+  na.omit() %>%
+  dplyr::mutate(abundance_presence = ifelse(abundance > 0, yes = 1, no = 0)) %>%
+  sf::st_as_sf() %>%
+  dplyr::select(cellID, abundance_presence, everything()) # arrange
+
+nish3 <- ggplot() +
+  geom_sf(data = df, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence))) +
+  scale_discrete_manual(name = "Presence/Absence",
+                        values = c(`1` = "#016450", `0` = "#a6bddb"),
+                        aesthetics = c("fill", "color")) +
+  geom_sf(data = landmass, fill = "black", color = "black", size = 1) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) +
+  theme_bw() +
+  theme(legend.position = "bottom",
+          axis.title = element_blank(),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 10),
+          panel.border = element_blank(),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+nish3
+```
+
+### October-December
+
+```{r nish_od, echo = FALSE}
+df <- `grid_SAU_oct-dec` %>%
+  dplyr::select(cellID, abundance, geometry) %>%
+  na.omit() %>%
+  dplyr::mutate(abundance_presence = ifelse(abundance > 0, yes = 1, no = 0)) %>%
+  sf::st_as_sf() %>%
+  dplyr::select(cellID, abundance_presence, everything()) # arrange
+
+nish4 <- ggplot() +
+  geom_sf(data = df, aes(fill = as.factor(abundance_presence), color = as.factor(abundance_presence))) +
+  scale_discrete_manual(name = "Presence/Absence",
+                        values = c(`1` = "#016450", `0` = "#a6bddb"),
+                        aesthetics = c("fill", "color")) +
+  geom_sf(data = landmass, fill = "black", color = "black", size = 1) +
+  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) +
+  theme_bw() +
+  theme(legend.position = "bottom",
+          axis.title = element_blank(),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 10),
+          panel.border = element_blank(),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+nish4
+```
+
+## Base model (Model 1)
+
+Then, we build the basic sauries model with all the predictors included. Note that the environmental predictors are mean values over 1956-1981.
+
+1. longitude
+2. latitude
+3. season
+4. temperature ($^{\circ} C$)
+5. oxygen ($mol \; m^{-3}$)
+6. pH
+7. chlorophyll ($mol \; m^{-3}$)
+8. salinity (ppt)
+9. mixed layer thickness (m)
+10. nitrate ($mol \; m^{-3}$)
+11. phosphate ($mol \; m^{-3}$)
+12. ammonium ($mol \; m^{-3}$)
+13. broad-scale thermal gradient ($\Delta  ^{\circ} C \; km^{-1}$)
+14. broad-scale salinity gradient ($ppt \; km^{-1}$)
+15. eddy kinetic energy ($m^{-2} \; s^{-2}$)
+16. depth (m)
+17. distance from nearest coast (km)
+18. mean probability of adult occurrence for three sauries species (*Cololabis saira*, *Cololabis adocetus*, and *Scomberesox saurus*)
+
+```{r model1, echo = FALSE}
+SAU_model1 <- readRDS("Output/Models/SAU_model1.rds")
+
+print(paste0("training AUC: ", SAU_model1$self.statistics$discrimination)) # Training AUC Score
+
+# Predict to the testing dataset
+preds <- gbm::predict.gbm(SAU_model1, test, n.trees = SAU_model1$gbm.call$best.trees, type = "response")
+print(paste0("testing AUC: ", get_testAUC(test$abundance_presence, preds))) # Print testing AUC
+
+# Plot maps
+train_tmp <- train %>%
+  dplyr::mutate(model = SAU_model1$fitted)
+test_tmp <- test %>%
+  dplyr::mutate(model = preds)
+```
+
+Then, we extrapolate for the rest of $40^{\circ}N$-$40^{\circ}S$ and present seasonal distribution maps. The distribution maps are shown side-by-side with the Nishikawa maps.
+
+### January-March
+```{r model1_jm, echo = FALSE}
+# January-March
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jan-mar", # season
+                        SAU_predict_season1, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_jan-mar` # grid of species for specific season
+)
+
+gg1 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg1 + nish1
+```
+
+And, unlike yellowfin tuna, the adult sauries have a more restricted range. We show the plot with hatches in areas that have adult probabilities < 0.01.
+
+```{r hatched1_jm, echo = FALSE}
+hatch1 <- plotHatch(gg1, gg, SAU_ds1)
+hatch1
+```
+
+### April-June
+```{r model1_aj, echo = FALSE}
+# April-June
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "apr-jun", # season
+                        SAU_predict_season2, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_apr-jun` # grid of species for specific season
+)
+
+gg2 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg2 + nish2
+```
+
+```{r hatched1_aj, echo = FALSE}
+hatch2 <- plotHatch(gg2, gg, SAU_ds2)
+hatch2
+```
+
+### July-September
+```{r model1_js, echo = FALSE}
+# July-September
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jul-sept", # season
+                        SAU_predict_season3, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_jul-sept` # grid of species for specific season
+)
+
+gg3 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg3 + nish3
+```
+
+```{r hatched1_js, echo = FALSE}
+hatch3 <- plotHatch(gg3, gg, SAU_ds3)
+hatch3
+```
+
+### October-December
+```{r model1_od, echo = FALSE}
+# October-December
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "oct-dec", # season
+                        SAU_predict_season4, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_oct-dec` # grid of species for specific season
+)
+
+gg4 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg4 + nish4
+```
+
+```{r hatched1_od, echo = FALSE}
+hatch4 <- plotHatch(gg4, gg, SAU_ds4)
+hatch4
+```
+
+## Model without geographical location (Model 2)
+
+```{r model2, echo = FALSE}
+SAU_model2 <- readRDS("Output/Models/SAU_model2.rds")
+
+print(paste0("training AUC: ", SAU_model2$self.statistics$discrimination)) # Training AUC Score
+
+# Predict to the testing dataset
+preds <- gbm::predict.gbm(SAU_model2, test, n.trees = SAU_model2$gbm.call$best.trees, type = "response")
+print(paste0("testing AUC: ", get_testAUC(test$abundance_presence, preds))) # Print testing AUC
+
+# Plot maps
+train_tmp <- train %>%
+  dplyr::mutate(model = SAU_model2$fitted)
+test_tmp <- test %>%
+  dplyr::mutate(model = preds)
+```
+
+Again, each seasonal distribution map is shown side-by-side with its corresponding Nishikawa seasonal chart.
+
+### January-March
+```{r model2_jm, echo = FALSE}
+# January-March
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jan-mar", # season
+                        SAU_predict_season1, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_jan-mar` # grid of species for specific season
+)
+
+gg1 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg1 + nish1
+```
+
+```{r hatched2_jm, echo = FALSE}
+hatch1 <- plotHatch(gg1, gg, SAU_ds1)
+hatch1
+```
+
+### April-June
+```{r model2_aj, echo = FALSE}
+# April-June
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "apr-jun", # season
+                        SAU_predict_season2, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_apr-jun` # grid of species for specific season
+)
+
+gg2 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg2 + nish2
+```
+
+```{r hatched2_aj, echo = FALSE}
+hatch2 <- plotHatch(gg2, gg, SAU_ds2)
+hatch2
+```
+
+### July-September
+
+```{r model2_js, echo = FALSE}
+# July-September
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jul-sept", # season
+                        SAU_predict_season3, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_jul-sept` # grid of species for specific season
+)
+
+gg3 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg3 + nish3
+```
+
+```{r hatched2_js, echo = FALSE}
+hatch3 <- plotHatch(gg3, gg, SAU_ds3)
+hatch3
+```
+
+### October-December
+```{r model2_od, echo = FALSE}
+# October-December
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "oct-dec", # season
+                        SAU_predict_season4, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_oct-dec` # grid of species for specific season
+)
+
+gg4 <- plotModel(gg) +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
+gg4 + nish4
+```
+
+```{r hatched2_od, echo = FALSE}
+hatch4 <- plotHatch(gg4, gg, SAU_ds4)
+hatch4
+```
+
+## Increasing confidence of distribution maps.
+
+For this section, we use Model 1 (full model). We use the same $10 \times 10$ grid.
+
+``` {r grid10x10, echo = FALSE}
+# Objects for plotting seasonal maps using model 1
+preds <- gbm::predict.gbm(SAU_model1, test, n.trees = SAU_model1$gbm.call$best.trees, type = "response")
+train_tmp <- train %>%
+  dplyr::mutate(model = SAU_model1$fitted)
+test_tmp <- test %>%
+  dplyr::mutate(model = preds)
+
+# Build the 10x10 grid
+grid_100 <- sf::st_make_grid(Bndry,
+                         square = TRUE,
+                         cellsize = c(10,10),
+                         what = "polygons") %>%
+  sf::st_sf()
+
+# First get all the PUs partially/wholly within the planning region
+logi_Reg <- sf::st_centroid(grid_100) %>%
+  sf::st_intersects(Bndry) %>%
+  lengths > 0 # Get logical vector instead of sparse geometry binary
+
+grid_100 <- grid_100[logi_Reg, ] # Get TRUE
+
+grid_100 %<>%
+  dplyr::mutate(cellID = dplyr::row_number()) # Add a cell ID reference
+```
+
+### January-March
+
+Similar to the yellowfin tuna, for each season, we associate the $10 \times 10$ grid with the $1 \times 1$ grid cells. Then, we limit the area to $10 \times 10$ grid cells with sampling points.
+
+``` {r assoc_jm, echo = FALSE}
+# Associate seasonal grids with the 10x10 grid
+full_grid <- associateGrids(`grid_SAU_jan-mar`, grid_100)
+
+# Create January-March seasonal map using model 1
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jan-mar", # season
+                        SAU_predict_season1, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_jan-mar` # grid of species for specific season
+)
+
+# Filter model outputs to those 10x10 grid cells with sampling points within them
+gg_new <- restrictArea(gg, full_grid)
+
+plotModel(gg_new) +
+  theme(plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+```
+
+
+We only leave $10 \times 10$ grid cells that have sampling points within a certain % area threshold. We first do this for a more conservative __25%__ threshold.
+
+```{r thresh25_jm, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 25% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             25)
+
+gg_25 <- plotModel(gg_filt) +
+  ggtitle("January-March: 25% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_25 + nish1
+```
+
+Let's also visualize that side-by-side with the hatched plot that's filtered to just the remaining $10 \times 10$ grid cells.
+
+```{r threshatched25_jm, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds1 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt1 <- plotHatch(gg_25, gg_filt, df_filt)
+gg_25 + hatch_filt1
+```
+
+We now put hatches over areas of lower confidence.
+``` {r hatchFull25_jm, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```
+
+We also do it for a more liberal __10%__ threshold.
+```{r thresh10_jm, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 10% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             10)
+
+gg_10 <- plotModel(gg_filt) +
+  ggtitle("January-March: 10% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_10 + nish1
+```
+
+```{r threshatched10_jm, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds1 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt1 <- plotHatch(gg_10, gg_filt, df_filt)
+gg_10 + hatch_filt1
+```
+
+``` {r hatchFull10_jm, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```
+
+Then, we replicate this across the 3 other seasons...
+
+### April-June
+
+``` {r assoc_aj, echo = FALSE}
+# Associate seasonal grids with the 10x10 grid
+full_grid <- associateGrids(`grid_SAU_apr-jun`, grid_100)
+
+# Create April-June seasonal map using model 1
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "apr-jun", # season
+                        SAU_predict_season2, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_apr-jun` # grid of species for specific season
+)
+
+# Filter model outputs to those 10x10 grid cells with sampling points within them
+gg_new <- restrictArea(gg, full_grid)
+
+plotModel(gg_new) +
+  theme(plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+```
+
+```{r thresh25_aj, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 25% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             25)
+
+gg_25 <- plotModel(gg_filt) +
+  ggtitle("April-June: 25% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_25 + nish2
+```
+
+```{r threshatched25_aj, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds2 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt2 <- plotHatch(gg_25, gg_filt, df_filt)
+gg_25 + hatch_filt2
+```
+
+``` {r hatchFull25_aj, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```
+
+```{r thresh10_aj, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 10% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             10)
+
+gg_10 <- plotModel(gg_filt) +
+  ggtitle("April-June: 10% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_10 + nish2
+```
+
+```{r threshatched10_aj, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds2 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt2 <- plotHatch(gg_10, gg_filt, df_filt)
+gg_10 + hatch_filt2
+```
+
+``` {r hatchFull10_aj, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```
+
+### July-September
+
+``` {r assoc_js, echo = FALSE}
+# Associate seasonal grids with the 10x10 grid
+full_grid <- associateGrids(`grid_SAU_jul-sept`, grid_100)
+
+# Create July-September seasonal map using model 1
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jul-sept", # season
+                        SAU_predict_season3, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_jul-sept` # grid of species for specific season
+)
+
+# Filter model outputs to those 10x10 grid cells with sampling points within them
+gg_new <- restrictArea(gg, full_grid)
+
+plotModel(gg_new) +
+  theme(plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+```
+
+```{r thresh25_js, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 25% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             25)
+
+gg_25 <- plotModel(gg_filt) +
+  ggtitle("July-September: 25% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_25 + nish3
+```
+
+```{r threshatched25_js, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds3 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt3 <- plotHatch(gg_25, gg_filt, df_filt)
+gg_25 + hatch_filt3
+```
+``` {r hatchFull25_js, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```
+
+```{r thresh10_js, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 10% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             10)
+
+gg_10 <- plotModel(gg_filt) +
+  ggtitle("July-September: 10% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_10 + nish3
+```
+
+```{r threshatched10_js, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds3 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt3 <- plotHatch(gg_10, gg_filt, df_filt)
+gg_10 + hatch_filt3
+```
+
+``` {r hatchFull10_js, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```
+
+### October-December
+
+``` {r assoc_od, echo = FALSE}
+# Associate seasonal grids with the 10x10 grid
+full_grid <- associateGrids(`grid_SAU_oct-dec`, grid_100)
+
+# Create October-December seasonal map using model 1
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "oct-dec", # season
+                        SAU_predict_season4, # rest of the ocean cells
+                        SAU_model1, # BRT model
+                        `grid_SAU_oct-dec` # grid of species for specific season
+)
+
+# Filter model outputs to those 10x10 grid cells with sampling points within them
+gg_new <- restrictArea(gg, full_grid)
+
+plotModel(gg_new) +
+  theme(plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+```
+
+```{r thresh25_od, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 25% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             25)
+
+gg_25 <- plotModel(gg_filt) +
+  ggtitle("October-December: 25% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_25 + nish4
+```
+
+```{r threshatched25_od, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds4 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt4 <- plotHatch(gg_25, gg_filt, df_filt)
+gg_25 + hatch_filt4
+```
+
+``` {r hatchFull25_od, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```
+
+```{r thresh10_od, echo = FALSE}
+# Restrict model outputs to just 10x10 grid cells that have at least 10% of its area being sampling points.
+gg_filt <- restrictThreshold(full_grid,
+                             gg,
+                             10)
+
+gg_10 <- plotModel(gg_filt) +
+  ggtitle("October-December: 10% threshold") +
+  theme(legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        plot.margin = unit(c(0,0.5,0,0.5), "cm"))
+gg_10 + nish4
+```
+
+```{r threshatched10_od, echo = FALSE}
+# Filter original grid to only these cells for plotting
+df_filt <- SAU_ds4 %>%
+  dplyr::filter(cellID %in% gg_filt$cellID)
+
+hatch_filt4 <- plotHatch(gg_10, gg_filt, df_filt)
+gg_10 + hatch_filt4
+```
+
+``` {r hatchFull10_od, echo = FALSE}
+plotConfidence(gg_filt, full_grid, gg)
+```

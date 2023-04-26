@@ -1,14 +1,7 @@
 # Description: Plot seasonal species distribution map
 
-plotModel <- function(sf, # seasonal species sf object
-                      df # seasonal species data.frame
+plotModel <- function(sf # seasonal species sf object
                       ) {
-  
-  x <- sf %>%
-    restrict_adult(df, .) %>%
-    dplyr::filter(adult_cat == 0) %>%
-    sf::st_union()
-  
   ggmodel <- ggplot() + 
     geom_sf(data = sf, aes(fill = model),
             color = NA, size = 0.1) +
@@ -32,14 +25,6 @@ plotModel <- function(sf, # seasonal species sf object
           legend.text = element_text(size = 12),
           legend.title = element_text(size = 18),
           panel.border = element_blank()) +
-    geom_sf_pattern(data = x,
-                    pattern = "stripe",
-                    pattern_fill = "grey55",
-                    pattern_color = "grey55",
-                    fill = NA,
-                    color = "grey55",
-                    size = 0.1,
-                    pattern_size = 0.05) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
   
   

@@ -1,12 +1,13 @@
 # DESCRIPTION: Assembling albacore dataset
 
 # Load preliminaries
-source("00_Utils.R")
+source("00_Preliminaries.R")
+input_dir <- here::here("Output", "CSV")
 
 # Function to restrict adult distribution predictor to just albacore
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:19, 21:22, 25, 40)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 24, 39)) %>%  # restrict the predictors
     dplyr::mutate(Thunnus_alalunga = ifelse(is.na(Thunnus_alalunga), yes = 0, no = Thunnus_alalunga)) # replace NAs of adult predictions to 0s
 }
 
@@ -16,11 +17,12 @@ restrict_adult <- function(x, y) {
     dplyr::mutate(adult_cat = ifelse(Thunnus_alalunga >= 0.01, yes = 1, no = 0)) %>% 
     dplyr::select(-geometry) %>% 
     dplyr::left_join(., y) %>% 
-    sf::st_as_sf(crs = moll_pacific)
+    sf::st_as_sf(crs = cCRS)
 }
 
+# Create species sf object
 sf <- combineFish(species = "albacore") %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = moll_pacific) %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
   sf::st_centroid() # transform into point data
 
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
@@ -33,10 +35,13 @@ for(s in 1:length(seasons)) {
 # Load albacore datasets
 ALB_ds1 <- read_csv("Output/CSV/ALB_historical_jan-mar.csv", show_col_types = FALSE) %>% # January-March
   restrict_predictor()
+
 ALB_ds2 <- read_csv("Output/CSV/ALB_historical_apr-jun.csv", show_col_types = FALSE) %>% # April-June
   restrict_predictor()
+
 ALB_ds3 <- read_csv("Output/CSV/ALB_historical_jul-sept.csv", show_col_types = FALSE) %>% # July-September
   restrict_predictor()
+
 ALB_ds4 <- read_csv("Output/CSV/ALB_historical_oct-dec.csv", show_col_types = FALSE) %>% # October-December
   restrict_predictor()
 
@@ -48,10 +53,10 @@ ALB_build <- dplyr::bind_rows(ALB_ds1 %>% dplyr::filter(!is.na(abundance)),
   organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(ALB_build) * 0.9 # = 11051.1
+nrow(ALB_build) * 0.9 # = 11063.7
 
 set.seed(5301)
-train <- slice_sample(ALB_build, n = 11051, replace = FALSE) # 90% training set
+train <- slice_sample(ALB_build, n = 11063, replace = FALSE) # 90% training set
 test <- ALB_build[!ALB_build$row %in% train$row, ] # 10% testing set
 
 # Prepare data frame for predictions

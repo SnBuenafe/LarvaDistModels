@@ -1,52 +1,45 @@
 # DESCRIPTION: Building optimal model for sauries
 
-###########################
-## Load preliminaries ##
-###########################
-# Load SAU data
-source("10a_SAU_Data.R")
+# Load preliminaries
+source("10a_SAU_Data.R") # Load SAU data
+output_dir <- here::here("Output", "Models")
+figure_dir <- here::here("Figures", "SAU")
 
-#################
-## Build model ##
-#################
+#### Model 1: With longitude and latitude ####
 
-# Grid search
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(9:23, 27), resp_in = 5)
+# 5-fold grid search
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:23, 27), resp_in = 5)
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
 # Building most optimal model
-SAU_model1 <- dismo::gbm.step(data = train, gbm.x = c(9:23, 27),
+SAU_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:23, 27),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.01
+                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.01
 )
-saveRDS(SAU_model1, "Output/Models/SAU_model1.rds")
-# SAU_model1 <- readRDS("Output/Models/SAU_model1.rds")
+saveRDS(SAU_model1, here::here(output_dir, "SAU_model1.rds"))
+# SAU_model1 <- readRDS(here::here(output_dir, "SAU_model1.rds"))
 
-summary(SAU_model1) # get the relative importance of each of the predictors
+# Show the relative importance of each of the predictors
+summary(SAU_model1)
 
 # Printing AUCs
 SAU_model1$self.statistics$discrimination # Training AUC Score
 SAU_model1$cv.statistics$discrimination.mean # Validation AUC Score
 
-preds <- gbm::predict.gbm(SAU_model1, test, n.trees = SAU_model1$gbm.call$best.trees, type = "response") # predict to test
-
+# Predict to the testing dataset
+preds <- gbm::predict.gbm(SAU_model1, test, n.trees = SAU_model1$gbm.call$best.trees, type = "response")
 dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
-.roc(test$abundance_presence, preds) # Get testing AUC
+get_testAUC(test$abundance_presence, preds) # Print testing AUC
 
+# Plot maps
 train_tmp <- train %>% 
   dplyr::mutate(model = SAU_model1$fitted)
-preds <- gbm::predict.gbm(SAU_model1, test, n.trees = SAU_model1$gbm.call$best.trees, type = "response") # predict to test
-
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
 
-##############
-## Plotting ##
-##############
-
 # January-March
-gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "jan-mar", # season
                         SAU_predict_season1, # rest of the ocean cells
@@ -54,10 +47,11 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_SAU_jan-mar` # grid of species for specific season
 )
 
-ggsquish1 <- plotSquishedModel(gg[[1]], SAU_ds1) # Plot the squished model
+gg1 <- plotModel(gg)
+hatch1 <- plotHatch(gg1, gg, SAU_ds1)
 
 # April-June
-gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "apr-jun", # season
                         SAU_predict_season2, # rest of the ocean cells
@@ -65,10 +59,11 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_SAU_apr-jun` # grid of species for specific season
 )
 
-ggsquish2 <- plotSquishedModel(gg[[1]], SAU_ds2) # Plot the squished model
+gg2 <- plotModel(gg)
+hatch2 <- plotHatch(gg2, gg, SAU_ds2)
 
 # July-September
-gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "jul-sept", # season
                         SAU_predict_season3, # rest of the ocean cells
@@ -76,10 +71,11 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_SAU_jul-sept` # grid of species for specific season
 )
 
-ggsquish3 <- plotSquishedModel(gg[[1]], SAU_ds3) # Plot the squished model
+gg3 <- plotModel(gg)
+hatch3 <- plotHatch(gg3, gg, SAU_ds3)
 
 # October-December
-gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted values)
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                         test_tmp, # testing object with model column (predictions)
                         "oct-dec", # season
                         SAU_predict_season4, # rest of the ocean cells
@@ -87,10 +83,110 @@ gg <- plotSeasonPredict(train_tmp, # training object with model column (fitted v
                         `grid_SAU_oct-dec` # grid of species for specific season
 )
 
-ggsquish4 <- plotSquishedModel(gg[[1]], SAU_ds4) # Plot the squished model
+gg4 <- plotModel(gg)
+hatch4 <- plotHatch(gg4, gg, SAU_ds4)
 
-ggsquished <- (ggsquish1 + ggsquish2) / (ggsquish3 + ggsquish4) +
+ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = "Figures/SAU/SAU_model1_squished_hatched.png", width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, "SAU_model1_base.png"), width = 27, height = 15, dpi = 600)
+
+gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
+
+ggsave(plot = gghatch, filename = here::here(figure_dir, "SAU_model1_hatched.png"), width = 27, height = 15, dpi = 600)
+
+#### Model 2: Without longitude and latitude ####
+
+# 5-fold grid search
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(9:23, 27), resp_in = 5)
+
+print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
+
+# Building most optimal model
+SAU_model2 <- dismo::gbm.step(data = train, gbm.x = c(9:23, 27),
+                              gbm.y = 5, family = "bernoulli", n.folds = 5,
+                              tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.008
+)
+saveRDS(SAU_model2, here::here(output_dir, "SAU_model2.rds"))
+# SAU_model2 <- readRDS(here::here(output_dir, "SAU_model2.rds"))
+
+# Show the relative importance of each of the predictors
+summary(SAU_model2)
+
+# Printing AUCs
+SAU_model1$self.statistics$discrimination # Training AUC Score
+SAU_model1$cv.statistics$discrimination.mean # Validation AUC Score
+
+# Predict to the testing dataset
+preds <- gbm::predict.gbm(SAU_model2, test, n.trees = SAU_model2$gbm.call$best.trees, type = "response")
+dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
+get_testAUC(test$abundance_presence, preds) # Print testing AUC
+
+# Plot maps
+train_tmp <- train %>% 
+  dplyr::mutate(model = SAU_model2$fitted)
+test_tmp <- test %>% 
+  dplyr::mutate(model = preds)
+
+# January-March
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jan-mar", # season
+                        SAU_predict_season1, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_jan-mar` # grid of species for specific season
+)
+
+gg1 <- plotModel(gg)
+hatch1 <- plotHatch(gg1, gg, SAU_ds1)
+
+# April-June
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "apr-jun", # season
+                        SAU_predict_season2, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_apr-jun` # grid of species for specific season
+)
+
+gg2 <- plotModel(gg)
+hatch2 <- plotHatch(gg2, gg, SAU_ds2)
+
+# July-September
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "jul-sept", # season
+                        SAU_predict_season3, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_jul-sept` # grid of species for specific season
+)
+
+gg3 <- plotModel(gg)
+hatch3 <- plotHatch(gg3, gg, SAU_ds3)
+
+# October-December
+gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
+                        test_tmp, # testing object with model column (predictions)
+                        "oct-dec", # season
+                        SAU_predict_season4, # rest of the ocean cells
+                        SAU_model2, # BRT model
+                        `grid_SAU_oct-dec` # grid of species for specific season
+)
+
+gg4 <- plotModel(gg)
+hatch4 <- plotHatch(gg4, gg, SAU_ds4)
+
+ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
+
+ggsave(plot = ggsquished, filename = here::here(figure_dir, "SAU_model2_base.png"), width = 27, height = 15, dpi = 600)
+
+gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
+
+ggsave(plot = gghatch, filename = here::here(figure_dir, "SAU_model2_hatched.png"), width = 27, height = 15, dpi = 600)

@@ -3,6 +3,7 @@
 # Load preliminaries
 source("02a_YFT_Data.R") # Load YFT data
 output_dir <- here::here("Output", "Models")
+figure_dir <- here::here("Figures", "YFT")
 
 #### Model 1: With longitude and latitude ####
 
@@ -14,10 +15,10 @@ print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 # Building most optimal model
 YFT_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.008
+                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.009
 )
 saveRDS(YFT_model1, here::here(output_dir, "YFT_model1.rds"))
-# YFT_model1 <- readRDS("Output/Models/YFT_model1.rds")
+# YFT_model1 <- readRDS(here::here(output_dir, "YFT_model1.rds"))
 
 # Show the relative importance of each of the predictors
 summary(YFT_model1) 
@@ -46,7 +47,8 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jan-mar` # grid of species for specific season
 )
 
-gg1 <- plotModel(gg[[1]], YFT_ds1) # Plot the squished model
+gg1 <- plotModel(gg)
+hatch1 <- plotHatch(gg1, gg, YFT_ds1)
 
 # April-June
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -57,7 +59,8 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_apr-jun` # grid of species for specific season
 )
 
-gg2 <- plotModel(gg[[1]], YFT_ds2) # Plot the squished model
+gg2 <- plotModel(gg)
+hatch2 <- plotHatch(gg2, gg, YFT_ds2)
 
 # July-September
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -68,7 +71,8 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jul-sept` # grid of species for specific season
 )
 
-gg3 <- plotModel(gg[[1]], YFT_ds3) # Plot the squished model
+gg3 <- plotModel(gg)
+hatch3 <- plotHatch(gg3, gg, YFT_ds3)
 
 # October-December
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -79,13 +83,20 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_oct-dec` # grid of species for specific season
 )
 
-gg4 <- plotModel(gg[[1]], YFT_ds4) # Plot the squished model
+gg4 <- plotModel(gg)
+hatch4 <- plotHatch(gg4, gg, YFT_ds4)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = "Figures/YFT/YFT_model1_base.png", width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, "YFT_model1_base.png"), width = 27, height = 15, dpi = 600)
+
+gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
+
+ggsave(plot = gghatch, filename = here::here(figure_dir, "YFT_model1_hatched.png"), width = 27, height = 15, dpi = 600)
 
 #### Model 2: Without longitude and latitude ####
 
@@ -129,7 +140,8 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jan-mar` # grid of species for specific season
 )
 
-gg1 <- plotModel(gg[[1]], YFT_ds1) # Plot the squished model
+gg1 <- plotModel(gg)
+hatch1 <- plotHatch(gg1, gg, YFT_ds1)
 
 # April-June
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -140,7 +152,8 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_apr-jun` # grid of species for specific season
 )
 
-gg2 <- plotModel(gg[[1]], YFT_ds2) # Plot the squished model
+gg2 <- plotModel(gg)
+hatch2 <- plotHatch(gg2, gg, YFT_ds2)
 
 # July-September
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -151,7 +164,8 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_jul-sept` # grid of species for specific season
 )
 
-gg3 <- plotModel(gg[[1]], YFT_ds3) # Plot the squished model
+gg3 <- plotModel(gg)
+hatch3 <- plotHatch(gg3, gg, YFT_ds3)
 
 # October-December
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -162,10 +176,17 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_YFT_oct-dec` # grid of species for specific season
 )
 
-gg4 <- plotModel(gg[[1]], YFT_ds4) # Plot the squished model
+gg4 <- plotModel(gg)
+hatch4 <- plotHatch(gg4, gg, YFT_ds4)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = "Figures/YFT/YFT_model2_base.png", width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, "YFT_model2_base.png"), width = 27, height = 15, dpi = 600)
+
+gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
+
+ggsave(plot = gghatch, filename = here::here(figure_dir, "YFT_model2_hatched.png"), width = 27, height = 15, dpi = 600)

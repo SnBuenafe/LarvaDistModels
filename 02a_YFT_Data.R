@@ -15,7 +15,7 @@ restrict_predictor <- function(x){
 # Function to hatch areas where adults are unlikely to be found
 restrict_adult <- function(x, y) {
   sf <- x %>% 
-    dplyr::mutate(adult_cat = ifelse(Thunnus_albacares >= 0.01, yes = 1, no = 0)) %>% 
+    dplyr::mutate(adult_cat = ifelse(Thunnus_albacares >= 0.01, yes = 1, no = 0)) %>% # used a 0.01 threshold
     dplyr::select(-geometry) %>% 
     dplyr::left_join(., y) %>% 
     sf::st_as_sf(crs = cCRS)
