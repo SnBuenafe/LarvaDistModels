@@ -31,7 +31,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
-saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "jan-mar.csv", sep = "_"))) # save predictions
+saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "jan-mar.rds", sep = "_"))) # save predictions
 
 # Plot model removing 10x10 areas with lower confidence
 gg1 <- plotConfidence(gg_filt, full_grid)
@@ -53,7 +53,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
-saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "apr-jun.csv", sep = "_"))) # save predictions
+saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "apr-jun.rds", sep = "_"))) # save predictions
 
 # Plot model removing 10x10 areas with lower confidence
 gg2 <- plotConfidence(gg_filt, full_grid)
@@ -75,7 +75,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
-saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "jul-sept.csv", sep = "_"))) # save predictions
+saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "jul-sept.rds", sep = "_"))) # save predictions
 
 # Plot model removing 10x10 areas with lower confidence
 gg3 <- plotConfidence(gg_filt, full_grid)
@@ -97,7 +97,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
-saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "oct-dec.csv", sep = "_"))) # save predictions
+saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SAU", "oct-dec.rds", sep = "_"))) # save predictions
 
 # Plot model removing 10x10 areas with lower confidence
 gg4 <- plotConfidence(gg_filt, full_grid)

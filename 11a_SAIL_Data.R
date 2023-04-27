@@ -7,7 +7,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just sailfish
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 34, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 34, 51)) %>%  # restrict the predictors
     dplyr::mutate(Istiophorus_platypterus = ifelse(is.na(Istiophorus_platypterus), yes = 0, no = Istiophorus_platypterus)) # replace NAs of adult predictions to 0s
 }
 

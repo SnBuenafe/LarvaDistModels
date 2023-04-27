@@ -7,7 +7,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just frigate tuna
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 27:28, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 27:28, 51)) %>%  # restrict the predictors
     rowwise() %>% 
     dplyr::mutate(adult = mean(c(Auxis_rochei, Auxis_thazard), na.rm = TRUE)) %>% 
     ungroup() %>% 

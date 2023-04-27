@@ -8,7 +8,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just sauries
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 35:37, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 35:37, 51)) %>%  # restrict the predictors
     rowwise() %>% 
     dplyr::mutate(adult = mean(c(Cololabis_saira, Cololabis_adocetus, Scomberesox_saurus), na.rm = TRUE)) %>% 
     ungroup() %>% 

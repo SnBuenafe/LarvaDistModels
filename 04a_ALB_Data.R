@@ -7,7 +7,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just albacore
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 24, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 24, 51)) %>%  # restrict the predictors
     dplyr::mutate(Thunnus_alalunga = ifelse(is.na(Thunnus_alalunga), yes = 0, no = Thunnus_alalunga)) # replace NAs of adult predictions to 0s
 }
 

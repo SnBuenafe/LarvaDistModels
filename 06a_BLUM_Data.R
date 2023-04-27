@@ -7,7 +7,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just blue marlin
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 30, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 30, 51)) %>%  # restrict the predictors
     dplyr::mutate(Makaira_nigricans = ifelse(is.na(Makaira_nigricans), yes = 0, no = Makaira_nigricans)) # replace NAs of adult predictions to 0s
 }
 

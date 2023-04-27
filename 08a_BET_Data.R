@@ -7,7 +7,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just bigeye tunas
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 25:26, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 25:26, 51)) %>%  # restrict the predictors
     rowwise() %>% 
     dplyr::mutate(adult = mean(c(Thunnus_obesus, Thunnus_atlanticus), na.rm = TRUE)) %>% 
     ungroup() %>% 

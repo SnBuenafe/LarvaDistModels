@@ -7,7 +7,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just skipjack tunas
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 23, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 23, 51)) %>%  # restrict the predictors
     dplyr::mutate(Katsuwonus_pelamis = ifelse(is.na(Katsuwonus_pelamis), yes = 0, no = Katsuwonus_pelamis)) # replace NAs of adult predictions to 0s
 }
 

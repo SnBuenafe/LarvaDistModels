@@ -18,7 +18,7 @@ output_dir <- here::here("Output", "Models")
 
 ## Nishikawa plots
 
-First, we plot the presence/absence data from the Nishikawa dataset for sauries.
+First, we plot the presence/absence data from the Nishikawa dataset for sauries. Generally, positive sampling points are pretty sparse.
 
 ### January-March
 
@@ -169,6 +169,8 @@ test_tmp <- test %>%
 
 Then, we extrapolate for the rest of $40^{\circ}N$-$40^{\circ}S$ and present seasonal distribution maps. The distribution maps are shown side-by-side with the Nishikawa maps.
 
+Generally speaking, even with the $0-360^{\circ}$ longitude, there are still visible artefacts for the sauries' model.
+
 ### January-March
 ```{r model1_jm, echo = FALSE}
 # January-March
@@ -185,13 +187,6 @@ gg1 <- plotModel(gg) +
         legend.title = element_text(size = 10),
         plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
 gg1 + nish1
-```
-
-And, unlike yellowfin tuna, the adult sauries have a more restricted range. We show the plot with hatches in areas that have adult probabilities < 0.01.
-
-```{r hatched1_jm, echo = FALSE}
-hatch1 <- plotHatch(gg1, gg, SAU_ds1)
-hatch1
 ```
 
 ### April-June
@@ -212,11 +207,6 @@ gg2 <- plotModel(gg) +
 gg2 + nish2
 ```
 
-```{r hatched1_aj, echo = FALSE}
-hatch2 <- plotHatch(gg2, gg, SAU_ds2)
-hatch2
-```
-
 ### July-September
 ```{r model1_js, echo = FALSE}
 # July-September
@@ -235,11 +225,6 @@ gg3 <- plotModel(gg) +
 gg3 + nish3
 ```
 
-```{r hatched1_js, echo = FALSE}
-hatch3 <- plotHatch(gg3, gg, SAU_ds3)
-hatch3
-```
-
 ### October-December
 ```{r model1_od, echo = FALSE}
 # October-December
@@ -256,11 +241,6 @@ gg4 <- plotModel(gg) +
         legend.title = element_text(size = 10),
         plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
 gg4 + nish4
-```
-
-```{r hatched1_od, echo = FALSE}
-hatch4 <- plotHatch(gg4, gg, SAU_ds4)
-hatch4
 ```
 
 ## Model without geographical location (Model 2)
@@ -283,6 +263,8 @@ test_tmp <- test %>%
 
 Again, each seasonal distribution map is shown side-by-side with its corresponding Nishikawa seasonal chart.
 
+The artefacts are gone when using Model 2.
+
 ### January-March
 ```{r model2_jm, echo = FALSE}
 # January-March
@@ -301,11 +283,6 @@ gg1 <- plotModel(gg) +
 gg1 + nish1
 ```
 
-```{r hatched2_jm, echo = FALSE}
-hatch1 <- plotHatch(gg1, gg, SAU_ds1)
-hatch1
-```
-
 ### April-June
 ```{r model2_aj, echo = FALSE}
 # April-June
@@ -322,11 +299,6 @@ gg2 <- plotModel(gg) +
         legend.title = element_text(size = 10),
         plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
 gg2 + nish2
-```
-
-```{r hatched2_aj, echo = FALSE}
-hatch2 <- plotHatch(gg2, gg, SAU_ds2)
-hatch2
 ```
 
 ### July-September
@@ -348,11 +320,6 @@ gg3 <- plotModel(gg) +
 gg3 + nish3
 ```
 
-```{r hatched2_js, echo = FALSE}
-hatch3 <- plotHatch(gg3, gg, SAU_ds3)
-hatch3
-```
-
 ### October-December
 ```{r model2_od, echo = FALSE}
 # October-December
@@ -369,11 +336,6 @@ gg4 <- plotModel(gg) +
         legend.title = element_text(size = 10),
         plot.margin = unit(c(0,0.5,0,0.5), "cm")) # Plot the squished model
 gg4 + nish4
-```
-
-```{r hatched2_od, echo = FALSE}
-hatch4 <- plotHatch(gg4, gg, SAU_ds4)
-hatch4
 ```
 
 ## Increasing confidence of distribution maps.
@@ -447,20 +409,8 @@ gg_25 <- plotModel(gg_filt) +
 gg_25 + nish1
 ```
 
-Let's also visualize that side-by-side with the hatched plot that's filtered to just the remaining $10 \times 10$ grid cells.
-
-```{r threshatched25_jm, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds1 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
-
-hatch_filt1 <- plotHatch(gg_25, gg_filt, df_filt)
-gg_25 + hatch_filt1
-```
-
-We now put hatches over areas of lower confidence.
 ``` {r hatchFull25_jm, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```
 
 We also do it for a more liberal __10%__ threshold.
@@ -478,17 +428,8 @@ gg_10 <- plotModel(gg_filt) +
 gg_10 + nish1
 ```
 
-```{r threshatched10_jm, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds1 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
-
-hatch_filt1 <- plotHatch(gg_10, gg_filt, df_filt)
-gg_10 + hatch_filt1
-```
-
 ``` {r hatchFull10_jm, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```
 
 Then, we replicate this across the 3 other seasons...
@@ -529,17 +470,9 @@ gg_25 <- plotModel(gg_filt) +
 gg_25 + nish2
 ```
 
-```{r threshatched25_aj, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds2 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
-
-hatch_filt2 <- plotHatch(gg_25, gg_filt, df_filt)
-gg_25 + hatch_filt2
-```
 
 ``` {r hatchFull25_aj, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```
 
 ```{r thresh10_aj, echo = FALSE}
@@ -556,17 +489,8 @@ gg_10 <- plotModel(gg_filt) +
 gg_10 + nish2
 ```
 
-```{r threshatched10_aj, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds2 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
-
-hatch_filt2 <- plotHatch(gg_10, gg_filt, df_filt)
-gg_10 + hatch_filt2
-```
-
 ``` {r hatchFull10_aj, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```
 
 ### July-September
@@ -605,16 +529,9 @@ gg_25 <- plotModel(gg_filt) +
 gg_25 + nish3
 ```
 
-```{r threshatched25_js, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds3 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
 
-hatch_filt3 <- plotHatch(gg_25, gg_filt, df_filt)
-gg_25 + hatch_filt3
-```
 ``` {r hatchFull25_js, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```
 
 ```{r thresh10_js, echo = FALSE}
@@ -631,17 +548,8 @@ gg_10 <- plotModel(gg_filt) +
 gg_10 + nish3
 ```
 
-```{r threshatched10_js, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds3 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
-
-hatch_filt3 <- plotHatch(gg_10, gg_filt, df_filt)
-gg_10 + hatch_filt3
-```
-
 ``` {r hatchFull10_js, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```
 
 ### October-December
@@ -680,17 +588,8 @@ gg_25 <- plotModel(gg_filt) +
 gg_25 + nish4
 ```
 
-```{r threshatched25_od, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds4 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
-
-hatch_filt4 <- plotHatch(gg_25, gg_filt, df_filt)
-gg_25 + hatch_filt4
-```
-
 ``` {r hatchFull25_od, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```
 
 ```{r thresh10_od, echo = FALSE}
@@ -707,15 +606,6 @@ gg_10 <- plotModel(gg_filt) +
 gg_10 + nish4
 ```
 
-```{r threshatched10_od, echo = FALSE}
-# Filter original grid to only these cells for plotting
-df_filt <- SAU_ds4 %>%
-  dplyr::filter(cellID %in% gg_filt$cellID)
-
-hatch_filt4 <- plotHatch(gg_10, gg_filt, df_filt)
-gg_10 + hatch_filt4
-```
-
 ``` {r hatchFull10_od, echo = FALSE}
-plotConfidence(gg_filt, full_grid, gg)
+plotConfidence(gg_filt, full_grid)
 ```

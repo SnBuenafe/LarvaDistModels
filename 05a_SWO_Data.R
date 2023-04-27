@@ -7,7 +7,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just swordfish
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 29, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 29, 51)) %>%  # restrict the predictors
     dplyr::mutate(Xiphias_gladius = ifelse(is.na(Xiphias_gladius), yes = 0, no = Xiphias_gladius)) # replace NAs of adult predictions to 0s
 }
 

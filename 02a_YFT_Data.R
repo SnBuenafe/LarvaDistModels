@@ -8,7 +8,7 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just yellowfin tunas
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:22, 39)) %>%  # restrict the predictors
+    dplyr::select(c(1:22, 51)) %>%  # restrict the predictors
     dplyr::mutate(Thunnus_albacares = ifelse(is.na(Thunnus_albacares), yes = 0, no = Thunnus_albacares)) # replace NAs of adult predictions to 0s
 }
 

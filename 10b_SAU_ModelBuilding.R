@@ -15,7 +15,7 @@ print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 # Building most optimal model
 SAU_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:23, 27),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.01
+                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.006
 )
 saveRDS(SAU_model1, here::here(output_dir, "SAU_model1.rds"))
 # SAU_model1 <- readRDS(here::here(output_dir, "SAU_model1.rds"))
@@ -108,7 +108,7 @@ print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 # Building most optimal model
 SAU_model2 <- dismo::gbm.step(data = train, gbm.x = c(9:23, 27),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.008
+                              tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.01
 )
 saveRDS(SAU_model2, here::here(output_dir, "SAU_model2.rds"))
 # SAU_model2 <- readRDS(here::here(output_dir, "SAU_model2.rds"))

@@ -7,9 +7,9 @@ input_dir <- here::here("Output", "CSV")
 # Function to restrict adult distribution predictor to just striped marlins
 restrict_predictor <- function(x){
   x %<>%
-    dplyr::select(c(1:21, 39:40, 51)) %>%  # restrict the predictors
+    dplyr::select(c(1:21, 40, 51)) %>%  # restrict the predictors
     rowwise() %>% 
-    dplyr::mutate(adult = mean(c(Thunnus_thynnus, Thunnus_orientalis), na.rm = TRUE)) %>% 
+    dplyr::mutate(adult = mean(c(Thunnus_orientalis), na.rm = TRUE)) %>% # Just looking at Pacific tuna adult distributions
     ungroup() %>% 
     dplyr::mutate(adult = ifelse(is.na(adult), yes = 0, no = adult)) # replace NAs of adult predictions to 0s
 }

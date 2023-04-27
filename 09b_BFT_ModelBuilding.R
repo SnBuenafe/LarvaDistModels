@@ -8,14 +8,14 @@ figure_dir <- here::here("Figures", "BFT")
 #### Model 1: With longitude and latitude ####
 
 # Grid search
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:23, 26), resp_in = 5)
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:23, 25), resp_in = 5)
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
 # Building most optimal model
-BFT_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:23, 26),
+BFT_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:23, 25),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.01
+                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.008
 )
 saveRDS(BFT_model1, here::here(output_dir, "BFT_model1.rds"))
 # BFT_model1 <- readRDS(here::here(output_dir, "BFT_model1.rds"))
@@ -101,20 +101,20 @@ ggsave(plot = gghatch, filename = here::here(figure_dir, "BFT_model1_hatched.png
 #### Model 2: Without longitude and latitude ####
 
 # 5-fold grid search
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(9:23, 26), resp_in = 5) # with longitude and latitude
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(9:23, 25), resp_in = 5) # with longitude and latitude
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
 # Building most optimal model
-BFT_model2 <- dismo::gbm.step(data = train, gbm.x = c(9:23, 26),
+BFT_model2 <- dismo::gbm.step(data = train, gbm.x = c(9:23, 25),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.01
+                              tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.009
 )
 saveRDS(BFT_model2, here::here(output_dir, "BFT_model2.rds"))
 # BFT_model2 <- readRDS("Output/Models/BFT_model2.rds")
 
 # Show the relative importance of each of the predictors
-summary(BFT_model2) 
+summary(BFT_model2)
 
 # Printing AUCs
 BFT_model2$self.statistics$discrimination # Training AUC Score
