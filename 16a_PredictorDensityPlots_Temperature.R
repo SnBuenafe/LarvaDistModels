@@ -1,12 +1,19 @@
 # DESCRIPTION: Density plots for temperature vs predictions
+
+# Define preliminaries
+source("00_Preliminaries.R")
+pred_dir <- here::here("Output", "Predictions")
+clim_dir <- here::here("Data", "Climatology", "sf")
+fig_dir <- here::here("Figures")
+
 # Greens: c("#708B75", "#88A88E", "#9DC2A4", "#B2DBB9", "#C2F0CA")
 # Purples: c("#6A637A", "#9086A6", "#A297BA", "#B8ABD4", "#CABCE8")
 # Yellows: c("#DB9F1D", "#FFD67D")
 
 # Function for plotting temperature vs probability
-plot_pred_spp <- function(predictor, spp, color, title) {
-  gg <- ggplot(dataTmp) +
-    geom_point(aes_string(x = predictor, y = spp), color = color, size = 0.5, shape = 16) +
+plotPredictor <- function(predictor, spp, title) {
+  gg <- ggplot(fin_tmp) +
+    geom_point(aes(x = !!sym(predictor), y = !!sym(spp)), color = "#708B75", size = 0.5, shape = 16) +
     theme_bw() +
     ggtitle(title) +
     xlab(expression('Temperature ('^"o"*'C)')) +
@@ -17,140 +24,59 @@ plot_pred_spp <- function(predictor, spp, color, title) {
           plot.title = element_text(size = 20, color = "black"))
 }
 
-### January-March ####
-
-# Load full prediction data set
-df <- read_csv("Output/CSV/FULL_predictions_jan-mar.csv") %>% 
+# January-March
+df <- read_csv(here::here(pred_dir, "FULL_predictions_jan-mar.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
-# Load predictor data set
-dataTmp <- readRDS("Data/Climatology/sf/tos_historical_jan-mar_interpolated.rds") %>% 
-  sf::st_as_sf(sf_column_name = "geometry") %>% 
-  crop_predictor() %>%  # load temperature
-  tibble::as_tibble() %>% 
+tmp1 <- readRDS(here::here(clim_dir, "tos_historical_jan-mar_interpolated.rds")) %>% # load predictor data set
   dplyr::select(-geometry) %>% 
-  bind_cols(., df)
+  dplyr::left_join(df, ., by = "cellID")
 
-gg_yft <- plot_pred_spp("tos_transformed", "yft", "#708B75", "(a) Yellowfin tuna")
-gg_skp <- plot_pred_spp("tos_transformed", "skp", "#88A88E", "(b) Skipjack tuna")
-gg_alb <- plot_pred_spp("tos_transformed", "alb", "#9DC2A4", "(c) Albacore")
-gg_fri <- plot_pred_spp("tos_transformed", "fri", "#B2DBB9", "(d) Frigate tuna")
-gg_bet <- plot_pred_spp("tos_transformed", "bet", "#C2F0CA", "(e) Bigeye tuna")
-gg_swo <- plot_pred_spp("tos_transformed", "swo", "#6A637A", "(f) Swordfish")
-gg_blum <- plot_pred_spp("tos_transformed", "blum", "#9086A6", "(g) Blue marlin")
-gg_shos <- plot_pred_spp("tos_transformed", "shos", "#A297BA", "(h) Shortbill spearfish")
-gg_strm <- plot_pred_spp("tos_transformed", "strm", "#B8ABD4", "(i) Striped marlin")
-gg_sail <- plot_pred_spp("tos_transformed", "sail", "#CABCE8", "(j) Sailfish")
-gg_sau <- plot_pred_spp("tos_transformed", "sau", "#DB9F1D", "(k) Sauries")
-gg_lesc <- plot_pred_spp("tos_transformed", "lesc", "#FFD67D", "(l) Longfin escolar")
-
-`gg_tmp_jan-mar` <- gg_yft + gg_skp + gg_alb + gg_fri +
-  gg_bet + gg_swo + gg_blum + gg_shos +
-  gg_strm + gg_sail + gg_sau + gg_lesc +
-  plot_layout(ncol = 4, nrow = 3)
-
-ggsave(plot = `gg_tmp_jan-mar`, filename = "Figures/ImptPredictors_Temperature_jan-mar.png", width = 27, height = 15, dpi = 300)
-
-#### April-June ####
-
-# Load full prediction data set
-df <- read_csv("Output/CSV/FULL_predictions_apr-jun.csv") %>% 
+# April-June
+df <- read_csv(here::here(pred_dir, "FULL_predictions_apr-jun.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
-# Load predictor data set
-dataTmp <- readRDS("Data/Climatology/sf/tos_historical_apr-jun_interpolated.rds") %>% 
-  sf::st_as_sf(sf_column_name = "geometry") %>% 
-  crop_predictor() %>%  # load temperature
-  tibble::as_tibble() %>% 
+tmp2 <- readRDS(here::here(clim_dir, "tos_historical_apr-jun_interpolated.rds")) %>% # load predictor data set
   dplyr::select(-geometry) %>% 
-  bind_cols(., df)
+  dplyr::left_join(df, ., by = "cellID")
 
-gg_yft <- plot_pred_spp("tos_transformed", "yft", "#708B75", "(a) Yellowfin tuna")
-gg_skp <- plot_pred_spp("tos_transformed", "skp", "#88A88E", "(b) Skipjack tuna")
-gg_alb <- plot_pred_spp("tos_transformed", "alb", "#9DC2A4", "(c) Albacore")
-gg_fri <- plot_pred_spp("tos_transformed", "fri", "#B2DBB9", "(d) Frigate tuna")
-gg_bet <- plot_pred_spp("tos_transformed", "bet", "#C2F0CA", "(e) Bigeye tuna")
-gg_swo <- plot_pred_spp("tos_transformed", "swo", "#6A637A", "(f) Swordfish")
-gg_blum <- plot_pred_spp("tos_transformed", "blum", "#9086A6", "(g) Blue marlin")
-gg_shos <- plot_pred_spp("tos_transformed", "shos", "#A297BA", "(h) Shortbill spearfish")
-gg_strm <- plot_pred_spp("tos_transformed", "strm", "#B8ABD4", "(i) Striped marlin")
-gg_sail <- plot_pred_spp("tos_transformed", "sail", "#CABCE8", "(j) Sailfish")
-gg_sau <- plot_pred_spp("tos_transformed", "sau", "#DB9F1D", "(k) Sauries")
-gg_lesc <- plot_pred_spp("tos_transformed", "lesc", "#FFD67D", "(l) Longfin escolar")
-
-`gg_tmp_apr-jun` <- gg_yft + gg_skp + gg_alb + gg_fri +
-  gg_bet + gg_swo + gg_blum + gg_shos +
-  gg_strm + gg_sail + gg_sau + gg_lesc +
-  plot_layout(ncol = 4, nrow = 3)
-
-ggsave(plot = `gg_tmp_apr-jun`, filename = "Figures/ImptPredictors_Temperature_apr-jun.png", width = 27, height = 15, dpi = 300)
-
-#### July-September ####
-
-# Load full prediction data set
-df <- read_csv("Output/CSV/FULL_predictions_jul-sept.csv") %>% 
+# July-September
+df <- read_csv(here::here(pred_dir, "FULL_predictions_jul-sept.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
-# Load predictor data set
-dataTmp <- readRDS("Data/Climatology/sf/tos_historical_jul-sept_interpolated.rds") %>% 
-  sf::st_as_sf(sf_column_name = "geometry") %>% 
-  crop_predictor() %>%  # load temperature
-  tibble::as_tibble() %>% 
+tmp3 <- readRDS(here::here(clim_dir, "tos_historical_jul-sept_interpolated.rds")) %>% # load predictor data set
   dplyr::select(-geometry) %>% 
-  bind_cols(., df)
+  dplyr::left_join(df, ., by = "cellID")
 
-gg_yft <- plot_pred_spp("tos_transformed", "yft", "#708B75", "(a) Yellowfin tuna")
-gg_skp <- plot_pred_spp("tos_transformed", "skp", "#88A88E", "(b) Skipjack tuna")
-gg_alb <- plot_pred_spp("tos_transformed", "alb", "#9DC2A4", "(c) Albacore")
-gg_fri <- plot_pred_spp("tos_transformed", "fri", "#B2DBB9", "(d) Frigate tuna")
-gg_bet <- plot_pred_spp("tos_transformed", "bet", "#C2F0CA", "(e) Bigeye tuna")
-gg_swo <- plot_pred_spp("tos_transformed", "swo", "#6A637A", "(f) Swordfish")
-gg_blum <- plot_pred_spp("tos_transformed", "blum", "#9086A6", "(g) Blue marlin")
-gg_shos <- plot_pred_spp("tos_transformed", "shos", "#A297BA", "(h) Shortbill spearfish")
-gg_strm <- plot_pred_spp("tos_transformed", "strm", "#B8ABD4", "(i) Striped marlin")
-gg_sail <- plot_pred_spp("tos_transformed", "sail", "#CABCE8", "(j) Sailfish")
-gg_sau <- plot_pred_spp("tos_transformed", "sau", "#DB9F1D", "(k) Sauries")
-gg_lesc <- plot_pred_spp("tos_transformed", "lesc", "#FFD67D", "(l) Longfin escolar")
-
-`gg_tmp_jul-sept` <- gg_yft + gg_skp + gg_alb + gg_fri +
-  gg_bet + gg_swo + gg_blum + gg_shos +
-  gg_strm + gg_sail + gg_sau + gg_lesc +
-  plot_layout(ncol = 4, nrow = 3)
-
-ggsave(plot = `gg_tmp_jul-sept`, filename = "Figures/ImptPredictors_Temperature_jul-sept.png", width = 27, height = 15, dpi = 300)
-
-#### October-December ####
-
-# Load full prediction data set
-df <- read_csv("Output/CSV/FULL_predictions_oct-dec.csv") %>% 
+# October-December
+df <- read_csv(here::here(pred_dir, "FULL_predictions_oct-dec.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
-df <- df[3:114786,] # TODO: BUG IN ASSIGNING LONGITUDE AND LATITUDE
-
-# Load predictor data set
-dataTmp <- readRDS("Data/Climatology/sf/tos_historical_oct-dec_interpolated.rds") %>% 
-  sf::st_as_sf(sf_column_name = "geometry") %>% 
-  crop_predictor() %>%  # load temperature
-  tibble::as_tibble() %>% 
+tmp4 <- readRDS(here::here(clim_dir, "tos_historical_oct-dec_interpolated.rds")) %>% # load predictor data set
   dplyr::select(-geometry) %>% 
-  bind_cols(., df)
+  dplyr::left_join(df, ., by = "cellID")
 
-gg_yft <- plot_pred_spp("tos_transformed", "yft", "#708B75", "(a) Yellowfin tuna")
-gg_skp <- plot_pred_spp("tos_transformed", "skp", "#88A88E", "(b) Skipjack tuna")
-gg_alb <- plot_pred_spp("tos_transformed", "alb", "#9DC2A4", "(c) Albacore")
-gg_fri <- plot_pred_spp("tos_transformed", "fri", "#B2DBB9", "(d) Frigate tuna")
-gg_bet <- plot_pred_spp("tos_transformed", "bet", "#C2F0CA", "(e) Bigeye tuna")
-gg_swo <- plot_pred_spp("tos_transformed", "swo", "#6A637A", "(f) Swordfish")
-gg_blum <- plot_pred_spp("tos_transformed", "blum", "#9086A6", "(g) Blue marlin")
-gg_shos <- plot_pred_spp("tos_transformed", "shos", "#A297BA", "(h) Shortbill spearfish")
-gg_strm <- plot_pred_spp("tos_transformed", "strm", "#B8ABD4", "(i) Striped marlin")
-gg_sail <- plot_pred_spp("tos_transformed", "sail", "#CABCE8", "(j) Sailfish")
-gg_sau <- plot_pred_spp("tos_transformed", "sau", "#DB9F1D", "(k) Sauries")
-gg_lesc <- plot_pred_spp("tos_transformed", "lesc", "#FFD67D", "(l) Longfin escolar")
+fin_tmp <- purrr::reduce(list(tmp1, tmp2, tmp3, tmp4), dplyr::bind_rows) # join all seasons
 
-`gg_tmp_oct-dec` <- gg_yft + gg_skp + gg_alb + gg_fri +
-  gg_bet + gg_swo + gg_blum + gg_shos +
-  gg_strm + gg_sail + gg_sau + gg_lesc +
-  plot_layout(ncol = 4, nrow = 3)
+# Plot all the species
+gg_yft <- plotPredictor("tos_transformed", "yft", "(a) Yellowfin tuna")
+gg_skp <- plotPredictor("tos_transformed", "skp", "(b) Skipjack tuna")
+gg_alb <- plotPredictor("tos_transformed", "alb", "(c) Albacore")
+gg_fri <- plotPredictor("tos_transformed", "fri", "(d) Frigate tuna")
+gg_bet <- plotPredictor("tos_transformed", "bet", "(e) Bigeye tuna")
+gg_bft <- plotPredictor("tos_transformed", "bft", "(f) Pacific bluefin tuna")
+gg_sbft <- plotPredictor("tos_transformed", "sbft", "(g) Southern bluefin tuna")
+gg_slt <- plotPredictor("tos_transformed", "slt", "(h) Slender tuna")
+gg_bon <- plotPredictor("tos_transformed", "bon", "(i) Bonitos")
+gg_swo <- plotPredictor("tos_transformed", "swo", "(j) Swordfish")
+gg_blum <- plotPredictor("tos_transformed", "blum", "(k) Blue marlin")
+gg_sail <- plotPredictor("tos_transformed", "sail", "(l) Sailfish")
+gg_sau <- plotPredictor("tos_transformed", "sau", "(m) Sauries")
 
-ggsave(plot = `gg_tmp_oct-dec`, filename = "Figures/ImptPredictors_Temperature_oct-dec.png", width = 27, height = 15, dpi = 300)
+
+gg_tmp <- gg_yft + gg_skp + gg_alb + gg_fri +
+  gg_bet + gg_bft + gg_sbft + gg_slt +
+  gg_bon + gg_swo + gg_blum + gg_sail + gg_sau +
+  plot_layout(nrow = 3)
+
+ggsave(plot = gg_tmp, filename = here::here(fig_dir, "ImptPredictors_tos_jan-mar.png"), width = 27, height = 15, dpi = 300)

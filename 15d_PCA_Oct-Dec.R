@@ -1,5 +1,4 @@
 # Description: Using PCA to determine hotspots for October-December
-
 # Define preliminaries
 source("00_Preliminaries.R")
 pred_dir <- here::here("Output", "Predictions")
@@ -10,77 +9,80 @@ pc_dir <- here::here("Output", "PCA")
 
 # Yellowfin tuna
 obj <- readRDS(here::here(pred_dir, "YFT_oct-dec.rds"))
-yft <- prepare_components(obj)
+yft <- prepare_components(obj, "yft")
 
 # Skipjack tuna
 obj <- readRDS(here::here(pred_dir, "SKP_oct-dec.rds"))
-skp <- prepare_components(obj)
+skp <- prepare_components(obj, "skp")
 
 # Albacore
 obj <- readRDS(here::here(pred_dir, "ALB_oct-dec.rds"))
-alb <- prepare_components(obj)
+alb <- prepare_components(obj, "alb")
 
 # Swordfish
 obj <- readRDS(here::here(pred_dir, "SWO_oct-dec.rds"))
-swo <- prepare_components(obj)
+swo <- prepare_components(obj, "swo")
 
 # Blue marlin
 obj <- readRDS(here::here(pred_dir, "BLUM_oct-dec.rds"))
-blum <- prepare_components(obj)
+blum <- prepare_components(obj, "blum")
 
 # Frigate tuna
 obj <- readRDS(here::here(pred_dir, "FRI_oct-dec.rds"))
-fri <- prepare_components(obj)
+fri <- prepare_components(obj, "fri")
 
 # Bigeye tuna
 obj <- readRDS(here::here(pred_dir, "BET_oct-dec.rds"))
-bet <- prepare_components(obj)
+bet <- prepare_components(obj, "bet")
 
 # Pacific bluefin tuna
 obj <- readRDS(here::here(pred_dir, "BFT_oct-dec.rds"))
-bft <- prepare_components(obj)
+bft <- prepare_components(obj, "bft")
 
 # Sauries
 obj <- readRDS(here::here(pred_dir, "SAU_oct-dec.rds"))
-sau <- prepare_components(obj)
+sau <- prepare_components(obj, "sau")
 
 # Sailfish
 obj <- readRDS(here::here(pred_dir, "SAIL_oct-dec.rds"))
-sail <- prepare_components(obj)
+sail <- prepare_components(obj, "sail")
 
 # Southern bluefin tuna
 obj <- readRDS(here::here(pred_dir, "SBFT_oct-dec.rds"))
-sbft <- prepare_components(obj)
+sbft <- prepare_components(obj, "sbft")
 
 # Slender tuna
 obj <- readRDS(here::here(pred_dir, "SLT_oct-dec.rds"))
-slt <- prepare_components(obj)
+slt <- prepare_components(obj, "slt")
 
 # Bonitos
 obj <- readRDS(here::here(pred_dir, "BON_oct-dec.rds"))
-bon <- prepare_components(obj)
+bon <- prepare_components(obj, "bon")
 
 #### Assembling data frame ####
 
-df <- list(yft = yft, 
-           skp = skp, 
-           alb = alb, 
-           swo = swo, 
-           blum = blum, 
-           fri = fri, 
-           bet = bet, 
-           bft = bft,
-           sau = sau,
-           sail = sail, 
-           sbft = sbft,
-           slt = slt,
-           bon = bon) %>% 
-  do.call(bind_cols, .)
+df <- list(yft, 
+           skp, 
+           alb,
+           swo,
+           blum,
+           fri,
+           bet,
+           bft,
+           sau,
+           sail,
+           sbft,
+           slt,
+           bon
+)
+
+df <- purrr::reduce(df, dplyr::left_join, by = 'cellID')
 
 write.csv(df, file = here::here(pred_dir, "FULL_predictions_oct-dec.csv"))
 
 #### Run PCA ####
-PCA <- princomp(df, cor = FALSE)
+PCA <- princomp(df %>% 
+                  dplyr::select(-cellID), cor = FALSE)
 
 summary(PCA)
 

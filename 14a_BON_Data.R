@@ -5,7 +5,7 @@ source("00_Preliminaries.R")
 input_dir <- here::here("Output", "CSV")
 
 # Define functions
-# Function to restrict adult distribution predictor to just southern bluefin tuna
+# Function to restrict adult distribution predictor to just bonitos
 restrict_predictor <- function(x){
   x %<>%
     dplyr::select(c(1:21, 46:49, 51)) %>%  # restrict the predictors

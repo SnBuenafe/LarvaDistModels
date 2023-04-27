@@ -9,77 +9,80 @@ model_dir <- here::here("Output", "Models")
 
 # Yellowfin tuna
 obj <- readRDS(here::here(pred_dir, "YFT_jan-mar.rds"))
-yft <- prepare_components(obj)
+yft <- prepare_components(obj, "yft")
 
 # Skipjack tuna
 obj <- readRDS(here::here(pred_dir, "SKP_jan-mar.rds"))
-skp <- prepare_components(obj)
+skp <- prepare_components(obj, "skp")
 
 # Albacore
 obj <- readRDS(here::here(pred_dir, "ALB_jan-mar.rds"))
-alb <- prepare_components(obj)
+alb <- prepare_components(obj, "alb")
 
 # Swordfish
 obj <- readRDS(here::here(pred_dir, "SWO_jan-mar.rds"))
-swo <- prepare_components(obj)
+swo <- prepare_components(obj, "swo")
 
 # Blue marlin
 obj <- readRDS(here::here(pred_dir, "BLUM_jan-mar.rds"))
-blum <- prepare_components(obj)
+blum <- prepare_components(obj, "blum")
 
 # Frigate tuna
 obj <- readRDS(here::here(pred_dir, "FRI_jan-mar.rds"))
-fri <- prepare_components(obj)
+fri <- prepare_components(obj, "fri")
 
 # Bigeye tuna
 obj <- readRDS(here::here(pred_dir, "BET_jan-mar.rds"))
-bet <- prepare_components(obj)
+bet <- prepare_components(obj, "bet")
 
 # Pacific bluefin tuna
 obj <- readRDS(here::here(pred_dir, "BFT_jan-mar.rds"))
-bft <- prepare_components(obj)
+bft <- prepare_components(obj, "bft")
 
 # Sauries
 obj <- readRDS(here::here(pred_dir, "SAU_jan-mar.rds"))
-sau <- prepare_components(obj)
+sau <- prepare_components(obj, "sau")
 
 # Sailfish
 obj <- readRDS(here::here(pred_dir, "SAIL_jan-mar.rds"))
-sail <- prepare_components(obj)
+sail <- prepare_components(obj, "sail")
 
 # Southern bluefin tuna
 obj <- readRDS(here::here(pred_dir, "SBFT_jan-mar.rds"))
-sbft <- prepare_components(obj)
+sbft <- prepare_components(obj, "sbft")
 
 # Slender tuna
 obj <- readRDS(here::here(pred_dir, "SLT_jan-mar.rds"))
-slt <- prepare_components(obj)
+slt <- prepare_components(obj, "slt")
 
 # Bonitos
 obj <- readRDS(here::here(pred_dir, "BON_jan-mar.rds"))
-bon <- prepare_components(obj)
+bon <- prepare_components(obj, "bon")
 
 #### Assembling data frame ####
 
-df <- list(yft = yft, 
-           skp = skp, 
-           alb = alb, 
-           swo = swo, 
-           blum = blum, 
-           fri = fri, 
-           bet = bet, 
-           bft = bft,
-           sau = sau,
-           sail = sail, 
-           sbft = sbft,
-           slt = slt,
-           bon = bon) %>% 
-  do.call(bind_cols, .)
+df <- list(yft, 
+           skp, 
+           alb,
+           swo,
+           blum,
+           fri,
+           bet,
+           bft,
+           sau,
+           sail,
+           sbft,
+           slt,
+           bon
+           )
+
+df <- purrr::reduce(df, dplyr::left_join, by = 'cellID')
 
 write.csv(df, file = here::here(pred_dir, "FULL_predictions_jan-mar.csv"))
 
 #### Run PCA ####
-PCA <- stats::princomp(df, cor = FALSE)
+PCA <- stats::princomp(df %>% 
+                         dplyr::select(-cellID), cor = FALSE)
 
 summary(PCA)
 
