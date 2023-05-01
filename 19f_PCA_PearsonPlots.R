@@ -10,6 +10,7 @@ for(i in 1:length(seasons)) {
     res <- read_csv(here::here(pc_dir, paste("CorrMatrix", PC[j], seasons[i], "r.csv", sep = "_")))
     
     res <- res[1,] %>% 
+      dplyr::select(Comp, skp, yft, alb, bet, fri, sbft, bft, lit, slt, bon, blum, shos, swo, strm, sail, lesc, sau) %>%  # arrange columns
       as.matrix() # to plot only the top row
     
     file_path_test = here::here(fig_dir, paste("CorrMatrix", PC[j], paste0(seasons[i], ".png"), sep = "_"))

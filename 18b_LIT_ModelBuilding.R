@@ -37,6 +37,7 @@ train_tmp <- train %>%
   dplyr::mutate(model = LIT_model1$fitted)
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
+limits = c(0, 0.9)
 
 # January-March
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -47,7 +48,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_jan-mar` # grid of species for specific season
 )
 
-gg1 <- plotModel(gg)
+gg1 <- plotModel(gg, limits)
 hatch1 <- plotHatch(gg1, gg, LIT_ds1)
 
 # April-June
@@ -59,7 +60,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_apr-jun` # grid of species for specific season
 )
 
-gg2 <- plotModel(gg)
+gg2 <- plotModel(gg, limits)
 hatch2 <- plotHatch(gg2, gg, LIT_ds2)
 
 # July-September
@@ -71,7 +72,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_jul-sept` # grid of species for specific season
 )
 
-gg3 <- plotModel(gg)
+gg3 <- plotModel(gg, limits)
 hatch3 <- plotHatch(gg3, gg, LIT_ds3)
 
 # October-December
@@ -83,7 +84,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_oct-dec` # grid of species for specific season
 )
 
-gg4 <- plotModel(gg)
+gg4 <- plotModel(gg, limits)
 hatch4 <- plotHatch(gg4, gg, LIT_ds4)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
@@ -117,8 +118,8 @@ saveRDS(LIT_model2, here::here(output_dir, "LIT_model2.rds"))
 summary(LIT_model2)
 
 # Printing AUCs
-LIT_model1$self.statistics$discrimination # Training AUC Score
-LIT_model1$cv.statistics$discrimination.mean # Validation AUC Score
+LIT_model2$self.statistics$discrimination # Training AUC Score
+LIT_model2$cv.statistics$discrimination.mean # Validation AUC Score
 
 # Predict to the testing dataset
 preds <- gbm::predict.gbm(LIT_model2, test, n.trees = LIT_model2$gbm.call$best.trees, type = "response")
@@ -130,6 +131,7 @@ train_tmp <- train %>%
   dplyr::mutate(model = LIT_model2$fitted)
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
+limits = c(0, 0.9)
 
 # January-March
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -140,7 +142,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_jan-mar` # grid of species for specific season
 )
 
-gg1 <- plotModel(gg)
+gg1 <- plotModel(gg, limits)
 hatch1 <- plotHatch(gg1, gg, LIT_ds1)
 
 # April-June
@@ -152,7 +154,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_apr-jun` # grid of species for specific season
 )
 
-gg2 <- plotModel(gg)
+gg2 <- plotModel(gg, limits)
 hatch2 <- plotHatch(gg2, gg, LIT_ds2)
 
 # July-September
@@ -164,7 +166,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_jul-sept` # grid of species for specific season
 )
 
-gg3 <- plotModel(gg)
+gg3 <- plotModel(gg, limits)
 hatch3 <- plotHatch(gg3, gg, LIT_ds3)
 
 # October-December
@@ -176,7 +178,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_LIT_oct-dec` # grid of species for specific season
 )
 
-gg4 <- plotModel(gg)
+gg4 <- plotModel(gg, limits)
 hatch4 <- plotHatch(gg4, gg, LIT_ds4)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +

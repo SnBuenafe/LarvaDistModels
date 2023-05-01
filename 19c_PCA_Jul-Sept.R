@@ -125,11 +125,11 @@ pc1 <- plotPC1_limits(dummy, "Comp.1", "PC score 1")
 # Plot PC2
 pc2 <- plotPC2_limits(dummy, "Comp.2", "PC score 2")
 
-pc_plot <- (pc1 + pc2) +
-  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+pc_plot <- (pc1 + pc2) #+
+  #plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  #theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = pc_plot, filename = "Figures/PC_plot_jul-sept.png", width = 27, height = 7.5, dpi = 300)
+ggsave(plot = pc_plot, filename = "Figures/PC_plot_jul-sept.png", width = 35, height = 7.5, dpi = 300)
 
 #### Pearson's correlation ####
 

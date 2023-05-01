@@ -37,6 +37,7 @@ train_tmp <- train %>%
   dplyr::mutate(model = BON_model1$fitted)
 test_tmp <- test %>% 
   dplyr::mutate(model = preds)
+limits = c(0, 0.95)
 
 # January-March
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -47,7 +48,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BON_jan-mar` # grid of species for specific season
 )
 
-gg1 <- plotModel(gg)
+gg1 <- plotModel(gg, limits)
 hatch1 <- plotHatch(gg1, gg, BON_ds1)
 
 # April-June
@@ -59,7 +60,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BON_apr-jun` # grid of species for specific season
 )
 
-gg2 <- plotModel(gg)
+gg2 <- plotModel(gg, limits)
 hatch2 <- plotHatch(gg2, gg, BON_ds2)
 
 # July-September
@@ -71,7 +72,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BON_jul-sept` # grid of species for specific season
 )
 
-gg3 <- plotModel(gg)
+gg3 <- plotModel(gg, limits)
 hatch3 <- plotHatch(gg3, gg, BON_ds3)
 
 # October-December
@@ -83,7 +84,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BON_oct-dec` # grid of species for specific season
 )
 
-gg4 <- plotModel(gg)
+gg4 <- plotModel(gg, limits)
 hatch4 <- plotHatch(gg4, gg, BON_ds4)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +

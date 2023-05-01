@@ -13,6 +13,7 @@ train_tmp <- train %>%
   dplyr::mutate(model = model$fitted)
 test_tmp <- test %>%
   dplyr::mutate(model = preds)
+limits = c(0, 0.85)
 
 #### January-March ####
 # Associate seasonal grids with the 10x10 grid
@@ -32,9 +33,10 @@ gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("STRM", "jan-mar.rds", sep = "_"))) # save predictions
+# gg_filt <- readRDS(here::here(preds_dir, paste("STRM", "jan-mar.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
-gg1 <- plotConfidence(gg_filt, full_grid)
+gg1 <- plotConfidence(gg_filt, full_grid, limits)
 
 #### April-June ####
 # Associate seasonal grids with the 10x10 grid
@@ -54,9 +56,10 @@ gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("STRM", "apr-jun.rds", sep = "_"))) # save predictions
+# gg_filt <- readRDS(here::here(preds_dir, paste("STRM", "apr-jun.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
-gg2 <- plotConfidence(gg_filt, full_grid)
+gg2 <- plotConfidence(gg_filt, full_grid, limits)
 
 #### July-September ####
 # Associate seasonal grids with the 10x10 grid
@@ -76,9 +79,10 @@ gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("STRM", "jul-sept.rds", sep = "_"))) # save predictions
+# gg_filt <- readRDS(here::here(preds_dir, paste("STRM", "jul-sept.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
-gg3 <- plotConfidence(gg_filt, full_grid)
+gg3 <- plotConfidence(gg_filt, full_grid, limits)
 
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid
@@ -98,9 +102,10 @@ gg_filt <- restrictThreshold(full_grid,
                              gg,
                              10)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("STRM", "oct-dec.rds", sep = "_"))) # save predictions
+# gg_filt <- readRDS(here::here(preds_dir, paste("STRM", "oct-dec.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
-gg4 <- plotConfidence(gg_filt, full_grid)
+gg4 <- plotConfidence(gg_filt, full_grid, limits)
 
 gg_full <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
