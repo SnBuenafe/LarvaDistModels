@@ -60,6 +60,22 @@ slt <- prepare_components(obj, "slt")
 obj <- readRDS(here::here(pred_dir, "BON_apr-jun.rds"))
 bon <- prepare_components(obj, "bon")
 
+# Shortbill spearfish
+obj <- readRDS(here::here(pred_dir, "SHOS_apr-jun.rds"))
+shos <- prepare_components(obj, "shos")
+
+# Striped marlin
+obj <- readRDS(here::here(pred_dir, "STRM_apr-jun.rds"))
+strm <- prepare_components(obj, "strm")
+
+# Longfin escolar
+obj <- readRDS(here::here(pred_dir, "LESC_apr-jun.rds"))
+lesc <- prepare_components(obj, "lesc")
+
+# Little tuna
+obj <- readRDS(here::here(pred_dir, "LIT_apr-jun.rds"))
+lit <- prepare_components(obj, "lit")
+
 #### Assembling data frame ####
 
 df <- list(yft, 
@@ -74,7 +90,11 @@ df <- list(yft,
            sail,
            sbft,
            slt,
-           bon
+           bon,
+           shos,
+           strm,
+           lesc,
+           lit
 )
 
 df <- purrr::reduce(df, dplyr::left_join, by = 'cellID')
@@ -82,14 +102,15 @@ df <- purrr::reduce(df, dplyr::left_join, by = 'cellID')
 write.csv(df, file = here::here(pred_dir, "FULL_predictions_apr-jun.csv"))
 
 #### Run PCA ####
-PCA <- princomp(df %>% 
-                  dplyr::select(-cellID), cor = FALSE)
+PCA <- stats::princomp(df %>% 
+                         dplyr::select(-cellID), cor = FALSE)
 
 summary(PCA)
 
 PC_scores <- PCA$scores[,1:2] %>% 
   tibble::as_tibble()
 write.csv(PC_scores, file = here::here(pc_dir, "hotspots_apr-jun_scores.csv"))
+# PC_scores <- read_csv(here::here(pc_dir, "hotspots_apr-jun_scores.csv"))
 write.csv(PCA$loadings, file = here::here(pc_dir, "hotspots_apr-jun_loadings.csv"))
 
 # Creating dummy sf for PCA plots
@@ -99,10 +120,10 @@ dummy <- dummy %>%
   cbind(., PC_scores)
 
 # Plot PC1
-pc1 <- plotPC(dummy, "Comp.1", "PC score 1")
+pc1 <- plotPC1_limits(dummy, "Comp.1", "PC score 1")
 
 # Plot PC2
-pc2 <- plotPC(dummy, "Comp.2", "PC score 2")
+pc2 <- plotPC2_limits(dummy, "Comp.2", "PC score 2")
 
 pc_plot <- (pc1 + pc2) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
@@ -112,48 +133,22 @@ ggsave(plot = pc_plot, filename = "Figures/PC_plot_apr-jun.png", width = 27, hei
 
 #### Pearson's correlation ####
 
-file_path_test = "Figures/CorrMatrix_PC1_apr-jun.png"
-png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")
-
 mat <- dplyr::bind_cols(PC_scores$Comp.1, df) %>% 
   dplyr::rename(Comp = `...1`) %>% 
-  dplyr::select(Comp, yft, skp, alb, fri, bet, bft, sbft, slt, bon, swo, blum, sail, sau) %>% # reorder the columns
+  dplyr::select(Comp, yft, skp, alb, fri, bet, bft, sbft, slt, bon, lit, swo, blum, sail, shos, strm, sau, lesc) %>% # reorder the columns
   as.matrix()
 
 res <- rcorr(mat)
-
-corrplot(res$r, 
-         type = "upper", 
-         order = "original", 
-         tl.col = "black", # change to white when preparing figures for publication
-         # addCoef.col = "black", 
-         tl.srt = 45, 
-         insig = "blank", 
-         col = COL2('BrBG', 200),
-         diag = FALSE)
-
-dev.off()
-
-file_path_test = "Figures/CorrMatrix_PC2_apr-jun.png"
-png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")
+write_csv(res$r %>% dplyr::as_tibble(), here::here(pc_dir, "CorrMatrix_PC1_apr-jun_r.csv"))
+write_csv(res$P %>% dplyr::as_tibble(), here::here(pc_dir, "CorrMatrix_PC1_apr-jun_p.csv"))
 
 mat <- dplyr::bind_cols(PC_scores$Comp.2, df) %>% 
   dplyr::rename(Comp = `...1`) %>% 
-  dplyr::select(Comp, yft, skp, alb, fri, bet, bft, sbft, slt, bon, swo, blum, sail, sau) %>% # reorder the columns
+  dplyr::select(Comp, yft, skp, alb, fri, bet, bft, sbft, slt, bon, lit, swo, blum, sail, shos, strm, sau, lesc) %>% # reorder the columns
   as.matrix()
 
 res <- rcorr(mat)
-
-corrplot(res$r, 
-         type = "lower", 
-         order = "original", 
-         tl.col = "black", # change to white when preparing figures for publication
-         #addCoef.col = "black", 
-         tl.srt = 45, 
-         insig = "blank", 
-         col = COL2('BrBG', 200),
-         diag = FALSE)
-
-dev.off()
+write_csv(res$r %>% dplyr::as_tibble(), here::here(pc_dir, "CorrMatrix_PC2_apr-jun_r.csv"))
+write_csv(res$P %>% dplyr::as_tibble(), here::here(pc_dir, "CorrMatrix_PC2_apr-jun_p.csv"))
 
 rm(list=ls())  # free up environment
