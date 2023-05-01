@@ -1,7 +1,8 @@
 # DESCRIPTION: Add hatches over areas of lower confidence.
 
 plotConfidence <- function(gg_filt, # filtered map
-                           assoc_grid # associated grid
+                           assoc_grid, # associated grid
+                           limits
 ) {
   filt_cells <- gg_filt$grid_100_category # get cellIDs of filtered cells
   
@@ -10,7 +11,7 @@ plotConfidence <- function(gg_filt, # filtered map
     sf::st_as_sf() %>% 
     sf::st_union()
   
-  plot <- plotModel(gg_filt) +
+  plot <- plotModel(gg_filt, limits) +
     geom_sf(data = filt_100, color = "black", size = 0.01, fill = NA) +
   # geom_sf_pattern(data = filt_100,
   #                 pattern = "stripe",
