@@ -37,6 +37,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "jan-mar.rd
 
 # Plot model removing 10x10 areas with lower confidence
 gg1 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg1, filename = here::here(figure_dir, paste("BLUM", "model1", "high_conf", "jan-mar.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 #### April-June ####
 # Associate seasonal grids with the 10x10 grid
@@ -60,6 +61,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "apr-jun.rd
 
 # Plot model removing 10x10 areas with lower confidence
 gg2 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg2, filename = here::here(figure_dir, paste("BLUM", "model1", "high_conf", "apr-jun.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 #### July-September ####
 # Associate seasonal grids with the 10x10 grid
@@ -83,6 +85,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "jul-sept.r
 
 # Plot model removing 10x10 areas with lower confidence
 gg3 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg3, filename = here::here(figure_dir, paste("BLUM", "model1", "high_conf", "jul-sept.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid
@@ -106,6 +109,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "oct-dec.rd
 
 # Plot model removing 10x10 areas with lower confidence
 gg4 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg4, filename = here::here(figure_dir, paste("BLUM", "model1", "high_conf", "oct-dec.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 gg_full <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &

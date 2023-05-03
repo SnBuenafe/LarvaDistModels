@@ -34,19 +34,21 @@ create_plot <- function(ggtos) {
                        aesthetics = c("fill"),
                        direction = -1,
                        na.value = "grey64",
-                       guide = guide_colorbar(
+                       guide = guide_colourbar(
                          title.vjust = 0.5,
-                         barheight = grid::unit(0.01, "npc"),
-                         barwidth = grid::unit(0.25, "npc"),
+                         barheight = grid::unit(0.035, "npc"),
+                         barwidth = grid::unit(0.2, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression(''^"o"*'C')) +
+    labs(fill = expression(''^"o"*'C     ')) +
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank()) +
+          legend.text = element_text(size = 18, color = "black"),
+          legend.title = element_text(size = 25, color = "black"),
+          axis.text = element_text(size = 12, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -57,14 +59,17 @@ tos_rs <- stars::read_ncdf(here::here(input_dir, "tos_historical_1956_1981_jan-m
   terra::rast()
 tos <- create_layer(tos_rs)
 saveRDS(tos, here::here(output_dir, "tos_historical_jan-mar_interpolated.rds")) # save object
+# tos <- readRDS(here::here(output_dir, "tos_historical_jan-mar_interpolated.rds"))
 
 tmp1 <- create_plot(tos)
+ggsave(plot = tmp1, filename = here::here(figure_dir, "tos_historical_jan-mar.png"), width = 15, height = 7, dpi = 600)
 
 # ii. April-June
 tos_rs <- stars::read_ncdf(here::here(input_dir, "tos_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
   terra::rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, "tos_historical_apr-jun_interpolated.rds"))  
+saveRDS(tos, here::here(output_dir, "tos_historical_apr-jun_interpolated.rds"))
+# tos <- readRDS(here::here(output_dir, "tos_historical_apr-jun_interpolated.rds"))
 
 tmp2 <- create_plot(tos)
 

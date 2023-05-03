@@ -49,6 +49,10 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg1 <- plotModel(gg, limits)
+ggsave(plot = gg1, filename = here::here(figure_dir, "BLUM_model1_jan-mar.png"), width = 15, height = 7, dpi = 600)
+nish1 <- plotNish(`grid_BLUM_jan-mar`)
+ggsave(plot = nish1, filename = here::here(figure_dir, "BLUM_nishikawa_jan-mar.png"), width = 15, height = 7, dpi = 600)
+
 hatch1 <- plotHatch(gg1, gg, BLUM_ds1)
 
 # April-June
@@ -61,6 +65,9 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg2 <- plotModel(gg, limits)
+ggsave(plot = gg2, filename = here::here(figure_dir, "BLUM_model1_apr-jun.png"), width = 15, height = 7, dpi = 600)
+nish2 <- plotNish(`grid_BLUM_apr-jun`)
+ggsave(plot = nish2, filename = here::here(figure_dir, "BLUM_nishikawa_apr-jun.png"), width = 15, height = 7, dpi = 600)
 hatch2 <- plotHatch(gg2, gg, BLUM_ds2)
 
 # July-September
@@ -73,6 +80,9 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg3 <- plotModel(gg, limits)
+ggsave(plot = gg3, filename = here::here(figure_dir, "BLUM_model1_jul-sept.png"), width = 15, height = 7, dpi = 600)
+nish3 <- plotNish(`grid_BLUM_jul-sept`)
+ggsave(plot = nish3, filename = here::here(figure_dir, "BLUM_nishikawa_jul-sept.png"), width = 15, height = 7, dpi = 600)
 hatch3 <- plotHatch(gg3, gg, BLUM_ds3)
 
 # October-December
@@ -85,6 +95,9 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg4 <- plotModel(gg, limits)
+ggsave(plot = gg4, filename = here::here(figure_dir, "BLUM_model1_oct-dec.png"), width = 15, height = 7, dpi = 600)
+nish4 <- plotNish(`grid_BLUM_oct-dec`)
+ggsave(plot = nish4, filename = here::here(figure_dir, "BLUM_nishikawa_oct-dec.png"), width = 15, height = 7, dpi = 600)
 hatch4 <- plotHatch(gg4, gg, BLUM_ds4)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +

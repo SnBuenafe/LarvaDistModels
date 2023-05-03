@@ -19,6 +19,7 @@ suppressPackageStartupMessages({
   library(spatialplanr)
   library(ggpattern)
   library(here)
+  library(ggridges)
 })
 
 # Load all helper functions
@@ -28,9 +29,9 @@ sapply(X = utils, FUN = source) %>% invisible()
 # Define map projections
 sf_use_s2(FALSE)
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-pc_pacific <- "+proj=eqc +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
+rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 ll_pacific <- "+proj=longlat +lon_0=180 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-cCRS = ll_pacific # Use equidistant projection, Plate Careé
+cCRS = ll_pacific 
 
 # Load worldwide landmass
 landmass <- rnaturalearth::ne_countries(scale = "medium") %>% 
