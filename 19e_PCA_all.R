@@ -16,10 +16,12 @@ dummy <- dummy %>%
   cbind(., PC_scores)
 
 # Plot PC1
-pc1 <- plotPC(dummy, "Comp.1", "PC score 1")
+pc1 <- plotPC1_limits(dummy, "Comp.1", "PC score 1")
+ggsave(plot = pc1, filename = here::here(fig_dir, paste("PC1", "jan-mar.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # Plot PC2
-pc2 <- plotPC(dummy, "Comp.2", "PC score 2")
+pc2 <- plotPC2_limits(dummy, "Comp.2", "PC score 2")
+ggsave(plot = pc2, filename = here::here(fig_dir, paste("PC2", "jan-mar.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # April-June
 PC_scores <- read_csv(here::here(pc_dir, "hotspots_apr-jun_scores.csv")) # Load PC scores
@@ -31,10 +33,12 @@ dummy <- dummy %>%
   cbind(., PC_scores)
 
 # Plot PC1
-pc3 <- plotPC(dummy, "Comp.1", "PC score 1")
+pc3 <- plotPC1_limits(dummy, "Comp.1", "PC score 1")
+ggsave(plot = pc3, filename = here::here(fig_dir, paste("PC1", "apr-jun.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # Plot PC2
-pc4 <- plotPC(dummy, "Comp.2", "PC score 2")
+pc4 <- plotPC2_limits(dummy, "Comp.2", "PC score 2")
+ggsave(plot = pc4, filename = here::here(fig_dir, paste("PC2", "apr-jun.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # July-September
 PC_scores <- read_csv(here::here(pc_dir, "hotspots_jul-sept_scores.csv")) # Load PC scores
@@ -46,10 +50,12 @@ dummy <- dummy %>%
   cbind(., PC_scores)
 
 # Plot PC1
-pc5 <- plotPC(dummy, "Comp.1", "PC score 1")
+pc5 <- plotPC1_limits(dummy, "Comp.1", "PC score 1")
+ggsave(plot = pc5, filename = here::here(fig_dir, paste("PC1", "jul-sept.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # Plot PC2
-pc6 <- plotPC(dummy, "Comp.2", "PC score 2")
+pc6 <- plotPC2_limits(dummy, "Comp.2", "PC score 2")
+ggsave(plot = pc6, filename = here::here(fig_dir, paste("PC2", "jul-sept.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # October-December
 PC_scores <- read_csv(here::here(pc_dir, "hotspots_oct-dec_scores.csv")) # Load PC scores
@@ -61,10 +67,12 @@ dummy <- dummy %>%
   cbind(., PC_scores)
 
 # Plot PC1
-pc7 <- plotPC(dummy, "Comp.1", "PC score 1")
+pc7 <- plotPC1_limits(dummy, "Comp.1", "PC score 1")
+ggsave(plot = pc7, filename = here::here(fig_dir, paste("PC1", "oct-dec.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # Plot PC2
-pc8 <- plotPC(dummy, "Comp.2", "PC score 2")
+pc8 <- plotPC2_limits(dummy, "Comp.2", "PC score 2")
+ggsave(plot = pc8, filename = here::here(fig_dir, paste("PC2", "oct-dec.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 # Plot everything
 

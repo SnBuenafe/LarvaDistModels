@@ -111,7 +111,9 @@ PC_scores <- PCA$scores[,1:2] %>%
   tibble::as_tibble()
 write.csv(PC_scores, file = here::here(pc_dir, "hotspots_apr-jun_scores.csv"))
 # PC_scores <- read_csv(here::here(pc_dir, "hotspots_apr-jun_scores.csv"))
-write.csv(PCA$loadings, file = here::here(pc_dir, "hotspots_apr-jun_loadings.csv"))
+loadings <- PCA$loadings %>% 
+  as.data.frame.matrix()
+write.csv(loadings, file = here::here(pc_dir, "hotspots_apr-jun_loadings.csv"))
 
 # Creating dummy sf for PCA plots
 dummy <- readRDS(here::here(pred_dir, "YFT_apr-jun.rds"))

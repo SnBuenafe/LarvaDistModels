@@ -50,6 +50,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 
 gg1 <- plotModel(gg, limits)
 hatch1 <- plotHatch(gg1, gg, YFT_ds1)
+nish1 <- plotNish(`grid_YFT_jan-mar`)
 
 # April-June
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -62,6 +63,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 
 gg2 <- plotModel(gg, limits)
 hatch2 <- plotHatch(gg2, gg, YFT_ds2)
+nish2 <- plotNish(`grid_YFT_apr-jun`)
 
 # July-September
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -74,6 +76,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 
 gg3 <- plotModel(gg, limits)
 hatch3 <- plotHatch(gg3, gg, YFT_ds3)
+nish3 <- plotNish(`grid_YFT_jul-sept`)
 
 # October-December
 gg <- create_speciesMap(train_tmp, # training object with model column (fitted values)
@@ -86,6 +89,7 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 
 gg4 <- plotModel(gg, limits)
 hatch4 <- plotHatch(gg4, gg, YFT_ds4)
+nish4 <- plotNish(`grid_YFT_oct-dec`)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
@@ -98,6 +102,12 @@ gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
   theme(plot.tag = element_text(size = 25))
 
 ggsave(plot = gghatch, filename = here::here(figure_dir, "YFT_model1_hatched.png"), width = 27, height = 15, dpi = 600)
+
+ggnish <- (nish1 + nish2) / (nish3 + nish4) +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+  theme(plot.tag = element_text(size = 25))
+
+ggsave(plot = ggnish, filename = here::here(figure_dir, "YFT_nishikawa.png"), width = 27, height = 15, dpi = 600)
 
 #### Model 2: Without longitude and latitude ####
 

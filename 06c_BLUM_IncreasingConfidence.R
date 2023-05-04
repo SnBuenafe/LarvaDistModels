@@ -28,10 +28,10 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BLUM_jan-mar` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "jan-mar.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BLUM", "jan-mar.rds", sep = "_")))
 
@@ -52,10 +52,10 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BLUM_apr-jun` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "apr-jun.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BLUM", "apr-jun.rds", sep = "_")))
 
@@ -76,10 +76,10 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BLUM_jul-sept` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "jul-sept.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BLUM", "jul-sept.rds", sep = "_")))
 
@@ -100,10 +100,10 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BLUM_oct-dec` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BLUM", "oct-dec.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BLUM", "oct-dec.rds", sep = "_")))
 

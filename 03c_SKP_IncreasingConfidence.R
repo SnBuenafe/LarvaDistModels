@@ -28,15 +28,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_SKP_jan-mar` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SKP", "jan-mar.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("SKP", "jan-mar.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg1 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg1, filename = here::here(figure_dir, "SKP_model1_highconf_jan-mar.png"), width = 15, height = 7, dpi = 600)
 
 #### April-June ####
 # Associate seasonal grids with the 10x10 grid
@@ -51,15 +52,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_SKP_apr-jun` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SKP", "apr-jun.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("SKP", "apr-jun.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg2 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg2, filename = here::here(figure_dir, "SKP_model1_highconf_apr-jun.png"), width = 15, height = 7, dpi = 600)
 
 #### July-September ####
 # Associate seasonal grids with the 10x10 grid
@@ -74,15 +76,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_SKP_jul-sept` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SKP", "jul-sept.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("SKP", "jul-sept.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg3 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg3, filename = here::here(figure_dir, "SKP_model1_highconf_jul-sept.png"), width = 15, height = 7, dpi = 600)
 
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid
@@ -97,15 +100,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_SKP_oct-dec` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("SKP", "oct-dec.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("SKP", "oct-dec.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg4 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg4, filename = here::here(figure_dir, "SKP_model1_highconf_oct-dec.png"), width = 15, height = 7, dpi = 600)
 
 gg_full <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &

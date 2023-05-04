@@ -28,15 +28,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BET_jan-mar` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BET", "jan-mar.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BET", "jan-mar.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg1 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg1, filename = here::here(figure_dir, paste("BET", "model1", "high_conf", "jan-mar.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 #### April-June ####
 # Associate seasonal grids with the 10x10 grid
@@ -51,15 +52,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BET_apr-jun` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BET", "apr-jun.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BET", "apr-jun.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg2 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg2, filename = here::here(figure_dir, paste("BET", "model1", "high_conf", "apr-jun.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 #### July-September ####
 # Associate seasonal grids with the 10x10 grid
@@ -74,15 +76,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BET_jul-sept` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BET", "jul-sept.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BET", "jul-sept.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg3 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg3, filename = here::here(figure_dir, paste("BET", "model1", "high_conf", "jul-sept.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid
@@ -97,15 +100,16 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
                         `grid_BET_oct-dec` # grid of species for specific season
 )
 
-# Filtering 10x10 grid cells that have at least 10% of its area as sampling points
+# Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg,
-                             10)
+                             5)
 saveRDS(object = gg_filt, file = here::here(preds_dir, paste("BET", "oct-dec.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste("BET", "oct-dec.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg4 <- plotConfidence(gg_filt, full_grid, limits)
+ggsave(plot = gg4, filename = here::here(figure_dir, paste("BET", "model1", "high_conf", "oct-dec.png", sep = "_")), width = 15, height = 7, dpi = 600)
 
 gg_full <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
