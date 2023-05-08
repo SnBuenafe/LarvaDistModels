@@ -1,150 +1,77 @@
-# DESCRIPTION: Identify hot
+# DESCRIPTION: Identify core hotspots across species using the model outputs
 
-pc_dir <- here::here("Output", "PCA")
+source("00_Preliminaries.R")
+pred_dir <- here::here("Output", "Predictions")
 fig_dir <- here::here("Figures")
+spp <- c("skp", "yft", "alb", "bet", "fri", "sbft", "bft", "lit", "slt", "bon", "blum", "shos", "swo", "strm", "sail", "lesc", "sau")
+
+# Take the union of grid_100 cells that were selected at least once
+filt1 <- readRDS(here::here(preds_dir, paste("YFT", "jan-mar.rds", sep = "_"))) %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(grid_100_category) %>% 
+  unique()
+filt2 <- readRDS(here::here(preds_dir, paste("YFT", "apr-jun.rds", sep = "_"))) %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(grid_100_category) %>% 
+  unique()
+filt3 <- readRDS(here::here(preds_dir, paste("YFT", "jul-sept.rds", sep = "_"))) %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(grid_100_category) %>% 
+  unique()
+filt4 <- readRDS(here::here(preds_dir, paste("YFT", "oct-dec.rds", sep = "_"))) %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(grid_100_category) %>% 
+  unique()
+filt <- purrr::reduce(list(filt1, filt2, filt3, filt4), dplyr::bind_rows) %>% 
+  unique() %>% 
+  pull()
+
+
+# Load dummy data to match coordinates and cellIDs
+sf <- combineFish(species = "yellowfin-tuna") %>% 
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
+  sf::st_centroid() # transform into point data
+dummy <- assembleGrid(grid, sf %>% dplyr::filter(season == "jan-mar")) %>%  # season here doesn't really matter; it will produce the coordinates across the entire region
+  associateGrids(., grid_100)
+
+#### Generate heatmaps ####
+jm <- determineHotspots("jan-mar")
+aj <- determineHotspots("apr-jun")
+js <- determineHotspots("jul-sept")
+od <- determineHotspots("oct-dec")
+
 seas_list <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
-dum_list <- list()
+new_names <- c("jm", "aj", "js", "od")
 
-for(i in 1:length(seas_list)) {
-  PC_scores <- read_csv(here::here(pc_dir, paste0("hotspots_", seas_list[i], "_scores.csv"))) %>%  # Load PC scores
-    dplyr::select(Comp.1) %>% 
-    dplyr::rename(!!sym(seas_list[i]) := Comp.1)
+full <- purrr::reduce(list(jm, aj, js, od), dplyr::full_join) %>% 
+  dplyr::rename_with(~ new_names, all_of(seas_list)) %>% 
+  dplyr::mutate(across(all_of(new_names), ~replace_na(., 0))) %>% 
+  dplyr::mutate(across(all_of(new_names), ~.+1)) %>% # add 1, so we don't have 0s?
+  dplyr::mutate(gm = (jm * aj * js * od)^(1/4)) %>% 
+  dplyr::select(cellID, grid_100_category, all_of(new_names), gm, geometry) %>% 
+  dplyr::filter(grid_100_category %in% filt) # make sure we only have cells that were filtered at least in one season
   
-  dum_list[[i]] <- readRDS(here::here(pred_dir, paste0("YFT_", seas_list[i], ".rds"))) %>% 
-    dplyr::select(-ocean, -model, -grid_100_category) %>% 
-    cbind(., PC_scores) %>% 
-    dplyr::as_tibble()
-}
+quant <- quantile(full$gm, c(0.5, 0.8, 0.95)) # get quantiles for categories
 
-dum <- purrr::reduce(dum_list, dplyr::full_join) %>% 
-  dplyr::select(cellID, `jan.mar`, `apr.jun`, `jul.sept`, `oct.dec`, geometry) 
+full %<>%
+  dplyr::mutate(hotspot_cat = case_when(gm <= quant[[1]] ~ "low",
+                                        (gm > quant[[1]] & gm <= quant[[2]]) ~ "mid",
+                                        (gm > quant[[2]] & gm <= quant[[3]]) ~ "high",
+                                        (gm > quant[[3]] ~ "core"))) %>% # assign hotspot categories
+  dplyr::mutate(hotspot_cat = fct_relevel(hotspot_cat, c("low", "mid", "high", "core"))) %>%
+  sf::st_as_sf(crs = cCRS)
+  
+# Plot heatmaps for each season
+hm_jm <- plotHotspot(jm, "jan-mar")
+hm_aj <- plotHotspot(aj, "apr-jun")
+hm_js <- plotHotspot(js, "jul-sept")
+hm_od <- plotHotspot(od, "oct-dec")
+  
+hm_sum <- plotHotspotSummary(full)
 
-# January-March hotspots
-fin <- dum %>%  # arrange columns
-  dplyr::mutate(`jan.mar` = case_when((`jan.mar` >= (quantile(dum$jan.mar, c(0.95), na.rm = TRUE) %>% unname())) ~ "High",
-                                      (`jan.mar` < (quantile(dum$jan.mar, c(0.95), na.rm = TRUE) %>% unname())) & (`jan.mar` >= (quantile(dum$jan.mar, c(0.85), na.rm = TRUE) %>% unname())) ~ "Mid",
-                                      TRUE ~ NA)) %>% 
-  sf::st_as_sf()
-
-sum1 <- ggplot() + geom_sf(data = fin, aes(fill = as.factor(jan.mar)), color = NA, size = 0.1) +
-  scale_fill_manual(values = c("High" = "#EB4949", "Mid" = "#66A7C4"),
-                    na.value = NA) +
-  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
-  xlab("Longitude") +
-  ylab("Latitude") +
-  theme_bw() +
-  theme(legend.position = "bottom",
-        axis.text = element_text(size = 12, color = "black"),
-        axis.title = element_blank(),
-        legend.text = element_text(size = 20),
-        legend.title = element_blank(),
-        panel.border = element_blank()) +
-  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
-
-# April-June hotspots
-fin <- dum %>%  # arrange columns
-  dplyr::mutate(`apr.jun` = case_when((`apr.jun` >= (quantile(dum$apr.jun, c(0.95), na.rm = TRUE) %>% unname())) ~ "High",
-                                      (`apr.jun` < (quantile(dum$apr.jun, c(0.95), na.rm = TRUE) %>% unname())) & (`apr.jun` >= (quantile(dum$apr.jun, c(0.85), na.rm = TRUE) %>% unname())) ~ "Mid",
-                                      TRUE ~ NA)) %>% 
-  sf::st_as_sf()
-
-sum2 <- ggplot() + geom_sf(data = fin, aes(fill = as.factor(apr.jun)), color = NA, size = 0.1) +
-  scale_fill_manual(values = c("High" = "#EB4949", "Mid" = "#66A7C4"),
-                    na.value = NA) +
-  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
-  xlab("Longitude") +
-  ylab("Latitude") +
-  theme_bw() +
-  theme(legend.position = "bottom",
-        axis.text = element_text(size = 12, color = "black"),
-        axis.title = element_blank(),
-        legend.text = element_text(size = 20),
-        legend.title = element_blank(),
-        panel.border = element_blank()) +
-  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
-
-# July-September hotspots
-fin <- dum %>%  # arrange columns
-  dplyr::mutate(`jul.sept` = case_when((`jul.sept` >= (quantile(dum$jul.sept, c(0.95), na.rm = TRUE) %>% unname())) ~ "High",
-                                      (`jul.sept` < (quantile(dum$jul.sept, c(0.95), na.rm = TRUE) %>% unname())) & (`jul.sept` >= (quantile(dum$jul.sept, c(0.85), na.rm = TRUE) %>% unname())) ~ "Mid",
-                                      TRUE ~ NA)) %>% 
-  sf::st_as_sf()
-
-sum3 <- ggplot() + geom_sf(data = fin, aes(fill = as.factor(jul.sept)), color = NA, size = 0.1) +
-  scale_fill_manual(values = c("High" = "#EB4949", "Mid" = "#66A7C4"),
-                    na.value = NA) +
-  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
-  xlab("Longitude") +
-  ylab("Latitude") +
-  theme_bw() +
-  theme(legend.position = "bottom",
-        axis.text = element_text(size = 12, color = "black"),
-        axis.title = element_blank(),
-        legend.text = element_text(size = 20),
-        legend.title = element_blank(),
-        panel.border = element_blank()) +
-  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
-
-# October-December hotspots
-fin <- dum %>%  # arrange columns
-  dplyr::mutate(`oct.dec` = case_when((`oct.dec` >= (quantile(dum$oct.dec, c(0.95), na.rm = TRUE) %>% unname())) ~ "High",
-                                       (`oct.dec` < (quantile(dum$oct.dec, c(0.95), na.rm = TRUE) %>% unname())) & (`oct.dec` >= (quantile(dum$oct.dec, c(0.85), na.rm = TRUE) %>% unname())) ~ "Mid",
-                                       TRUE ~ NA)) %>% 
-  sf::st_as_sf()
-
-sum4 <- ggplot() + geom_sf(data = fin, aes(fill = as.factor(oct.dec)), color = NA, size = 0.1) +
-  scale_fill_manual(values = c("High" = "#EB4949", "Mid" = "#66A7C4"),
-                    na.value = NA) +
-  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
-  xlab("Longitude") +
-  ylab("Latitude") +
-  theme_bw() +
-  theme(legend.position = "bottom",
-        axis.text = element_text(size = 12, color = "black"),
-        axis.title = element_blank(),
-        legend.text = element_text(size = 20),
-        legend.title = element_blank(),
-        panel.border = element_blank()) +
-  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
-
-# Summary across the different seasons
-
-fin <- dum %>%  # arrange columns
-  dplyr::mutate(`jan.mar` = case_when((`jan.mar` >= (quantile(dum$jan.mar, c(0.95), na.rm = TRUE) %>% unname())) ~ 1,
-                                      TRUE ~ NA),
-                `apr.jun` = case_when((`apr.jun` >= (quantile(dum$apr.jun, c(0.95), na.rm = TRUE) %>% unname())) ~ 1,
-                                      TRUE ~ NA),
-                `jul.sept` = case_when((`jul.sept` >= (quantile(dum$jul.sept, c(0.95), na.rm = TRUE) %>% unname())) ~ 1,
-                                       TRUE ~ NA),
-                `oct.dec` = case_when((`oct.dec` >= (quantile(dum$oct.dec, c(0.95), na.rm = TRUE) %>% unname())) ~ 1,
-                                      TRUE ~ NA)) %>% 
-  dplyr::rowwise() %>% 
-  dplyr::mutate(category = sum(c(jan.mar, apr.jun, jul.sept, oct.dec), na.rm = TRUE)) %>% 
-  dplyr::mutate(category = case_when(category == 0 ~ NA,
-                                     category == 1 ~ "Unique",
-                                     TRUE ~ "Shared")) %>% 
-  dplyr::ungroup() %>% 
-  sf::st_as_sf(sf_column_name = "geometry")
-
-sum5 <- ggplot() + geom_sf(data = fin, aes(fill = as.factor(category)), color = NA, size = 0.1) +
-  scale_fill_manual(values = c("Unique" = "#8A74A6", "Shared" = "#DEA22A"),
-    na.value = NA) +
-  geom_sf(data = landmass, fill = "black", color = NA, size = 0.01) +
-  xlab("Longitude") +
-  ylab("Latitude") +
-  theme_bw() +
-  theme(legend.position = "bottom",
-        axis.text = element_text(size = 12, color = "black"),
-        axis.title = element_blank(),
-        legend.text = element_text(size = 20),
-        legend.title = element_blank(),
-        panel.border = element_blank()) +
-  coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
-
-
-all <- sum1 + sum2 + sum3 + sum4 + sum5 + plot_spacer() +
-  plot_layout(ncol = 3, nrow = 2) +
-  plot_annotation(tag_level = "a", tag_prefix = "(", tag_suffix = ")") &
+all <- hm_jm + hm_aj + hm_js + hm_od + hm_sum + plot_spacer() +
+  plot_layout(ncol = 2, nrow = 3) +
+  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(fig_dir, "SummaryHotspots.png"), width = 30, height = 10, dpi = 300)
+ggsave(plot = all, filename = here::here(fig_dir, "Hotspots.png"), width = 20, height = 15, dpi = 300)

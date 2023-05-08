@@ -2,25 +2,35 @@
 
 # Load preliminaries
 source("00_Preliminaries.R")
+pred_dir <- here::here("Output", "Predictions")
 fig_dir <- here::here("Figures")
 seas_list <- c("January-March", "April-June", "July-September", "October-December")
 
 load_data <- function(seas) {
-  full_jm <- read_csv(here::here(pred_dir, paste0("FULL_predictions_", seas, ".csv"))) %>%  # Jan-Mar
+  full <- read_csv(here::here(pred_dir, paste0("FULL_predictions_", seas, ".csv"))) %>%  # Jan-Mar
     dplyr::left_join(., dummy) %>% 
     dplyr::select(-c(1:2, 20:24, 26)) %>% 
-    dplyr::mutate(hemisphere = ifelse(latitude >= 0, "North", "South")) %>% 
+    dplyr::mutate(hemisphere = ifelse(latitude >= 0, "North", "South")) 
+  
+  standardize <- function(x) {
+    y <- sum(x) / n()
+  }
+  
+  df <- full %>% 
     dplyr::group_by(hemisphere) %>% 
-    dplyr::summarise(across(c(everything(), -latitude), sum)) %>% 
+    dplyr::summarise(across(c(everything(), -latitude), standardize)) %>% 
     dplyr::rename_with(~paste(., seas, sep = "_"), !hemisphere)
+  
 }
 
-plot_spp <- function(spp) {
+plot_spp <- function(spp, label) {
   df <- full %>% 
     dplyr::select(hemisphere, starts_with(spp)) %>% 
     dplyr::mutate(across(starts_with(paste0(spp, "_")),
                          ~ ifelse(hemisphere == "South", -(.x), .x),
-                         .names = "{col}")) %>% 
+                         .names = "{col}"))
+  
+  fin <- df %>% 
     tidyr::pivot_longer(!hemisphere, names_to = "season", values_to = "sum") %>% 
     dplyr::mutate(season = case_when(str_detect(season, "jan-mar") ~ "January-March",
                                      str_detect(season, "apr-jun") ~ "April-June",
@@ -28,12 +38,26 @@ plot_spp <- function(spp) {
                                      str_detect(season, "oct-dec") ~ "October-December")) %>% 
     dplyr::mutate(season = fct_relevel(season, seas_list))
   
-  ggplot(df, aes(x = season, y = sum, fill = hemisphere)) + 
-    geom_bar(stat = "identity", position = "identity", show.legend = FALSE) +
+  fin2 <- df %>% 
+    dplyr::summarise(across(!hemisphere, mean)) %>% 
+    tidyr::pivot_longer(cols = everything(),
+                        names_to = "season",
+                        values_to = "mean") %>% 
+    dplyr::mutate(season = case_when(str_detect(season, "jan-mar") ~ "January-March",
+                                     str_detect(season, "apr-jun") ~ "April-June",
+                                     str_detect(season, "jul-sept") ~ "July-September",
+                                     str_detect(season, "oct-dec") ~ "October-December"))
+    
+  ggplot() + 
+    geom_bar(data = fin, aes(x = season, y = sum, fill = hemisphere),
+             stat = "identity", position = "identity", show.legend = FALSE) +
     scale_fill_manual(aesthetics = "fill",
       values = c("North" = "#0084C2", "South" = "#EAB47F")) +
+    geom_line(data = fin2, aes(x = season, y = mean, group = 1), color = "black", linewidth = 3) +
+    geom_point(data = fin2, aes(x = season, y = mean), size = 5) +
     scale_x_discrete(expand = expansion(add = c(0.5, 0.5))) +
-    scale_y_continuous(limits = c(-max(abs(df$sum)), max(abs(df$sum)))) +
+    scale_y_continuous(limits = c(-max(abs(fin$sum)), max(abs(fin$sum)))) +
+    ggtitle(label) +
     xlab("Seasons") +
     ylab("Sum of probabilities") +
     theme_bw() +
@@ -42,7 +66,8 @@ plot_spp <- function(spp) {
           axis.title.y = element_blank(),
           axis.ticks.x = element_line(color = "black"),
           axis.text.x = element_text(color = "black", size = 18),
-          axis.title.x = element_blank())
+          axis.title.x = element_blank(),
+          plot.title = element_text(color = "black", size = 22))
           #axis.title.x = element_text(color = "black", size = 25))
 }
 
@@ -64,23 +89,23 @@ full_od <- load_data("oct-dec")
 full <- purrr::reduce(list(full_jm, full_aj, full_js, full_od), dplyr::left_join)
 
 # Seasonal bar plots per taxon
-(skp <- plot_spp("skp"))
-(yft <- plot_spp("yft"))
-(alb <- plot_spp("alb"))
-(bet <- plot_spp("bet"))
-(fri <- plot_spp("fri"))
-(sbft <- plot_spp("sbft"))
-(bft <- plot_spp("bft"))
-(lit <- plot_spp("lit"))
-(slt <- plot_spp("slt"))
-(bon <- plot_spp("bon"))
-(blum <- plot_spp("blum"))
-(shos <- plot_spp("shos"))
-(swo <- plot_spp("swo"))
-(strm <- plot_spp("strm"))
-(sail <- plot_spp("sail"))
-(lesc <- plot_spp("lesc"))
-(sau <- plot_spp("sau"))
+(skp <- plot_spp("skp", "Skipjack tuna"))
+(yft <- plot_spp("yft", "Yellowfin tuna"))
+(alb <- plot_spp("alb", "Albacore"))
+(bet <- plot_spp("bet", "Bigeye tuna"))
+(fri <- plot_spp("fri", "Frigate tuna"))
+(sbft <- plot_spp("sbft", "Southern bluefin tuna"))
+(bft <- plot_spp("bft", "Pacific bluefin tuna"))
+(lit <- plot_spp("lit", "Little tuna"))
+(slt <- plot_spp("slt", "Slender tuna"))
+(bon <- plot_spp("bon", "Bonitos"))
+(blum <- plot_spp("blum", "Blue marlin"))
+(shos <- plot_spp("shos", "Shortbill spearfish"))
+(swo <- plot_spp("swo", "Swordfish"))
+(strm <- plot_spp("strm", "Striped marlin"))
+(sail <- plot_spp("sail", "Sailfish"))
+(lesc <- plot_spp("lesc", "Longfin escolar"))
+(sau <- plot_spp("sau", "Sauries"))
 
 all <- skp + yft + alb + bet + fri + sbft + bft + lit + slt + bon +
   blum + shos + swo + strm + sail +
