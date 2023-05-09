@@ -1,12 +1,10 @@
 # DESCRIPTION: Creating seasonal nitrate layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "no3os_historical"
 
-# Function to prepare mlotst layer
+# Function to prepare no3os layer
 create_layer <- function(rs) {
   names(rs) <- paste0("X", seq(1956, 1981, by = 1))  
   
@@ -48,35 +46,52 @@ create_plot <- function(ggno3os) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-no3os_rs <- stars::read_ncdf(here::here(input_dir, "no3os_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+no3os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                         paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 no3os <- create_layer(no3os_rs)
-saveRDS(no3os, here::here(output_dir, "no3os_historical_jan-mar_interpolated.rds"))
+saveRDS(no3os, here::here(output_dir, 
+                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 nit1 <- create_plot(no3os)
 
 # ii. April-June
-no3os_rs <- stars::read_ncdf(here::here(input_dir, "no3os_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+no3os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                         paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 no3os <- create_layer(no3os_rs)
-saveRDS(no3os, here::here(output_dir, "no3os_historical_apr-jun_interpolated.rds"))
+saveRDS(no3os, here::here(output_dir, 
+                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 nit2 <- create_plot(no3os)
 
 # iii. July-September
-no3os_rs <- stars::read_ncdf(here::here(input_dir, "no3os_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+no3os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                         paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 no3os <- create_layer(no3os_rs)
-saveRDS(no3os, here::here(output_dir, "no3os_historical_jul-sept_interpolated.rds"))
+saveRDS(no3os, here::here(output_dir, 
+                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 nit3 <- create_plot(no3os)
 
 # iv. October-December
-no3os_rs <- stars::read_ncdf(here::here(input_dir, "no3os_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+no3os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                         paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 no3os <- create_layer(no3os_rs)
-saveRDS(no3os, here::here(output_dir, "no3os_historical_oct-dec_interpolated.rds"))
+saveRDS(no3os, here::here(output_dir, 
+                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 nit4 <- create_plot(no3os)
 

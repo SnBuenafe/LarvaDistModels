@@ -1,12 +1,10 @@
 # DESCRIPTION: Creating seasonal meridional velocity layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "vo_historical"
 
-# Function to prepare uo layer
+# Function to prepare vo layer
 create_layer <- function(rs) {
   names(rs) <- paste0("X", seq(1956, 1981, by = 1))  
   
@@ -48,35 +46,52 @@ create_plot <- function(ggvo) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-vo_rs <- stars::read_ncdf(here::here(input_dir, "vo_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+vo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                     paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 vo <- create_layer(vo_rs)
-saveRDS(vo, here::here(output_dir, "vo_historical_jan-mar_interpolated.rds"))
+saveRDS(vo, here::here(output_dir, 
+                       paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 vo1 <- create_plot(vo)
 
 # ii. April-June
-vo_rs <- stars::read_ncdf(here::here(input_dir, "vo_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+vo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                     paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 vo <- create_layer(vo_rs)
-saveRDS(vo, here::here(output_dir, "vo_historical_apr-jun_interpolated.rds"))
+saveRDS(vo, here::here(output_dir, 
+                       paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 vo2 <- create_plot(vo)
 
 # iii. July-September
-vo_rs <- stars::read_ncdf(here::here(input_dir, "vo_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+vo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                     paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 vo <- create_layer(vo_rs)
-saveRDS(vo, here::here(output_dir, "vo_historical_jul-sept_interpolated.rds"))
+saveRDS(vo, here::here(output_dir, 
+                       paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 vo3 <- create_plot(vo)
 
 # iv. October-December
-vo_rs <- stars::read_ncdf(here::here(input_dir, "vo_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+vo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                     paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 vo <- create_layer(vo_rs)
-saveRDS(vo, here::here(output_dir, "vo_historical_oct-dec_interpolated.rds"))
+saveRDS(vo, here::here(output_dir, 
+                       paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 vo4 <- create_plot(vo)
 

@@ -1,4 +1,5 @@
 # Description: Calculate the distance to the nearest coastline
+
 calculateDist2Coast <- function(grid) {
   # Load coast
   coast <- rnaturalearth::ne_coastline(scale = 'large') %>% 

@@ -1,10 +1,8 @@
 # DESCRIPTION: Creating seasonal chlorophyll layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "chlos_historical"
 
 # Function to prepare chlos layer
 create_layer <- function(rs) {
@@ -50,35 +48,52 @@ create_plot <- function(ggchlos) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-chlos_rs <- stars::read_ncdf(here::here(input_dir, "chlos_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+chlos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 chlos <- create_layer(chlos_rs)
-saveRDS(chlos, here::here(output_dir, "chlos_historical_jan-mar_interpolated.rds"))
+saveRDS(chlos, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 chl1 <- create_plot(chlos)
 
 # ii. April-June
-chlos_rs <- stars::read_ncdf(here::here(input_dir, "chlos_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+chlos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 chlos <- create_layer(chlos_rs)
-saveRDS(chlos, here::here(output_dir, "chlos_historical_apr-jun_interpolated.rds"))
+saveRDS(chlos, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 chl2 <- create_plot(chlos)
 
 # iii. July-September
-chlos_rs <- stars::read_ncdf(here::here(input_dir, "chlos_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+chlos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 chlos <- create_layer(chlos_rs)
-saveRDS(chlos, here::here(output_dir, "chlos_historical_jul-sept_interpolated.rds"))
+saveRDS(chlos, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 chl3 <- create_plot(chlos)
 
 # iv. October-December
-chlos_rs <- stars::read_ncdf(here::here(input_dir, "chlos_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+chlos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 chlos <- create_layer(chlos_rs)
-saveRDS(chlos, here::here(output_dir, "chlos_historical_oct-dec_interpolated.rds"))
+saveRDS(chlos, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 chl4 <- create_plot(chlos)
 

@@ -1,4 +1,5 @@
 # Description: Convert raster to sf objects
+
 rs2sf <- function(rs) {
   sf <- rs %>% 
     terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm=FALSE) %>% # Convert to sf polygon

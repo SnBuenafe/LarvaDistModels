@@ -1,10 +1,8 @@
 # DESCRIPTION: Creating seasonal oxygen layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "o2os_historical"
 
 # Function to prepare o2os layer
 create_layer <- function(rs) {
@@ -51,36 +49,51 @@ create_plot <- function(ggo2os) {
 }
 
 #### Create layers ####
-
 # i. January-March
-o2os_rs <- stars::read_ncdf(here::here(input_dir, "o2os_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+o2os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 o2os <- create_layer(o2os_rs)
-saveRDS(o2os, here::here(output_dir, "o2os_historical_jan-mar_interpolated.rds"))
+saveRDS(o2os, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ox1 <- create_plot(o2os)
 
 # ii. April-June
-o2os_rs <- stars::read_ncdf(here::here(input_dir, "o2os_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+o2os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 o2os <- create_layer(o2os_rs)
-saveRDS(o2os, here::here(output_dir, "o2os_historical_apr-jun_interpolated.rds"))
+saveRDS(o2os, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ox2 <- create_plot(o2os)
 
 # iii. July-September
-o2os_rs <- stars::read_ncdf(here::here(input_dir, "o2os_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+o2os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 o2os <- create_layer(o2os_rs)
-saveRDS(o2os, here::here(output_dir, "o2os_historical_jul-sept_interpolated.rds"))
+saveRDS(o2os, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ox3 <- create_plot(o2os)
 
 # iv. October-December
-o2os_rs <- stars::read_ncdf(here::here(input_dir, "o2os_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+o2os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                       paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 o2os <- create_layer(o2os_rs)
-saveRDS(o2os, here::here(output_dir, "o2os_historical_oct-dec_interpolated.rds"))
+saveRDS(o2os, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ox4 <- create_plot(o2os)
 

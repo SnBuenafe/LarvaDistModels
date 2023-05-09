@@ -1,10 +1,8 @@
 # DESCRIPTION: Creating seasonal temperature layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "tos_historical"
 
 # Function to prepare tos layer
 create_layer <- function(rs) {
@@ -55,37 +53,51 @@ create_plot <- function(ggtos) {
 #### Create layers ####
 
 # i. January-March
-tos_rs <- stars::read_ncdf(here::here(input_dir, "tos_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+tos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, "tos_historical_jan-mar_interpolated.rds")) # save object
-# tos <- readRDS(here::here(output_dir, "tos_historical_jan-mar_interpolated.rds"))
+saveRDS(tos, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tmp1 <- create_plot(tos)
-ggsave(plot = tmp1, filename = here::here(figure_dir, "tos_historical_jan-mar.png"), width = 15, height = 7, dpi = 600)
+# ggsave(plot = tmp1, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 15, height = 7, dpi = 600)
 
 # ii. April-June
-tos_rs <- stars::read_ncdf(here::here(input_dir, "tos_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+tos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, "tos_historical_apr-jun_interpolated.rds"))
-# tos <- readRDS(here::here(output_dir, "tos_historical_apr-jun_interpolated.rds"))
+saveRDS(tos, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tmp2 <- create_plot(tos)
 
 # iii. July-September
-tos_rs <- stars::read_ncdf(here::here(input_dir, "tos_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+tos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, "tos_historical_jul-sept_interpolated.rds"))
+saveRDS(tos, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tmp3 <- create_plot(tos)
 
 # iv. October-December
-tos_rs <- stars::read_ncdf(here::here(input_dir, "tos_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+tos_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, "tos_historical_oct-dec_interpolated.rds"))
+saveRDS(tos, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tmp4 <- create_plot(tos)
 

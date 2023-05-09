@@ -1,10 +1,9 @@
-# MAKING PACIFIC-CENTERED ROBINSON PROJECTION
+# Description: This function reprojects a Pacific-centered sf object from a lon-lat to a Robinson projection.
 
-# Description:
-# This function reprojects a Pacific-centered sf object from a lon-lat to a Robinson projection.
 # Function written by J.D. Everett and I. Brito-Morales
 # moll_pacific <- "+proj=moll +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 # rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+
 fSpatPlan_Convert2PacificCentered <- function(df, cCRS, buff = 0){
   # Define a long & slim polygon that overlaps the meridian line & set its CRS to match 
   # that of world

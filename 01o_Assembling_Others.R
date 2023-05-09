@@ -1,6 +1,14 @@
+# DESCRIPTION: Preparing bathymetry and distance to coast layers
+
 # Load preliminaries
-source("00_Preliminaries.R")
+source("00_SetupGrid.R")
+source("Utils/gebcoConvert.R")
+source("Utils/calculateDist2Coast.R")
 figure_dir <- here::here("Figures")
+
+# Load packages
+# install.packages("pacman")
+pacman::p_load(cmocean)
 
 # Bathymetry
 bathy <- gebcoConvert(grid) # bathymetry data is extrapolated depending on the grid area provided

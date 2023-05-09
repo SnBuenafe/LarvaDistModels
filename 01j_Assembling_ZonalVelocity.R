@@ -1,10 +1,8 @@
 # DESCRIPTION: Creating seasonal zonal velocity layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "uo_historical"
 
 # Function to prepare uo layer
 create_layer <- function(rs) {
@@ -48,35 +46,52 @@ create_plot <- function(gguo) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-uo_rs <- stars::read_ncdf(here::here(input_dir, "uo_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+uo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 uo <- create_layer(uo_rs)
-saveRDS(uo, here::here(output_dir, "uo_historical_jan-mar_interpolated.rds"))
+saveRDS(uo, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 uo1 <- create_plot(uo)
 
 # ii. April-June
-uo_rs <- stars::read_ncdf(here::here(input_dir, "uo_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+uo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 uo <- create_layer(uo_rs)
-saveRDS(uo, here::here(output_dir, "uo_historical_apr-jun_interpolated.rds"))
+saveRDS(uo, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 uo2 <- create_plot(uo)
 
 # iii. July-September
-uo_rs <- stars::read_ncdf(here::here(input_dir, "uo_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+uo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 uo <- create_layer(uo_rs)
-saveRDS(uo, here::here(output_dir, "uo_historical_jul-sept_interpolated.rds"))
+saveRDS(uo, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 uo3 <- create_plot(uo)
 
 # iv. October-December
-uo_rs <- stars::read_ncdf(here::here(input_dir, "uo_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+uo_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 uo <- create_layer(uo_rs)
-saveRDS(uo, here::here(output_dir, "uo_historical_oct-dec_interpolated.rds"))
+saveRDS(uo, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 uo4 <- create_plot(uo)
 

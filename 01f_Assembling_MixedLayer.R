@@ -1,10 +1,8 @@
 # DESCRIPTION: Creating seasonal mixed layer thickness layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "mlotst_historical"
 
 # Function to prepare mlotst layer
 create_layer <- function(rs) {
@@ -48,35 +46,52 @@ create_plot <- function(ggmlotst) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-mlotst_rs <- stars::read_ncdf(here::here(input_dir, "mlotst_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+mlotst_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 mlotst <- create_layer(mlotst_rs)
-saveRDS(mlotst, here::here(output_dir, "mlotst_historical_jan-mar_interpolated.rds"))
+saveRDS(mlotst, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 mix1 <- create_plot(mlotst)
 
 # ii. April-June
-mlotst_rs <- stars::read_ncdf(here::here(input_dir, "mlotst_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+mlotst_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 mlotst <- create_layer(mlotst_rs)
-saveRDS(mlotst, here::here(output_dir, "mlotst_historical_apr-jun_interpolated.rds"))
+saveRDS(mlotst, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 mix2 <- create_plot(mlotst)
 
 # iii. July-September
-mlotst_rs <- stars::read_ncdf(here::here(input_dir, "mlotst_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+mlotst_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 mlotst <- create_layer(mlotst_rs)
-saveRDS(mlotst, here::here(output_dir, "mlotst_historical_jul-sept_interpolated.rds"))
+saveRDS(mlotst, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 mix3 <- create_plot(mlotst)
 
 # iv. October-December
-mlotst_rs <- stars::read_ncdf(here::here(input_dir, "mlotst_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+mlotst_rs <- stars::read_ncdf(here::here(input_dir, 
+                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 mlotst <- create_layer(mlotst_rs)
-saveRDS(mlotst, here::here(output_dir, "mlotst_historical_oct-dec_interpolated.rds"))
+saveRDS(mlotst, here::here(output_dir, 
+                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 mix4 <- create_plot(mlotst)
 

@@ -1,10 +1,10 @@
 # DESCRIPTION: Calculate broad-scale salinity gradients
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+pacman::p_load(raster, VoCC)
+input <- "sos_historical"
+label <- "salinity_front_historical"
 
 # Function to prepare thermal gradient layer
 create_layer <- function(rs) {
@@ -54,34 +54,50 @@ create_plot <- function(ggsalinity) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-rs <- raster::stack(here::here(input_dir, "sos_historical_1956_1981_jan-mar_ensemble.nc"))
+season <- "jan-mar"
+rs <- raster::stack(here::here(input_dir, 
+                               paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "salinity_front_historical_jan-mar_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf1 <- create_plot(grad)
 
 # ii. April-June
-rs <- raster::stack(here::here(input_dir, "sos_historical_1956_1981_apr-jun_ensemble.nc"))
+season <- "apr-jun"
+rs <- raster::stack(here::here(input_dir, 
+                               paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "salinity_front_historical_apr-jun_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf2 <- create_plot(grad)
 
 # iii. July-September
-rs <- raster::stack(here::here(input_dir, "sos_historical_1956_1981_jul-sept_ensemble.nc"))
+season <- "jul-sept"
+rs <- raster::stack(here::here(input_dir, 
+                               paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "salinity_front_historical_jul-sept_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf3 <- create_plot(grad)
 
 # iv. October-December
-rs <- raster::stack(here::here(input_dir, "sos_historical_1956_1981_oct-dec_ensemble.nc"))
+season <- "oct-dec"
+rs <- raster::stack(here::here(input_dir, 
+                               paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "salinity_front_historical_oct-dec_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf4 <- create_plot(grad)
-
 
 # Full thermal front plots
 full_sf <- (sf1 + sf2) / (sf3 + sf4) +

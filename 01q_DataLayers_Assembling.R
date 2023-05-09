@@ -1,7 +1,7 @@
 # DESCRIPTION: Assembling grids for all species
 
 # Load preliminaries
-source("00_Preliminaries.R")
+source("00_SetupGrid.R")
 input_dir <- here::here("Data")
 
 # List all species in Nishikawa dataset

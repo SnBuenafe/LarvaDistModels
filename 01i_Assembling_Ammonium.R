@@ -1,10 +1,8 @@
 # DESCRIPTION: Creating seasonal ammonium layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "nh4os_historical"
 
 # Function to prepare nh4os layer
 create_layer <- function(rs) {
@@ -48,35 +46,52 @@ create_plot <- function(ggnh4os) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-nh4os_rs <- stars::read_ncdf(here::here(input_dir, "nh4os_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+nh4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 nh4os <- create_layer(nh4os_rs)
-saveRDS(nh4os, here::here(output_dir, "nh4os_historical_jan-mar_interpolated.rds"))
+saveRDS(nh4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 amm1 <- create_plot(nh4os)
 
 # ii. April-June
-nh4os_rs <- stars::read_ncdf(here::here(input_dir, "nh4os_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+nh4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 nh4os <- create_layer(nh4os_rs)
-saveRDS(nh4os, here::here(output_dir, "nh4os_historical_apr-jun_interpolated.rds"))
+saveRDS(nh4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 amm2 <- create_plot(nh4os)
 
 # iii. July-September
-nh4os_rs <- stars::read_ncdf(here::here(input_dir, "nh4os_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+nh4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 nh4os <- create_layer(nh4os_rs)
-saveRDS(nh4os, here::here(output_dir, "nh4os_historical_jul-sept_interpolated.rds"))
+saveRDS(nh4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 amm3 <- create_plot(nh4os)
 
 # iv. October-December
-nh4os_rs <- stars::read_ncdf(here::here(input_dir, "nh4os_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+nh4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 nh4os <- create_layer(nh4os_rs)
-saveRDS(nh4os, here::here(output_dir, "nh4os_historical_oct-dec_interpolated.rds"))
+saveRDS(nh4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 amm4 <- create_plot(nh4os)
 

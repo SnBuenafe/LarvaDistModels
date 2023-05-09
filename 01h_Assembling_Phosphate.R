@@ -1,10 +1,8 @@
 # DESCRIPTION: Creating seasonal phosphate layers
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+label <- "po4os_historical"
 
 # Function to prepare po4os layer
 create_layer <- function(rs) {
@@ -12,7 +10,7 @@ create_layer <- function(rs) {
   
   po4os <- rs2sf(rs) %>% 
     dplyr::rename(po4os = mean) %>% # using the mean of the models
-    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning units
+    sf::st_interpolate_aw(grid, extensive = FALSE) %>% # interpolate with planning uphoss
     dplyr::as_tibble() %>% 
     dplyr::left_join(grid, ., by = "geometry") %>% # left_join with the grid
     sf::st_as_sf(crs = cCRS) %>% 
@@ -48,36 +46,52 @@ create_plot <- function(ggpo4os) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
-
+#### Create layers ####
 # i. January-March
-po4os_rs <- stars::read_ncdf(here::here(input_dir, "po4os_historical_1956_1981_jan-mar_ensemble.nc")) %>% 
+season <- "jan-mar"
+po4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 po4os <- create_layer(po4os_rs)
-saveRDS(po4os, here::here(output_dir, "po4os_historical_jan-mar_interpolated.rds"))
+saveRDS(po4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 phos1 <- create_plot(po4os)
 
 # ii. April-June
-po4os_rs <- stars::read_ncdf(here::here(input_dir, "po4os_historical_1956_1981_apr-jun_ensemble.nc")) %>% 
+season <- "apr-jun"
+po4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 po4os <- create_layer(po4os_rs)
-saveRDS(po4os, here::here(output_dir, "po4os_historical_apr-jun_interpolated.rds"))
+saveRDS(po4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 phos2 <- create_plot(po4os)
 
 # iii. July-September
-po4os_rs <- stars::read_ncdf(here::here(input_dir, "po4os_historical_1956_1981_jul-sept_ensemble.nc")) %>% 
+season <- "jul-sept"
+po4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 po4os <- create_layer(po4os_rs)
-saveRDS(po4os, here::here(output_dir, "po4os_historical_jul-sept_interpolated.rds"))
+saveRDS(po4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 phos3 <- create_plot(po4os)
 
 # iv. October-December
-po4os_rs <- stars::read_ncdf(here::here(input_dir, "po4os_historical_1956_1981_oct-dec_ensemble.nc")) %>% 
+season <- "oct-dec"
+po4os_rs <- stars::read_ncdf(here::here(input_dir, 
+                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
   terra::rast()
 po4os <- create_layer(po4os_rs)
-saveRDS(po4os, here::here(output_dir, "po4os_historical_oct-dec_interpolated.rds"))
+saveRDS(po4os, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 phos4 <- create_plot(po4os)
 

@@ -1,10 +1,10 @@
 # DESCRIPTION: Calculate broad-scale thermal gradients
 
 # Load preliminaries
-source("00_Preliminaries.R")
-input_dir <- here::here("Data", "Climatology", "ensemble")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+source("00_PreparePredictors.R")
+pacman::p_load(raster, VoCC)
+input <- "tos_historical"
+label <- "thermal_front_historical"
 
 # Function to prepare thermal gradient layer
 create_layer <- function(rs) {
@@ -57,32 +57,48 @@ create_plot <- function(ggthermal) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
-
+#### Create layers ####
 # i. January-March
-rs <- raster::stack(here::here(input_dir, "tos_historical_1956_1981_jan-mar_ensemble.nc"))
+season <- "jan-mar"
+rs <- raster::stack(here::here(input_dir, 
+                                        paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "thermal_front_historical_jan-mar_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tf1 <- create_plot(grad)
 
 # ii. April-June
-rs <- raster::stack(here::here(input_dir, "tos_historical_1956_1981_apr-jun_ensemble.nc"))
+season <- "apr-jun"
+rs <- raster::stack(here::here(input_dir, 
+                               paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "thermal_front_historical_apr-jun_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tf2 <- create_plot(grad)
 
 # iii. July-September
-rs <- raster::stack(here::here(input_dir, "tos_historical_1956_1981_jul-sept_ensemble.nc"))
+season <- "jul-sept"
+rs <- raster::stack(here::here(input_dir, 
+                               paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "thermal_front_historical_jul-sept_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tf3 <- create_plot(grad)
 
 # iv. October-December
-rs <- raster::stack(here::here(input_dir, "tos_historical_1956_1981_oct-dec_ensemble.nc"))
+season <- "oct-dec"
+rs <- raster::stack(here::here(input_dir, 
+                               paste(input, "1956", "1981", season, "ensemble.nc", sep = "_")))
 grad <- create_layer(rs)
-saveRDS(grad, here::here(output_dir, "thermal_front_historical_oct-dec_interpolated.rds"))
+saveRDS(grad, here::here(output_dir, 
+                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
+# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tf4 <- create_plot(grad)
 

@@ -1,4 +1,5 @@
 # Description: Replacing NAs with the nearest neighborhood value
+
 replaceNN <- function(climate, grid, colname) {
   filtered <- climate %>% 
     dplyr::filter(!is.na(!!sym(colname)))

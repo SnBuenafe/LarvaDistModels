@@ -1,12 +1,16 @@
 # DESCRIPTION: Preparing aquamaps adult distribution layer
 
 # Load preliminaries
-source("00_Preliminaries.R")
+source("00_SetupGrid.R")
 input_dir <- file.path("/Volumes", "SeagateHub", "01_Spatial Datasets")
 output_dir <- here::here("Data")
 figure_dir <- here::here("Figures")
 
-# Cropping aquamaps dataset (from spatialplanr)
+# Load packages
+# install.packages("pacman")
+pacman::p_load(stars, cmocean)
+
+# Cropping aquamaps dataset (adopted from spatialplanr)
 SpatPlan_Crop_AQM <- function(df, spp, extent){
   
   cropped <- AquaMaps_sf %>%
@@ -124,7 +128,7 @@ AquaMaps_sf <- SpatPlan_Crop_AQM(AquaMaps_sf, aqm, ex_sf) %>%
 
 saveRDS(AquaMaps_sf, here::here(output_dir, "AquaMaps_sf.rds")) # save file
 
-# Plot number of features
+# TODO: Plot number of features
 ggaq <- AquaMaps_sf %>%
    dplyr::select(-Tetrapturus_angustirostris, -Scombrolabrax_heterolepis, 
                  -Kajikia_audax, -Scombrolabrax_heterolepis, -Euthynnus_affinis, 

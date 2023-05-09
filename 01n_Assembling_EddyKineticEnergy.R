@@ -1,10 +1,11 @@
 # DESCRIPTION: Calculate eddy kinetic energy (in m^2/s^2)
 
 # Load preliminaries
-source("00_Preliminaries.R")
+source("00_PreparePredictors.R")
 input_dir <- here::here("Data", "Climatology", "sf")
-output_dir <- here::here("Data", "Climatology", "sf")
-figure_dir <- here::here("Figures")
+input1 <- "uo_historical"
+input2 <- "vo_historical"
+label <- "eke_front_historical"
 
 # Function to calculate EKE
 create_layer <- function(uo, vo) {
@@ -40,35 +41,40 @@ create_plot <- function(ggcomb) {
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
+#### Create layers ####
 # i. January-March
-uo <- readRDS(here::here(input_dir, "uo_historical_jan-mar_interpolated.rds"))
-vo <- readRDS(here::here(input_dir, "vo_historical_jan-mar_interpolated.rds"))
+season <- "jan-mar"
+uo <- readRDS(here::here(input_dir, paste(input1, season, "interpolated.rds", sep = "_")))
+vo <- readRDS(here::here(input_dir, paste(input2, season, "interpolated.rds", sep = "_")))
 comb <- create_layer(uo, vo)
-saveRDS(comb, here::here(output_dir, "eke_historical_jan-mar_interpolated.rds"))
+saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 eke1 <- create_plot(comb)
 
 # ii. April-June
-uo <- readRDS(here::here(input_dir, "uo_historical_apr-jun_interpolated.rds"))
-vo <- readRDS(here::here(input_dir, "vo_historical_apr-jun_interpolated.rds"))
+season <- "apr-jun"
+uo <- readRDS(here::here(input_dir, paste(input1, season, "interpolated.rds", sep = "_")))
+vo <- readRDS(here::here(input_dir, paste(input2, season, "interpolated.rds", sep = "_")))
 comb <- create_layer(uo, vo)
-saveRDS(comb, here::here(output_dir, "eke_historical_apr-jun_interpolated.rds"))
+saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 eke2 <- create_plot(comb)
 
 # iii. July-September
-uo <- readRDS(here::here(input_dir, "uo_historical_jul-sept_interpolated.rds"))
-vo <- readRDS(here::here(input_dir, "vo_historical_jul-sept_interpolated.rds"))
+season <- "jul-sept"
+uo <- readRDS(here::here(input_dir, paste(input1, season, "interpolated.rds", sep = "_")))
+vo <- readRDS(here::here(input_dir, paste(input2, season, "interpolated.rds", sep = "_")))
 comb <- create_layer(uo, vo)
-saveRDS(comb, here::here(output_dir, "eke_historical_jul-sept_interpolated.rds"))
+saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 eke3 <- create_plot(comb)
 
 # iv. October-December
-uo <- readRDS(here::here(input_dir, "uo_historical_oct-dec_interpolated.rds"))
-vo <- readRDS(here::here(input_dir, "vo_historical_oct-dec_interpolated.rds"))
+season <- "oct-dec"
+uo <- readRDS(here::here(input_dir, paste(input1, season, "interpolated.rds", sep = "_")))
+vo <- readRDS(here::here(input_dir, paste(input2, season, "interpolated.rds", sep = "_")))
 comb <- create_layer(uo, vo)
-saveRDS(comb, here::here(output_dir, "eke_historical_oct-dec_interpolated.rds"))
+saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 eke4 <- create_plot(comb)
 
