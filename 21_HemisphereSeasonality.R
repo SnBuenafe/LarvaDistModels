@@ -2,12 +2,12 @@
 
 # Load preliminaries
 source("00_Preliminaries.R")
-pred_dir <- here::here("Output", "Predictions")
-fig_dir <- here::here("Figures")
+source("00_SetupGrid.R")
+pacman::p_load(patchwork, purrr)
 seas_list <- c("January-March", "April-June", "July-September", "October-December")
 
 load_data <- function(seas) {
-  full <- read_csv(here::here(pred_dir, paste0("FULL_predictions_", seas, ".csv"))) %>%  # Jan-Mar
+  full <- read_csv(here::here(preds_dir, paste0("FULL_predictions_", seas, ".csv"))) %>%  # Jan-Mar
     dplyr::left_join(., dummy) %>% 
     dplyr::select(-c(1:2, 20:24, 26)) %>% 
     dplyr::mutate(hemisphere = ifelse(latitude >= 0, "North", "South")) 
@@ -114,4 +114,4 @@ all <- skp + yft + alb + bet + fri + sbft + bft + lit + slt + bon +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(fig_dir, "Hemisphere_Seasonality.png"), width = 60, height = 20, dpi = 300, limitsize = FALSE)
+ggsave(plot = all, filename = here::here(figure_dir, "Hemisphere_Seasonality.png"), width = 60, height = 20, dpi = 300, limitsize = FALSE)

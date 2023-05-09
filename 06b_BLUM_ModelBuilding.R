@@ -2,11 +2,8 @@
 
 # Load preliminaries
 source("06a_BLUM_Data.R") # Load BLUM data
-output_dir <- here::here("Output", "Models")
-figure_dir <- here::here("Figures", "BLUM")
 
 #### Model 1: With longitude and latitude ####
-
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:24), resp_in = 5)
 
@@ -17,8 +14,8 @@ BLUM_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.009
 )
-saveRDS(BLUM_model1, here::here(output_dir, "BLUM_model1.rds"))
-# BLUM_model1 <- readRDS(here::here(output_dir, "BLUM_model1.rds"))
+saveRDS(BLUM_model1, here::here(model_dir, paste(species, "model1.rds", sep = "_")))
+# BLUM_model1 <- readRDS(here::here(model_dir, paste(species, "model1.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(BLUM_model1)
@@ -49,9 +46,9 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg1 <- plotModel(gg, limits)
-ggsave(plot = gg1, filename = here::here(figure_dir, "BLUM_model1_jan-mar.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = gg1, filename = here::here(figure_dir, "BLUM_model1_jan-mar.png"), width = 15, height = 7, dpi = 600)
 nish1 <- plotNish(`grid_BLUM_jan-mar`)
-ggsave(plot = nish1, filename = here::here(figure_dir, "BLUM_nishikawa_jan-mar.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = nish1, filename = here::here(figure_dir, "BLUM_nishikawa_jan-mar.png"), width = 15, height = 7, dpi = 600)
 
 hatch1 <- plotHatch(gg1, gg, BLUM_ds1)
 
@@ -65,9 +62,9 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg2 <- plotModel(gg, limits)
-ggsave(plot = gg2, filename = here::here(figure_dir, "BLUM_model1_apr-jun.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = gg2, filename = here::here(figure_dir, "BLUM_model1_apr-jun.png"), width = 15, height = 7, dpi = 600)
 nish2 <- plotNish(`grid_BLUM_apr-jun`)
-ggsave(plot = nish2, filename = here::here(figure_dir, "BLUM_nishikawa_apr-jun.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = nish2, filename = here::here(figure_dir, "BLUM_nishikawa_apr-jun.png"), width = 15, height = 7, dpi = 600)
 hatch2 <- plotHatch(gg2, gg, BLUM_ds2)
 
 # July-September
@@ -80,9 +77,9 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg3 <- plotModel(gg, limits)
-ggsave(plot = gg3, filename = here::here(figure_dir, "BLUM_model1_jul-sept.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = gg3, filename = here::here(figure_dir, "BLUM_model1_jul-sept.png"), width = 15, height = 7, dpi = 600)
 nish3 <- plotNish(`grid_BLUM_jul-sept`)
-ggsave(plot = nish3, filename = here::here(figure_dir, "BLUM_nishikawa_jul-sept.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = nish3, filename = here::here(figure_dir, "BLUM_nishikawa_jul-sept.png"), width = 15, height = 7, dpi = 600)
 hatch3 <- plotHatch(gg3, gg, BLUM_ds3)
 
 # October-December
@@ -95,25 +92,24 @@ gg <- create_speciesMap(train_tmp, # training object with model column (fitted v
 )
 
 gg4 <- plotModel(gg, limits)
-ggsave(plot = gg4, filename = here::here(figure_dir, "BLUM_model1_oct-dec.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = gg4, filename = here::here(figure_dir, "BLUM_model1_oct-dec.png"), width = 15, height = 7, dpi = 600)
 nish4 <- plotNish(`grid_BLUM_oct-dec`)
-ggsave(plot = nish4, filename = here::here(figure_dir, "BLUM_nishikawa_oct-dec.png"), width = 15, height = 7, dpi = 600)
+#ggsave(plot = nish4, filename = here::here(figure_dir, "BLUM_nishikawa_oct-dec.png"), width = 15, height = 7, dpi = 600)
 hatch4 <- plotHatch(gg4, gg, BLUM_ds4)
 
 ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = here::here(figure_dir, "BLUM_model1_base.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, paste(species, "model1", "base.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = gghatch, filename = here::here(figure_dir, "BLUM_model1_hatched.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = gghatch, filename = here::here(figure_dir, paste(species, "model1", "hatched.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 #### Model 2: Without longitude and latitude ####
-
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(9:24), resp_in = 5)
 
@@ -124,8 +120,8 @@ BLUM_model2 <- dismo::gbm.step(data = train, gbm.x = c(9:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.008
 )
-saveRDS(BLUM_model2, here::here(output_dir, "BLUM_model2.rds"))
-# BLUM_model2 <- readRDS(here::here(output_dir, "BLUM_model2.rds"))
+saveRDS(BLUM_model2, here::here(model_dir, paste(species, "model2.rds")))
+# BLUM_model2 <- readRDS(here::here(model_dir, paste(species, "model2.rds")))
 
 # Show the relative importance of each of the predictors
 summary(BLUM_model2)
@@ -198,10 +194,10 @@ ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = here::here(figure_dir, "BLUM_model2_base.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, paste(species, "model2", "base.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = gghatch, filename = here::here(figure_dir, "BLUM_model2_hatched.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = gghatch, filename = here::here(figure_dir, paste(species, "model2", "hatched.png", sep = "_")), width = 27, height = 15, dpi = 600)

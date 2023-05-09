@@ -2,11 +2,8 @@
 
 # Load preliminaries
 source("10a_SAU_Data.R") # Load SAU data
-output_dir <- here::here("Output", "Models")
-figure_dir <- here::here("Figures", "SAU")
 
 #### Model 1: With longitude and latitude ####
-
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:23, 27), resp_in = 5)
 
@@ -17,8 +14,8 @@ SAU_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:23, 27),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
                                tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.006
 )
-saveRDS(SAU_model1, here::here(output_dir, "SAU_model1.rds"))
-# SAU_model1 <- readRDS(here::here(output_dir, "SAU_model1.rds"))
+saveRDS(SAU_model1, here::here(model_dir, paste(species, "model1.rds", sep = "_")))
+# SAU_model1 <- readRDS(here::here(model_dir, paste(species, "model1.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(SAU_model1)
@@ -95,13 +92,13 @@ ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = here::here(figure_dir, "SAU_model1_base.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, paste(species, "model1", "base.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = gghatch, filename = here::here(figure_dir, "SAU_model1_hatched.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = gghatch, filename = here::here(figure_dir, paste(species, "model1", "hatched.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 ggnish <- (nish1 + nish2) / (nish3 + nish4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
@@ -110,7 +107,6 @@ ggnish <- (nish1 + nish2) / (nish3 + nish4) +
 ggsave(plot = ggnish, filename = here::here(figure_dir, "SAU_nishikawa.png"), width = 27, height = 15, dpi = 600)
 
 #### Model 2: Without longitude and latitude ####
-
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(9:23, 27), resp_in = 5)
 
@@ -121,8 +117,8 @@ SAU_model2 <- dismo::gbm.step(data = train, gbm.x = c(9:23, 27),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
                               tree.complexity = 1, bag.fraction = 0.75, learning.rate = 0.01
 )
-saveRDS(SAU_model2, here::here(output_dir, "SAU_model2.rds"))
-# SAU_model2 <- readRDS(here::here(output_dir, "SAU_model2.rds"))
+saveRDS(SAU_model2, here::here(model_dir, paste(species, "model2.rds", sep = "_")))
+# SAU_model2 <- readRDS(here::here(model_dir, paste(species, "model2.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(SAU_model2)
@@ -195,10 +191,10 @@ ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = here::here(figure_dir, "SAU_model2_base.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, paste(species, "model2", "base.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = gghatch, filename = here::here(figure_dir, "SAU_model2_hatched.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = gghatch, filename = here::here(figure_dir, paste(species, "model2", "hatched.png", sep = "_")), width = 27, height = 15, dpi = 600)

@@ -2,8 +2,6 @@
 
 # Load preliminaries
 source("02a_YFT_Data.R") # Load YFT data
-output_dir <- here::here("Output", "Models")
-figure_dir <- here::here("Figures", "YFT")
 
 #### Model 1: With longitude and latitude ####
 
@@ -17,8 +15,8 @@ YFT_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
                               tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.009
 )
-saveRDS(YFT_model1, here::here(output_dir, "YFT_model1.rds"))
-# YFT_model1 <- readRDS(here::here(output_dir, "YFT_model1.rds"))
+saveRDS(YFT_model1, here::here(model_dir, paste(species, "model1.rds", sep = "_")))
+# YFT_model1 <- readRDS(here::here(model_dir, paste(species, "model1.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(YFT_model1) 
@@ -95,19 +93,19 @@ ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = here::here(figure_dir, "YFT_model1_base.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, species, paste(species, "model1", "base.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = gghatch, filename = here::here(figure_dir, "YFT_model1_hatched.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = gghatch, filename = here::here(figure_dir, species, paste(species, "model1", "hatched.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 ggnish <- (nish1 + nish2) / (nish3 + nish4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggnish, filename = here::here(figure_dir, "YFT_nishikawa.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = ggnish, filename = here::here(figure_dir, species, paste(species, "nishikawa.png")), width = 27, height = 15, dpi = 600)
 
 #### Model 2: Without longitude and latitude ####
 
@@ -121,8 +119,8 @@ YFT_model2 <- dismo::gbm.step(data = train, gbm.x = c(9:24),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.008
 )
-saveRDS(YFT_model2, here::here(output_dir, "YFT_model2.rds"))
-# YFT_model2 <- readRDS("Output/Models/YFT_model2.rds")
+saveRDS(YFT_model2, here::here(model_dir, paste(species, "model2.rds", sep = "_")))
+# YFT_model2 <- readRDS(here::here(model_dir, paste(species, "model2.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(YFT_model2) 
@@ -195,10 +193,10 @@ ggsquished <- (gg1 + gg2) / (gg3 + gg4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = ggsquished, filename = here::here(figure_dir, "YFT_model2_base.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = ggsquished, filename = here::here(figure_dir, species, paste(species, "model2", "base.png", sep = "_")), width = 27, height = 15, dpi = 600)
 
 gghatch <- (hatch1 + hatch2) / (hatch3 + hatch4) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = gghatch, filename = here::here(figure_dir, "YFT_model2_hatched.png"), width = 27, height = 15, dpi = 600)
+ggsave(plot = gghatch, filename = here::here(figure_dir, species, paste(species, "model2", "hatched.png", sep = "_")), width = 27, height = 15, dpi = 600)

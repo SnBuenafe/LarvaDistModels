@@ -2,7 +2,7 @@
 
 # Load packages
 # install.packages("pacman")
-pacman::p_load(sf, rnaturalearth, tidyverse, spatialplanr, magrittr)
+pacman::p_load(here, sf, rnaturalearth, tidyverse, spatialplanr, magrittr)
 source("Utils/fSpatPlan_Convert2PacificCentered.R")
 
 # Define map projections

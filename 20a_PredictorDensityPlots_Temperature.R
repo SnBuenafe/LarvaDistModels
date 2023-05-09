@@ -1,14 +1,12 @@
 # DESCRIPTION: Density plots for temperature
 
 # Define preliminaries
-#source("00_Preliminaries.R")
-pred_dir <- here::here("Output", "Predictions")
-clim_dir <- here::here("Data", "Climatology", "sf")
-fig_dir <- here::here("Figures")
+source("00_Preliminaries.R")
+pacman::p_load(ggridges, patchwork, purrr)
 
 #### Assemble the data ####
 # January-March
-df <- read_csv(here::here(pred_dir, "FULL_predictions_jan-mar.csv")) %>% # load full prediction data set
+df <- read_csv(here::here(preds_dir, "FULL_predictions_jan-mar.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
 tmp1 <- readRDS(here::here(clim_dir, "tos_historical_jan-mar_interpolated.rds")) %>% # load predictor data set
@@ -16,7 +14,7 @@ tmp1 <- readRDS(here::here(clim_dir, "tos_historical_jan-mar_interpolated.rds"))
   dplyr::left_join(df, ., by = "cellID")
 
 # April-June
-df <- read_csv(here::here(pred_dir, "FULL_predictions_apr-jun.csv")) %>% # load full prediction data set
+df <- read_csv(here::here(preds_dir, "FULL_predictions_apr-jun.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
 tmp2 <- readRDS(here::here(clim_dir, "tos_historical_apr-jun_interpolated.rds")) %>% # load predictor data set
@@ -24,7 +22,7 @@ tmp2 <- readRDS(here::here(clim_dir, "tos_historical_apr-jun_interpolated.rds"))
   dplyr::left_join(df, ., by = "cellID")
 
 # July-September
-df <- read_csv(here::here(pred_dir, "FULL_predictions_jul-sept.csv")) %>% # load full prediction data set
+df <- read_csv(here::here(preds_dir, "FULL_predictions_jul-sept.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
 tmp3 <- readRDS(here::here(clim_dir, "tos_historical_jul-sept_interpolated.rds")) %>% # load predictor data set
@@ -32,7 +30,7 @@ tmp3 <- readRDS(here::here(clim_dir, "tos_historical_jul-sept_interpolated.rds")
   dplyr::left_join(df, ., by = "cellID")
 
 # October-December
-df <- read_csv(here::here(pred_dir, "FULL_predictions_oct-dec.csv")) %>% # load full prediction data set
+df <- read_csv(here::here(preds_dir, "FULL_predictions_oct-dec.csv")) %>% # load full prediction data set
   dplyr::select(-1)
 
 tmp4 <- readRDS(here::here(clim_dir, "tos_historical_oct-dec_interpolated.rds")) %>% # load predictor data set
@@ -68,4 +66,4 @@ all <- ((ab_tunas1) / (lab_tunas1) / (bill1) / oth1) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(fig_dir, "ImptPredictors_tos.png"), width = 15, height = 27, dpi = 300)
+ggsave(plot = all, filename = here::here(figure_dir, "ImptPredictors_tos.png"), width = 15, height = 27, dpi = 300)

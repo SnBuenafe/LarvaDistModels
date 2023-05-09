@@ -2,7 +2,8 @@
 
 # Load preliminaries
 source("00_Preliminaries.R")
-input_dir <- here::here("Output", "CSV")
+source("00_SetupGrid.R")
+species <- "SHOS"
 
 # Define functions
 # Function to restrict adult distribution predictor to just shortbill spearfish
@@ -33,7 +34,7 @@ seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 for(s in 1:length(seasons)) {
   gridded <- assembleGrid(grid, sf %>% dplyr::filter(season == seasons[s]))
   
-  assign(paste("grid", "SHOS", seasons[s], sep = "_"), gridded)
+  assign(paste("grid", species, seasons[s], sep = "_"), gridded)
 }
 
 # Load shortbill spearfish datasets

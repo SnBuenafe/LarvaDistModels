@@ -2,7 +2,8 @@
 
 # Load preliminaries
 source("00_Preliminaries.R")
-input_dir <- here::here("Output", "CSV")
+source("00_SetupGrid.R")
+species <- "BLUM"
 
 # Function to restrict adult distribution predictor to just blue marlin
 restrict_predictor <- function(x){
@@ -29,20 +30,20 @@ seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 for(s in 1:length(seasons)) {
   gridded <- assembleGrid(grid, sf %>% dplyr::filter(season == seasons[s]))
   
-  assign(paste("grid", "BLUM", seasons[s], sep = "_"), gridded)
+  assign(paste("grid", species, seasons[s], sep = "_"), gridded)
 }
 
 # Load blue marlin datasets
-BLUM_ds1 <- read_csv("Output/CSV/BLUM_historical_jan-mar.csv", show_col_types = FALSE) %>% # January-March
+BLUM_ds1 <- read_csv(here::here(input_dir, "BLUM_historical_jan-mar.csv"), show_col_types = FALSE) %>% # January-March
   restrict_predictor()
 
-BLUM_ds2 <- read_csv("Output/CSV/BLUM_historical_apr-jun.csv", show_col_types = FALSE) %>% # April-June
+BLUM_ds2 <- read_csv(here::here(input_dir, "BLUM_historical_apr-jun.csv"), show_col_types = FALSE)  %>% # April-June
   restrict_predictor()
 
-BLUM_ds3 <- read_csv("Output/CSV/BLUM_historical_jul-sept.csv", show_col_types = FALSE) %>% # July-September
+BLUM_ds3 <- read_csv(here::here(input_dir, "BLUM_historical_jul-sept.csv"), show_col_types = FALSE)  %>% # July-September
   restrict_predictor()
 
-BLUM_ds4 <- read_csv("Output/CSV/BLUM_historical_oct-dec.csv", show_col_types = FALSE) %>% # October-December
+BLUM_ds4 <- read_csv(here::here(input_dir, "BLUM_historical_oct-dec.csv"), show_col_types = FALSE)  %>% # October-December
   restrict_predictor()
 
 # Build model with known data only

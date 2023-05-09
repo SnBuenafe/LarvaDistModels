@@ -1,10 +1,8 @@
 # DESCRIPTION: Density plots for EKE
 
 # Define preliminaries
-#source("00_Preliminaries.R")
-pred_dir <- here::here("Output", "Predictions")
-clim_dir <- here::here("Data", "Climatology", "sf")
-fig_dir <- here::here("Figures")
+source("00_Preliminaries.R")
+pacman::p_load(ggridges, patchwork, purrr)
 
 #### Assemble data ####
 # January-March
@@ -68,4 +66,4 @@ all <- (ab_tunas3 / lab_tunas3 / bill3 / oth3) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(fig_dir, "ImptPredictors_eke.png"), width = 15, height = 27, dpi = 300)
+ggsave(plot = all, filename = here::here(figure_dir, "ImptPredictors_eke.png"), width = 15, height = 27, dpi = 300)

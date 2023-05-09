@@ -2,15 +2,14 @@
 
 # Define preliminaries
 source("00_Preliminaries.R")
-pc_dir <- here::here("Output", "PCA")
-pred_dir <- here::here("Output", "Predictions")
-fig_dir <- here::here("Figures")
+source("00_SetupGrid.R")
+pacman::p_load(purrr, Hmisc, RColorBrewer, patchwork)
 
 # January-March
 PC_scores <- read_csv(here::here(pc_dir, "hotspots_jan-mar_scores.csv")) # Load PC scores
 
 # Creating dummy sf for PCA plots
-dummy <- readRDS(here::here(pred_dir, "YFT_jan-mar.rds"))
+dummy <- readRDS(here::here(preds_dir, "YFT_jan-mar.rds"))
 dummy <- dummy %>% 
   dplyr::select(-ocean, -model) %>% 
   cbind(., PC_scores)
@@ -27,7 +26,7 @@ ggsave(plot = pc2, filename = here::here(fig_dir, paste("PC2", "jan-mar.png", se
 PC_scores <- read_csv(here::here(pc_dir, "hotspots_apr-jun_scores.csv")) # Load PC scores
 
 # Creating dummy sf for PCA plots
-dummy <- readRDS(here::here(pred_dir, "YFT_apr-jun.rds"))
+dummy <- readRDS(here::here(preds_dir, "YFT_apr-jun.rds"))
 dummy <- dummy %>% 
   dplyr::select(-ocean, -model) %>% 
   cbind(., PC_scores)
@@ -44,7 +43,7 @@ ggsave(plot = pc4, filename = here::here(fig_dir, paste("PC2", "apr-jun.png", se
 PC_scores <- read_csv(here::here(pc_dir, "hotspots_jul-sept_scores.csv")) # Load PC scores
 
 # Creating dummy sf for PCA plots
-dummy <- readRDS(here::here(pred_dir, "YFT_jul-sept.rds"))
+dummy <- readRDS(here::here(preds_dir, "YFT_jul-sept.rds"))
 dummy <- dummy %>% 
   dplyr::select(-ocean, -model) %>% 
   cbind(., PC_scores)
@@ -61,7 +60,7 @@ ggsave(plot = pc6, filename = here::here(fig_dir, paste("PC2", "jul-sept.png", s
 PC_scores <- read_csv(here::here(pc_dir, "hotspots_oct-dec_scores.csv")) # Load PC scores
 
 # Creating dummy sf for PCA plots
-dummy <- readRDS(here::here(pred_dir, "YFT_oct-dec.rds"))
+dummy <- readRDS(here::here(preds_dir, "YFT_oct-dec.rds"))
 dummy <- dummy %>% 
   dplyr::select(-ocean, -model) %>% 
   cbind(., PC_scores)

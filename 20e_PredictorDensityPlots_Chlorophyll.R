@@ -1,10 +1,8 @@
 # DESCRIPTION: Density plots for chlorophyll
 
 # Define preliminaries
-#source("00_Preliminaries.R")
-pred_dir <- here::here("Output", "Predictions")
-clim_dir <- here::here("Data", "Climatology", "sf")
-fig_dir <- here::here("Figures")
+source("00_Preliminaries.R")
+pacman::p_load(ggridges, patchwork, purrr)
 
 #### Assemble data ####
 # January-March
@@ -68,4 +66,4 @@ all <- (ab_tunas5 / lab_tunas5 / bill5 / oth5) +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(fig_dir, "ImptPredictors_chlos.png"), width = 15, height = 27, dpi = 300)
+ggsave(plot = all, filename = here::here(figure_dir, "ImptPredictors_chlos.png"), width = 15, height = 27, dpi = 300)

@@ -2,7 +2,8 @@
 
 # Load preliminaries
 source("00_Preliminaries.R")
-input_dir <- here::here("Output", "CSV")
+source("00_SetupGrid.R")
+species <- "SBFT"
 
 # Define functions
 # Function to restrict adult distribution predictor to just southern bluefin tuna
@@ -33,20 +34,20 @@ seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 for(s in 1:length(seasons)) {
   gridded <- assembleGrid(grid, sf %>% dplyr::filter(season == seasons[s]))
   
-  assign(paste("grid", "SBFT", seasons[s], sep = "_"), gridded)
+  assign(paste("grid", species, seasons[s], sep = "_"), gridded)
 }
 
 # Load southern bluefin tuna datasets
 SBFT_ds1 <- read_csv(here::here(input_dir, "SBFT_historical_jan-mar.csv"), show_col_types = FALSE) %>% # January-March
   restrict_predictor()
 
-SBFT_ds2 <- read_csv(here::here(input_dir, "SBFT_historical_apr-jun.csv"), show_col_types = FALSE) %>% # April-June
+SBFT_ds2 <- read_csv(here::here(input_dir, "SBFT_historical_apr-jun.csv"), show_col_types = FALSE)  %>% # April-June
   restrict_predictor()
 
-SBFT_ds3 <- read_csv(here::here(input_dir, "SBFT_historical_jul-sept.csv"), show_col_types = FALSE) %>% # July-September
+SBFT_ds3 <- read_csv(here::here(input_dir, "SBFT_historical_jul-sept.csv"), show_col_types = FALSE)  %>% # July-September
   restrict_predictor()
 
-SBFT_ds4 <- read_csv(here::here(input_dir, "SBFT_historical_oct-dec.csv"), show_col_types = FALSE) %>% # October-December
+SBFT_ds4 <- read_csv(here::here(input_dir, "SBFT_historical_oct-dec.csv"), show_col_types = FALSE)  %>% # October-December
   restrict_predictor()
 
 # Build model with known data only

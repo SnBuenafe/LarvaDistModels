@@ -4,7 +4,6 @@
 source("00_Preliminaries.R")
 scripts <- list.files(pattern = "^20", full.names = TRUE)
 sapply(X = scripts[1:5], FUN = source) %>% invisible()
-fig_dir <- here::here("Figures")
 
 all <- ab_tunas1 + ab_tunas2 + ab_tunas3 + ab_tunas4 + ab_tunas5 +
   lab_tunas1 + lab_tunas2 + lab_tunas3 + lab_tunas4 + lab_tunas5 +
@@ -14,4 +13,4 @@ all <- ab_tunas1 + ab_tunas2 + ab_tunas3 + ab_tunas4 + ab_tunas5 +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 30))
 
-ggsave(plot = all, filename = here::here(fig_dir, "ImptPredictors_all.png"), width = 60, height = 30, dpi = 300, limitsize = FALSE)
+ggsave(plot = all, filename = here::here(figure_dir, "ImptPredictors_all.png"), width = 60, height = 30, dpi = 300, limitsize = FALSE)

@@ -1,7 +1,8 @@
 # DESCRIPTION: Plotting the top row Pearson's Correlation plot
 
-pc_dir <- here::here("Output", "PCA")
-fig_dir <- here::here("Figures")
+# Load preliminaries
+source("00_Preliminaries.R")
+pacman::p_load(corrplot)
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 PC <- c("PC1", "PC2")
 
