@@ -1,8 +1,8 @@
 # DESCRIPTION: Assembling bigeye tuna dataset
 
 # Load preliminaries
-source("00_Preliminaries.R")
 source("00_SetupGrid.R")
+source("00_Preliminaries.R")
 species <- "BET"
 
 # Function to restrict adult distribution predictor to just bigeye tunas

@@ -1,8 +1,8 @@
 # DESCRIPTION: Assembling blue marlin dataset
 
 # Load preliminaries
-source("00_Preliminaries.R")
 source("00_SetupGrid.R")
+source("00_Preliminaries.R")
 species <- "BLUM"
 
 # Function to restrict adult distribution predictor to just blue marlin

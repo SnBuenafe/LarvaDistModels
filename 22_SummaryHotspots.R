@@ -1,8 +1,7 @@
 # DESCRIPTION: Identify core hotspots across species using the model outputs
 
+source("00_SetupGrid.R")
 source("00_Preliminaries.R")
-pred_dir <- here::here("Output", "Predictions")
-fig_dir <- here::here("Figures")
 spp <- c("skp", "yft", "alb", "bet", "fri", "sbft", "bft", "lit", "slt", "bon", "blum", "shos", "swo", "strm", "sail", "lesc", "sau")
 
 # Take the union of grid_100 cells that were selected at least once
@@ -45,10 +44,15 @@ new_names <- c("jm", "aj", "js", "od")
 
 full <- purrr::reduce(list(jm, aj, js, od), dplyr::full_join) %>% 
   dplyr::rename_with(~ new_names, all_of(seas_list)) %>% 
-  dplyr::mutate(across(all_of(new_names), ~replace_na(., 0))) %>% 
-  dplyr::mutate(across(all_of(new_names), ~.+1)) %>% # add 1, so we don't have 0s?
-  dplyr::mutate(gm = (jm * aj * js * od)^(1/4)) %>% 
-  dplyr::select(cellID, grid_100_category, all_of(new_names), gm, geometry) %>% 
+  dplyr::mutate(count = rowSums(across(starts_with("count_")))) %>% 
+  dplyr::mutate(jm = ifelse(jm == 0, 1, jm),
+                aj = ifelse(aj == 0, 1, aj),
+                js = ifelse(js == 0, 1, js),
+                od = ifelse(od == 0, 1, od)) %>%  # change all 0s to 1s
+  dplyr::rowwise() %>% 
+  dplyr::mutate(gm = ifelse(count == 4, yes = NA,
+                            no = (jm * aj * js * od)^(1/(4-count)))) %>%  # get the geometric mean only for cells where there are values
+  dplyr::select(cellID, grid_100_category, gm, all_of(new_names), geometry) %>% 
   dplyr::filter(grid_100_category %in% filt) # make sure we only have cells that were filtered at least in one season
   
 quant <- quantile(full$gm, c(0.5, 0.8, 0.95)) # get quantiles for categories
@@ -62,10 +66,14 @@ full %<>%
   sf::st_as_sf(crs = cCRS)
   
 # Plot heatmaps for each season
-hm_jm <- plotHotspot(jm, "jan-mar")
-hm_aj <- plotHotspot(aj, "apr-jun")
-hm_js <- plotHotspot(js, "jul-sept")
-hm_od <- plotHotspot(od, "oct-dec")
+hm_jm <- plotHotspot(jm %>% 
+                       dplyr::filter(grid_100_category %in% (filt1 %>% pull())), "jan-mar", "January-March")
+hm_aj <- plotHotspot(aj %>% 
+                       dplyr::filter(grid_100_category %in% (filt2 %>% pull())), "apr-jun", "April-June")
+hm_js <- plotHotspot(js %>% 
+                       dplyr::filter(grid_100_category %in% (filt3 %>% pull())), "jul-sept", "July-September")
+hm_od <- plotHotspot(od %>% 
+                       dplyr::filter(grid_100_category %in% (filt4 %>% pull())), "oct-dec", "October-December")
   
 hm_sum <- plotHotspotSummary(full)
 
@@ -74,4 +82,4 @@ all <- hm_jm + hm_aj + hm_js + hm_od + hm_sum + plot_spacer() +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(fig_dir, "Hotspots.png"), width = 20, height = 15, dpi = 300)
+ggsave(plot = all, filename = here::here(figure_dir, "Hotspots.png"), width = 20, height = 15, dpi = 300)

@@ -1,8 +1,8 @@
 # DESCRIPTION: Assembling sailfish dataset
 
 # Load preliminaries
-source("00_Preliminaries.R")
 source("00_SetupGrid.R")
+source("00_Preliminaries.R")
 species <- "SAIL"
 
 # Function to restrict adult distribution predictor to just sailfish

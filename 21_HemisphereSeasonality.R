@@ -1,8 +1,8 @@
 # DESCRIPTION: Barplots showing seasonality between N. and S. Hemispheres
 
 # Load preliminaries
-source("00_Preliminaries.R")
 source("00_SetupGrid.R")
+source("00_Preliminaries.R")
 pacman::p_load(patchwork, purrr)
 seas_list <- c("January-March", "April-June", "July-September", "October-December")
 
@@ -89,22 +89,30 @@ full_od <- load_data("oct-dec")
 full <- purrr::reduce(list(full_jm, full_aj, full_js, full_od), dplyr::left_join)
 
 # Seasonal bar plots per taxon
-(skp <- plot_spp("skp", "Skipjack tuna"))
+(skp <- plot_spp("skp", "Skipjack tuna") +
+    ylab("Mean probability") +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 2)))
 (yft <- plot_spp("yft", "Yellowfin tuna"))
 (alb <- plot_spp("alb", "Albacore"))
 (bet <- plot_spp("bet", "Bigeye tuna"))
 (fri <- plot_spp("fri", "Frigate tuna"))
-(sbft <- plot_spp("sbft", "Southern bluefin tuna"))
+(sbft <- plot_spp("sbft", "Southern bluefin tuna") +
+    ylab("Mean probability") +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 2)))
 (bft <- plot_spp("bft", "Pacific bluefin tuna"))
 (lit <- plot_spp("lit", "Little tuna"))
 (slt <- plot_spp("slt", "Slender tuna"))
 (bon <- plot_spp("bon", "Bonitos"))
-(blum <- plot_spp("blum", "Blue marlin"))
+(blum <- plot_spp("blum", "Blue marlin") +
+    ylab("Mean probability") +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 2)))
 (shos <- plot_spp("shos", "Shortbill spearfish"))
 (swo <- plot_spp("swo", "Swordfish"))
 (strm <- plot_spp("strm", "Striped marlin"))
 (sail <- plot_spp("sail", "Sailfish"))
-(lesc <- plot_spp("lesc", "Longfin escolar"))
+(lesc <- plot_spp("lesc", "Longfin escolar") +
+    ylab("Mean probability") +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 2)))
 (sau <- plot_spp("sau", "Sauries"))
 
 all <- skp + yft + alb + bet + fri + sbft + bft + lit + slt + bon +

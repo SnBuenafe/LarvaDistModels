@@ -15,7 +15,7 @@ for(i in 1:length(seasons)) {
     res <- res[,order(res[1,], decreasing = TRUE)] %>%  # arrange columns according to their r values
       as.matrix()  # to plot only the top row
     
-    file_path_test = here::here(fig_dir, paste("CorrMatrix", PC[j], paste0(seasons[i], ".png"), sep = "_"))
+    file_path_test = here::here(figure_dir, paste("CorrMatrix", PC[j], paste0(seasons[i], ".png"), sep = "_"))
     png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")
     
     corrplot(res,
@@ -26,7 +26,7 @@ for(i in 1:length(seasons)) {
              tl.srt = 45,
              insig = "blank", # make r values that have p values < 0.05 blank
              col = COL2('BrBG', 200),
-             diag = FALSE,
+             diag = TRUE,
              col.lim = c(-1, 1), # dictate limits of colors
              # addgrid.col = NA # remove the grid
              )

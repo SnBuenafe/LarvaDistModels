@@ -17,11 +17,11 @@ plot_tos <- function(df, spp, col) {
   
   mean_val <- mean(bind_df$transformed, na.rm = TRUE)
   
-  # cutoff values for temperature are 22.5C - 30C
-  # we change all values <22.5 to 22.5C and all values >30 to 30C
+  # cutoff values for temperature are 20C - 30C
+  # we change all values <20 to 20C and all values >30 to 30C
   
   bind_df %<>%
-    dplyr::mutate(transformed = case_when(transformed < 22.5 ~ 22.5,
+    dplyr::mutate(transformed = case_when(transformed < 20 ~ 20,
                                           transformed > 30 ~ 30,
                                           TRUE ~ transformed))
   
@@ -34,9 +34,9 @@ plot_tos <- function(df, spp, col) {
                         show.legend = FALSE) +
     scale_y_discrete(expand = expansion(add = c(0, 3.5))) +
     scale_x_continuous(expand = c(0.01, 0.01),
-                       limits = c(21.5, 31)) +
+                       limits = c(20, 30)) +
     scale_discrete_manual(aesthetics = "fill", values = col) +
-    geom_vline(xintercept = mean_val, color = col[1], linewidth = 2, linetype = "dashed") +
+    #geom_vline(xintercept = mean_val, color = col[1], linewidth = 2, linetype = "dashed") +
     xlab(expression('Temperature ('^"o"*'C)')) +
     theme_bw() +
     theme(axis.text.y = element_blank(),

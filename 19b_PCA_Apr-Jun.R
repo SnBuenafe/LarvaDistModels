@@ -1,8 +1,8 @@
 # Description: Using PCA to determine hotspots for April-June
 
 # Define preliminaries
-source("00_Preliminaries.R")
 source("00_SetupGrid.R")
+source("00_Preliminaries.R")
 pacman::p_load(purrr, Hmisc, RColorBrewer, patchwork)
 
 #### Prepare components for data frame ####

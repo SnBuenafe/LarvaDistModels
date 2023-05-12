@@ -1,8 +1,8 @@
 # DESCRIPTION: Assembling little tuna dataset
 
 # Load preliminaries
-source("00_Preliminaries.R")
 source("00_SetupGrid.R")
+source("00_Preliminaries.R")
 species <- "LIT"
 
 # Define functions

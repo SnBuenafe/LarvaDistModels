@@ -1,6 +1,6 @@
 # DESCRIPTION: Plot heatmaps
 
-plotHotspot <- function(df, season) {
+plotHotspot <- function(df, season, label) {
   ggplot() + 
     geom_sf(data = df %>% 
               sf::st_as_sf(crs = cCRS), 
@@ -10,7 +10,7 @@ plotHotspot <- function(df, season) {
     scale_fill_cmocean(name = "thermal",
                        #   alpha = 1,
                        aesthetics = c("fill"),
-                       direction = -1,
+                       direction = 1,
                        na.value = "grey64",
                        guide = guide_colourbar(
                          title = "# of taxa",
@@ -19,6 +19,7 @@ plotHotspot <- function(df, season) {
                          barwidth = grid::unit(0.25, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
+    ggtitle(label) +
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title = element_blank(),
@@ -26,6 +27,7 @@ plotHotspot <- function(df, season) {
           legend.title = element_text(size = 25, color = "black"),
           axis.text = element_text(size = 12, color = "black"),
           panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.title = element_text(size = 25, color = "black"),
           plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
@@ -35,7 +37,7 @@ plotHotspotSummary <- function(df) {
     geom_sf(data = df, aes(fill = hotspot_cat), color = NA, size = 0.1) +
     scale_fill_manual(name = "Priority",
                       aesthetics = "fill",
-                      values = c("#FAAF64", "#B36080", "#5C3E9A", "#062843")) +
+                      values = c("#062843", "#5C3E9A", "#B36080", "#FAAF64")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
     theme_bw() +
     theme(legend.position = "bottom",

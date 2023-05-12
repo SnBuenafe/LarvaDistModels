@@ -1,8 +1,8 @@
 # DESCRIPTION: Assembling bluefin tuna dataset
 
 # Load preliminaries
-source("00_Preliminaries.R")
 source("00_SetupGrid.R")
+source("00_Preliminaries.R")
 species <- "BFT"
 
 # Function to restrict adult distribution predictor to just bluefin tunas
