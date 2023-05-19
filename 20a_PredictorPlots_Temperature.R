@@ -92,9 +92,7 @@ expand = c(0,1)
 all <- skp + yft + alb + bet + fri + sbft + bft + lit + slt + bon +
   blum + shos + swo + strm + sail +
   lesc + sau + plot_spacer() + plot_spacer() + plot_spacer() +
-  plot_layout(ncol = 5, nrow = 4) +
-  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  plot_layout(ncol = 5, nrow = 4)
 
 ggsave(plot = all, filename = here::here(figure_dir, "Seasonality_tos.png"), width = 60, height = 20, dpi = 300, limitsize = FALSE)
 
