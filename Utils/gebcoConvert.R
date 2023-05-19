@@ -7,7 +7,7 @@ pacman::p_load(terra, purrr)
 
 gebcoConvert <- function(grid) {
   
-  path <- here::here("Data", "GEBCO")
+  path <- here::here(output_dir, "GEBCO")
   list <- list.files(path)
   x <- apply(outer(list, ".tif", stringr::str_detect), 1, all) %>% as.numeric()
   file <- which(x == 1)
@@ -56,7 +56,7 @@ gebcoConvert <- function(grid) {
     sf::st_as_sf(sf_column_name = "geometry") %>% 
     dplyr::select(cellID, meanDepth, geometry)
   
-  saveRDS(joined_sf, here::here("Data", paste0("gebco", ".rds")))
+  saveRDS(joined_sf, here::here(output_dir, paste0("gebco", ".rds")))
   
   return(joined_sf)
   

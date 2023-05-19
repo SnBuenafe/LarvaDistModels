@@ -3,6 +3,7 @@
 # Load preliminaries
 source("00_PreparePredictors.R")
 label <- "o2os_historical"
+figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare o2os layer
 create_layer <- function(rs) {
@@ -21,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggo2os) {
+create_plot <- function(ggo2os, season) {
   dataO2 <- ggo2os %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -31,6 +32,7 @@ create_plot <- function(ggo2os) {
                        #   alpha = 1,
                        aesthetics = c("fill"),
                        direction = -1,
+                       limits = c(0.18, 0.36),
                        na.value = "grey64",
                        guide = guide_colourbar(
                          title.vjust = 0.5,
@@ -38,13 +40,16 @@ create_plot <- function(ggo2os) {
                          barwidth = grid::unit(0.25, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('mol m'^"-3"*'')) +
+    ggtitle(season) +
+    labs(fill = expression('Oxygen concentration (mol m'^"-3"*')')) +
     theme_bw() +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank()) +
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          axis.text = element_text(size = 20, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -59,7 +64,7 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox1 <- create_plot(o2os)
+ox1 <- create_plot(o2os, "January-March")
 
 # ii. April-June
 season <- "apr-jun"
@@ -71,7 +76,7 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox2 <- create_plot(o2os)
+ox2 <- create_plot(o2os, "April-June")
 
 # iii. July-September
 season <- "jul-sept"
@@ -83,7 +88,7 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox3 <- create_plot(o2os)
+ox3 <- create_plot(o2os, "July-September")
 
 # iv. October-December
 season <- "oct-dec"
@@ -95,13 +100,15 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox4 <- create_plot(o2os)
+ox4 <- create_plot(o2os, "October-December")
 
 # Full oxygen plot
 full_ox <- (ox1 + ox2) / (ox3 + ox4) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "a",
                   tag_prefix = "(",
                   tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  theme(legend.position = "bottom",
+        plot.tag = element_text(size = 30))
 
-ggsave(plot = full_ox, filename = here::here(figure_dir, "global_historical_oxygen_full.png"), width = 27, height = 15, dpi = 300)
+ggsave(plot = full_ox, filename = here::here(figure_dir, "PredictorLayers_o2os.png"), width = 27, height = 15, dpi = 300)

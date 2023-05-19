@@ -3,6 +3,7 @@
 # Load preliminaries
 source("00_PreparePredictors.R")
 label <- "vo_historical"
+figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare vo layer
 create_layer <- function(rs) {
@@ -21,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggvo) {
+create_plot <- function(ggvo, season) {
   datavo <- ggvo %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -29,6 +30,7 @@ create_plot <- function(ggvo) {
     geom_sf(data = datavo, aes(fill = vo_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = rev(brewer.pal(9, "Blues")),
                          na.value = "grey64",
+                         limits = c(-0.5, 0.5),
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
@@ -36,13 +38,16 @@ create_plot <- function(ggvo) {
                            barwidth = grid::unit(0.25, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('m s'^"-1"*'')) +
+    ggtitle(season) +
+    labs(fill = expression('Meridional velocity (m s'^"-1"*') ')) +
     theme_bw() +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank()) +
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          axis.text = element_text(size = 20, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -57,7 +62,7 @@ saveRDS(vo, here::here(output_dir,
                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-vo1 <- create_plot(vo)
+vo1 <- create_plot(vo, "January-March")
 
 # ii. April-June
 season <- "apr-jun"
@@ -69,7 +74,7 @@ saveRDS(vo, here::here(output_dir,
                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-vo2 <- create_plot(vo)
+vo2 <- create_plot(vo, "April-June")
 
 # iii. July-September
 season <- "jul-sept"
@@ -81,7 +86,7 @@ saveRDS(vo, here::here(output_dir,
                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-vo3 <- create_plot(vo)
+vo3 <- create_plot(vo, "July-September")
 
 # iv. October-December
 season <- "oct-dec"
@@ -93,13 +98,15 @@ saveRDS(vo, here::here(output_dir,
                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-vo4 <- create_plot(vo)
+vo4 <- create_plot(vo, "October-December")
 
 # Full zonal velocity plots
 full_vo <- (vo1 + vo2) / (vo3 + vo4) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "a",
                   tag_prefix = "(",
                   tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  theme(plot.tag = element_text(size = 30),
+        legend.position = "bottom")
 
-ggsave(plot = full_vo, filename = here::here(figure_dir, "global_historical_vo_full.png"), width = 27, height = 15, dpi = 300)
+ggsave(plot = full_vo, filename = here::here(figure_dir, "PredictorPlots_vo.png"), width = 27, height = 15, dpi = 300)

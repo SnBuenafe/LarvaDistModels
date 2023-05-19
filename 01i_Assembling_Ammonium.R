@@ -3,6 +3,7 @@
 # Load preliminaries
 source("00_PreparePredictors.R")
 label <- "nh4os_historical"
+figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare nh4os layer
 create_layer <- function(rs) {
@@ -21,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggnh4os) {
+create_plot <- function(ggnh4os, season) {
   dataNH4OS <- ggnh4os %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -29,6 +30,7 @@ create_plot <- function(ggnh4os) {
     geom_sf(data = dataNH4OS, aes(fill = nh4os_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = brewer.pal(9, "Reds"),
                          na.value = "grey64",
+                         limits = c(0.005, 1.5),
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
@@ -36,13 +38,16 @@ create_plot <- function(ggnh4os) {
                            barwidth = grid::unit(0.25, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('mol m'^"-3"*'')) +
+    ggtitle(season) +
+    labs(fill = expression('Ammonium concentration (mmol m'^"-3"*')')) +
     theme_bw() +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank()) +
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          axis.text = element_text(size = 20, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -57,7 +62,8 @@ saveRDS(nh4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-amm1 <- create_plot(nh4os)
+amm1 <- create_plot(nh4os %>% 
+                      dplyr::mutate(nh4os_transformed = nh4os_transformed*1000), "January-March")
 
 # ii. April-June
 season <- "apr-jun"
@@ -69,7 +75,8 @@ saveRDS(nh4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-amm2 <- create_plot(nh4os)
+amm2 <- create_plot(nh4os %>% 
+                      dplyr::mutate(nh4os_transformed = nh4os_transformed*1000), "April-June")
 
 # iii. July-September
 season <- "jul-sept"
@@ -81,7 +88,8 @@ saveRDS(nh4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-amm3 <- create_plot(nh4os)
+amm3 <- create_plot(nh4os %>% 
+                      dplyr::mutate(nh4os_transformed = nh4os_transformed*1000), "July-September")
 
 # iv. October-December
 season <- "oct-dec"
@@ -93,13 +101,16 @@ saveRDS(nh4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-amm4 <- create_plot(nh4os)
+amm4 <- create_plot(nh4os %>% 
+                      dplyr::mutate(nh4os_transformed = nh4os_transformed*1000), "October-December")
 
 # Full ammonium plot
 full_amm <- (amm1 + amm2) / (amm3 + amm4) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "a",
                   tag_prefix = "(",
                   tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  theme(plot.tag = element_text(size = 30),
+        legend.position = "bottom")
 
-ggsave(plot = full_amm, filename = here::here(figure_dir, "global_historical_ammonium_full.png"), width = 27, height = 15, dpi = 300)
+ggsave(plot = full_amm, filename = here::here(figure_dir, "PredictorPlots_nh4os.png"), width = 27, height = 15, dpi = 300)

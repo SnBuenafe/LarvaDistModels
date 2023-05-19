@@ -4,7 +4,7 @@
 source("00_SetupGrid.R")
 input_dir <- file.path("/Volumes", "SeagateHub", "01_Spatial Datasets")
 output_dir <- here::here("Data")
-figure_dir <- here::here("Figures")
+figure_dir <- here::here("Figures", "predictors")
 
 # Load packages
 # install.packages("pacman")
@@ -58,6 +58,8 @@ create_plot <- function(df) {
                        #   alpha = 1,
                        aesthetics = c("fill"),
                        direction = 1,
+                       limits = c(NA, NA),
+                       oob = scales::squish,
                        na.value = "grey64",
                        guide = guide_colourbar(
                          title.vjust = 0.5,
@@ -65,14 +67,16 @@ create_plot <- function(df) {
                          barwidth = grid::unit(0.25, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('Number of features')) +
+    labs(fill = expression('Number of adult occurrences')) +
     theme_bw() +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank(),
-          title = element_blank()) +
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          legend.position = "bottom",
+          axis.text = element_text(size = 20, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -127,12 +131,11 @@ AquaMaps_sf <- SpatPlan_Crop_AQM(AquaMaps_sf, aqm, ex_sf) %>%
   dplyr::select(-ocean)
 
 saveRDS(AquaMaps_sf, here::here(output_dir, "AquaMaps_sf.rds")) # save file
+# AquaMaps_sf <- readRDS(here::here(output_dir, "AquaMaps_sf.rds"))
 
-# TODO: Plot number of features
+# Plot number of features
 ggaq <- AquaMaps_sf %>%
-   dplyr::select(-Tetrapturus_angustirostris, -Scombrolabrax_heterolepis, 
-                 -Kajikia_audax, -Scombrolabrax_heterolepis, -Euthynnus_affinis, 
-                 -Euthynnus_alletteratus, -Euthynnus_lineatus, -Istiompax_indica) %>% # Remove species that will not be included
+   dplyr::select(-Istiompax_indica, -Thunnus_thynnus) %>% # Remove species that will not be included
   create_plot()
 
-ggsave(plot = ggaq, filename = here::here(figure_dir, "global_AquaMaps.png"), width = 15, height = 8, dpi = 300)
+ggsave(plot = ggaq, filename = here::here(figure_dir, "PredictorPlots_AquaMaps.png"), width = 15, height = 8, dpi = 300)

@@ -3,6 +3,7 @@
 # Load preliminaries
 source("00_PreparePredictors.R")
 label <- "chlos_historical"
+figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare chlos layer
 create_layer <- function(rs) {
@@ -21,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggchlos) {
+create_plot <- function(ggchlos, season) {
   dataChlorophyll <- ggchlos %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -29,8 +30,7 @@ create_plot <- function(ggchlos) {
     geom_sf(data = dataChlorophyll, aes(fill = chlos_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = brewer.pal(9, "YlGn"),
                          na.value = "grey64",
-                         limits = c(as.numeric(quantile(dataChlorophyll$chlos_transformed, 0.05)), 
-                                    max(dataChlorophyll$chlos_transformed)),
+                         limits = c(0.02, 0.45),
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
@@ -38,13 +38,17 @@ create_plot <- function(ggchlos) {
                            barwidth = grid::unit(0.25, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('kg m'^"-3"*'')) +
+    ggtitle(season) +
+    labs(fill = expression('Chlorophyll concentration (mg m'^"-3"*')')) +
     theme_bw() +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
+          legend.position = "bottom",
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank()) +
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          axis.text = element_text(size = 20, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -59,7 +63,8 @@ saveRDS(chlos, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-chl1 <- create_plot(chlos)
+chl1 <- create_plot(chlos %>% 
+                      dplyr::mutate(chlos_transformed = chlos_transformed*1000000), "January-March")
 
 # ii. April-June
 season <- "apr-jun"
@@ -71,7 +76,8 @@ saveRDS(chlos, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-chl2 <- create_plot(chlos)
+chl2 <- create_plot(chlos %>% 
+                      dplyr::mutate(chlos_transformed = chlos_transformed*1000000), "April-June")
 
 # iii. July-September
 season <- "jul-sept"
@@ -83,7 +89,8 @@ saveRDS(chlos, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-chl3 <- create_plot(chlos)
+chl3 <- create_plot(chlos %>% 
+                      dplyr::mutate(chlos_transformed = chlos_transformed*1000000), "July-September")
 
 # iv. October-December
 season <- "oct-dec"
@@ -95,14 +102,17 @@ saveRDS(chlos, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-chl4 <- create_plot(chlos)
+chl4 <- create_plot(chlos %>% 
+                      dplyr::mutate(chlos_transformed = chlos_transformed*1000000), "October-December")
 
 # Full chlorophyll plot
 full_chl <- (chl1 + chl2) / (chl3 + chl4) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "a",
                   tag_prefix = "(",
                   tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  theme(plot.tag = element_text(size = 30),
+        legend.position = "bottom")
 
-ggsave(plot = full_chl, filename = here::here(figure_dir, "global_historical_chlorophyll_full.png"), width = 27, height = 15, dpi = 300)
+ggsave(plot = full_chl, filename = here::here(figure_dir, "PredictorPlots_chlos.png"), width = 27, height = 15, dpi = 300)
 

@@ -5,6 +5,7 @@ source("00_PreparePredictors.R")
 pacman::p_load(raster, VoCC)
 input <- "sos_historical"
 label <- "salinity_front_historical"
+figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare thermal gradient layer
 create_layer <- function(rs) {
@@ -30,7 +31,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggsalinity) {
+create_plot <- function(ggsalinity, season) {
   dataSalinity <- ggsalinity %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -38,19 +39,24 @@ create_plot <- function(ggsalinity) {
     geom_sf(data = dataSalinity, aes(fill = salinity_front_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = rev(brewer.pal(9, "PuBuGn")),
                          na.value = "grey64",
+                         limits = c(0.001, 0.01),
+                         oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
                            barheight = grid::unit(0.01, "npc"),
                            barwidth = grid::unit(0.25, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('ppt km'^"-1")) +
+    ggtitle(season) +
+    labs(fill = expression('Broad-scale thermal gradient (Δppt km'^"-1)")) +
     theme_bw()  +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank()) +
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          axis.text = element_text(size = 20, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -64,7 +70,7 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf1 <- create_plot(grad)
+sf1 <- create_plot(grad, "January-March")
 
 # ii. April-June
 season <- "apr-jun"
@@ -75,7 +81,7 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf2 <- create_plot(grad)
+sf2 <- create_plot(grad, "April-June")
 
 # iii. July-September
 season <- "jul-sept"
@@ -86,7 +92,7 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf3 <- create_plot(grad)
+sf3 <- create_plot(grad, "July-September")
 
 # iv. October-December
 season <- "oct-dec"
@@ -97,13 +103,15 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf4 <- create_plot(grad)
+sf4 <- create_plot(grad, "October-December")
 
 # Full thermal front plots
 full_sf <- (sf1 + sf2) / (sf3 + sf4) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "a",
                   tag_prefix = "(",
                   tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  theme(plot.tag = element_text(size = 30),
+        legend.position = "bottom")
 
-ggsave(plot = full_sf, filename = here::here(figure_dir, "global_historical_salinity_front_full.png"), width = 27, height = 15, dpi = 300)
+ggsave(plot = full_sf, filename = here::here(figure_dir, "PredictorPlots_SalinityFront.png"), width = 27, height = 15, dpi = 300)

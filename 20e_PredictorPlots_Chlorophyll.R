@@ -7,7 +7,7 @@ figure_dir <- here::here(figure_dir, "predictors")
 spp_list <- c("skp", "yft", "alb", "bet", "fri", "sbft", "bft", "lit", "slt", "bon", "blum", "shos", "swo", "strm", "sail", "lesc", "sau")
 
 fin_tmp <- assemblePreds("chlos") %>% 
-  dplyr::mutate(across(everything(), ~(.x*1000000))) # convert to mg m-3 instead of mol m-3
+  dplyr::mutate(across(everything(), ~(.x*1000000))) # convert to mg m-3 instead of kg m-3
 
 #### Boxplots ####
 breaks = seq(0, 0.3, 0.05)

@@ -3,6 +3,7 @@
 # Load preliminaries
 source("00_PreparePredictors.R")
 label <- "tos_historical"
+figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare tos layer
 create_layer <- function(rs) {
@@ -21,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggtos) {
+create_plot <- function(ggtos, season) {
   dataTmp <- ggtos %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -32,19 +33,22 @@ create_plot <- function(ggtos) {
                        aesthetics = c("fill"),
                        direction = -1,
                        na.value = "grey64",
+                       limits = c(5,35),
                        guide = guide_colourbar(
                          title.vjust = 0.5,
                          barheight = grid::unit(0.035, "npc"),
                          barwidth = grid::unit(0.2, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression(''^"o"*'C     ')) +
+    ggtitle(season) +
+    labs(fill = expression('Temperature ('^"o"*'C)')) +
     theme_bw() +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
+          legend.position = "bottom",
           axis.title = element_blank(),
-          legend.text = element_text(size = 18, color = "black"),
-          legend.title = element_text(size = 25, color = "black"),
-          axis.text = element_text(size = 12, color = "black"),
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          axis.text = element_text(size = 20, color = "black"),
           panel.border = element_rect(linewidth = 2, color = "black"),
           plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
@@ -62,7 +66,7 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp1 <- create_plot(tos)
+tmp1 <- create_plot(tos, "January-March")
 # ggsave(plot = tmp1, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 15, height = 7, dpi = 600)
 
 # ii. April-June
@@ -75,7 +79,7 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp2 <- create_plot(tos)
+tmp2 <- create_plot(tos, "April-June")
 
 # iii. July-September
 season <- "jul-sept"
@@ -87,7 +91,7 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp3 <- create_plot(tos)
+tmp3 <- create_plot(tos, "July-September")
 
 # iv. October-December
 season <- "oct-dec"
@@ -99,13 +103,15 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp4 <- create_plot(tos)
+tmp4 <- create_plot(tos, "October-December")
 
 # Full temperature plot
 full_tmp <- (tmp1 + tmp2) / (tmp3 + tmp4) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "a",
                   tag_prefix = "(",
                   tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  theme(legend.position = "bottom",
+        plot.tag = element_text(size = 30))
 
-ggsave(plot = full_tmp, filename = here::here(figure_dir, "global_historical_temperature_full.png"), width = 27, height = 15, dpi = 300)
+ggsave(plot = full_tmp, filename = here::here(figure_dir, "PredictorLayers_tos.png"), width = 27, height = 15, dpi = 300)

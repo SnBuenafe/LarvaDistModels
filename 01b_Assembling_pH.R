@@ -3,6 +3,7 @@
 # Load preliminaries
 source("00_PreparePredictors.R")
 label <- "phos_historical"
+figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare phos layer
 create_layer <- function(rs) {
@@ -21,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggphos) {
+create_plot <- function(ggphos, season) {
   dataPH <- ggphos %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -29,19 +30,24 @@ create_plot <- function(ggphos) {
     geom_sf(data = dataPH, aes(fill = phos_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = brewer.pal(9, "RdPu"),
                          na.value = "grey64",
+                         limits = c(7.9, 8.4),
                          guide = guide_colourbar(
                            title.vjust = 0.5,
                            barheight = grid::unit(0.01, "npc"),
                            barwidth = grid::unit(0.25, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('pH')) +
+    ggtitle(season) +
+    labs(fill = expression('pH ')) +
     theme_bw() +
-    theme(legend.position = "bottom",
+    theme(plot.title = element_text(size = 28, color = "black"),
+          legend.position = "bottom",
           axis.title = element_blank(),
-          legend.text = element_text(size = 12),
-          legend.title = element_text(size = 18),
-          panel.border = element_blank()) +
+          legend.text = element_text(size = 22, color = "black"),
+          legend.title = element_text(size = 28, color = "black"),
+          axis.text = element_text(size = 20, color = "black"),
+          panel.border = element_rect(linewidth = 2, color = "black"),
+          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 }
 
@@ -56,7 +62,7 @@ saveRDS(phos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ph1 <- create_plot(phos)
+ph1 <- create_plot(phos, "January-March")
 
 # ii. April-June
 season <- "apr-jun"
@@ -68,7 +74,7 @@ saveRDS(phos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ph2 <- create_plot(phos)
+ph2 <- create_plot(phos, "April-June")
 
 # iii. July-September
 season <- "jul-sept"
@@ -80,7 +86,7 @@ saveRDS(phos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ph3 <- create_plot(phos)
+ph3 <- create_plot(phos, "July-September")
 
 # iv. October-December
 season <- "oct-dec"
@@ -92,13 +98,15 @@ saveRDS(phos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ph4 <- create_plot(phos)
+ph4 <- create_plot(phos, "October-December")
 
 # Full pH plot
 full_ph <- (ph1 + ph2) / (ph3 + ph4) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "a",
                   tag_prefix = "(",
                   tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  theme(legend.position = "bottom",
+        plot.tag = element_text(size = 30))
 
-ggsave(plot = full_ph, filename = here::here(figure_dir, "global_historical_ph_full.png"), width = 27, height = 15, dpi = 300)
+ggsave(plot = full_ph, filename = here::here(figure_dir, "PredictorLayers_phos.png"), width = 27, height = 15, dpi = 300)

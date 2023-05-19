@@ -40,7 +40,6 @@ vignettes/*.pdf
 .Renviron
 
 # Large Files
-Figures/
 Data/Climatology/crop/
 Data/Climatology/merged/
 Data/Climatology/Present/

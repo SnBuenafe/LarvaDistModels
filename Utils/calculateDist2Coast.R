@@ -23,7 +23,7 @@ calculateDist2Coast <- function(grid) {
   # then add that in the grid_centroid df
   grid_centroid$coastDistance <- dists
   
-  saveRDS(grid_centroid, here::here("Data", "CoastDistance.rds")) # save the coast distance df
+  saveRDS(grid_centroid, here::here(output_dir, "CoastDistance.rds")) # save the coast distance df
   
   return(grid_centroid)
 }

@@ -24,10 +24,10 @@ plotBP <- function(df, species, breaks, limits, expand, label) {
     ggtitle(label) +
     theme_classic() +
     theme(axis.title.y = element_blank(),
-          plot.title = element_text(color = "black", size = 25),
+          plot.title = element_text(color = "black", size = 30),
           axis.ticks = element_line(color = "black"),
-          axis.text = element_text(color = "black", size = 18),
-          axis.title.x = element_text(color = "black", size = 20)
+          axis.text = element_text(color = "black", size = 20),
+          axis.title.x = element_text(color = "black", size = 25)
     )
   
 }

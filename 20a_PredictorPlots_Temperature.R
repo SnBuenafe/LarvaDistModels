@@ -36,55 +36,58 @@ expand = c(0,1)
                "Frigate tuna"))
 (sbft <- plotBP(fin_tmp, 
                 "sbft", 
-                breaks, limits,
+                breaks, limits, expand,
                 "Southern bluefin tuna") +
     ylab(expression('Temperature ('^"o"*'C)')) +
     theme(axis.title.y = element_text(color = "black", size = 20, angle = 90)))
 (bft <- plotBP(fin_tmp, 
                "bft", 
-               breaks, limits,
+               breaks, limits, expand,
                "Pacific bluefin tuna"))
 (lit <- plotBP(fin_tmp, 
                "lit", 
-               breaks, limits,
+               breaks, limits, expand,
                "Little tuna"))
 (slt <- plotBP(fin_tmp, 
                "slt", 
-               breaks, limits,
+               breaks, limits, expand,
                "Slender tuna"))
 (bon <- plotBP(fin_tmp, 
                "bon", 
-               breaks, limits,
+               breaks, limits, expand,
                "Bonitos"))
 (blum <- plotBP(fin_tmp, 
                 "blum", 
-                breaks, limits,
+                breaks, limits, expand,
                 "Blue marlin") +
     ylab(expression('Temperature ('^"o"*'C)')) +
     theme(axis.title.y = element_text(color = "black", size = 20, angle = 90)))
 (shos <- plotBP(fin_tmp, 
                 "shos", 
-                breaks, limits,
+                breaks, limits, expand,
                 "Shortbill spearfish"))
 (swo <- plotBP(fin_tmp, 
                "swo", 
-               breaks, limits,
+               breaks, limits, expand,
                "Swordfish"))
 (strm <- plotBP(fin_tmp, 
                 "strm", 
-                breaks, limits,
+                breaks, limits, expand,
                 "Striped marlin"))
 (sail <- plotBP(fin_tmp, 
                 "sail", 
-                breaks, limits,
+                breaks, limits, expand,
                 "Sailfish"))
 (lesc <- plotBP(fin_tmp, 
                 "lesc", 
-                breaks, limits,
+                breaks, limits, expand,
                 "Longfin escolar") +
     ylab(expression('Temperature ('^"o"*'C)')) +
     theme(axis.title.y = element_text(color = "black", size = 20, angle = 90)))
-(sau <- plotBP(fin_tmp, "sau", "Sauries"))
+(sau <- plotBP(fin_tmp, 
+               "sau", 
+               breaks, limits, expand,
+               "Sauries"))
 
 all <- skp + yft + alb + bet + fri + sbft + bft + lit + slt + bon +
   blum + shos + swo + strm + sail +
@@ -93,7 +96,7 @@ all <- skp + yft + alb + bet + fri + sbft + bft + lit + slt + bon +
   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(figure_dir, "tos_Seasonality.png"), width = 60, height = 20, dpi = 300, limitsize = FALSE)
+ggsave(plot = all, filename = here::here(figure_dir, "Seasonality_tos.png"), width = 60, height = 20, dpi = 300, limitsize = FALSE)
 
 #### Kernel density plots ####
 # Abundant tunas
