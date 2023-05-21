@@ -174,11 +174,8 @@ df %<>%
                  expression('Temperature ('^"o"*'C)'),
                  limits = c(20, 30),
                  col_values
-) +
-    theme(axis.title.x = element_blank())) # KD plots
+)) # KD plots
 
-all <- ((ab_tunas) / (lab_tunas) / (bill) / oth) +
-  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+all <- ((ab_tunas) / (lab_tunas) / (bill) / oth)
 
 ggsave(plot = all, filename = here::here(figure_dir, "ImptPredictors_tos.png"), width = 15, height = 27, dpi = 300)
