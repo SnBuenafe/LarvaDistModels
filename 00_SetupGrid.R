@@ -2,13 +2,15 @@
 
 # Load packages
 # install.packages("pacman")
-pacman::p_load(here, sf, rnaturalearth, tidyverse, spatialplanr, magrittr)
+# devtools::install_github("ropensci/rnaturalearthhires")
+pacman::p_load(here, sf, rnaturalearth, rnaturalearthhires, tidyverse, magrittr)
 source("Utils/fSpatPlan_Convert2PacificCentered.R")
+source("Utils/spatialplanrfxns.R")
 
 # Define map projections
 sf_use_s2(FALSE)
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
+moll_pacific <- "+proj=moll +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m no_defs"
 ll_pacific <- "+proj=longlat +lon_0=180 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 cCRS = ll_pacific 
 
@@ -25,7 +27,7 @@ oceans <- rnaturalearth::ne_download(category = "physical", scale = "medium", ty
   fSpatPlan_Convert2PacificCentered(., cCRS = cCRS)
 
 # Establish the grid
-Bndry <- spatialplanr::SpatPlan_Get_Boundary(Limits = c(xmin = -40, xmax = 40, ymax = 40, ymin = -40),
+Bndry <- SpatPlan_Get_Boundary(Limits = c(xmin = -40, xmax = 40, ymax = 40, ymin = -40),
                                              cCRS = cCRS) 
 
 grid <- sf::st_make_grid(Bndry,
