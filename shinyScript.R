@@ -54,7 +54,7 @@ fAssemblePredictions <- function(spp, # vector of species
 
 }
 
-spp <- c("YFT", "SKP") # species selected
+spp <- c("YFT", "SKP", "LESC", "LIT", "STRM") # species selected
 season <- seas_dict[1]
 spec_subs_jm <- fAssemblePredictions(spp, season) # subset of species
   
