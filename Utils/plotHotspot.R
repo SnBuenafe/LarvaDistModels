@@ -34,7 +34,8 @@ plotHotspot <- function(df, season, label) {
 
 plotHotspotSummary <- function(df) {
   ggplot() +
-    geom_sf(data = df, aes(fill = hotspot_cat), color = NA, size = 0.1) +
+    geom_sf(data = df %>% 
+              dplyr::filter(!is.na(hotspot_cat)), aes(fill = hotspot_cat), color = NA, size = 0.1) +
     scale_fill_manual(name = "Priority",
                       aesthetics = "fill",
                       values = c("#062843", "#5C3E9A", "#B36080", "#FAAF64")) +
