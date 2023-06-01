@@ -49,3 +49,4 @@ Data/Climatology/
 *.rmd # Don't include markdowns
 *.css
 .DS_Store
+Data/Fish/.DS_Store
