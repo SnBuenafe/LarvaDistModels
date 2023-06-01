@@ -4,10 +4,28 @@ preds_dir <- here::here("Output", "Predictions")
 # Define preliminaries
 source("00_SetupGrid.R")
 source(here::here("Utils", "plotPC.R"))
-pacman::p_load(purrr, Hmisc, RColorBrewer, patchwork)
+pacman::p_load(purrr, Hmisc, RColorBrewer, patchwork, ggcorrplot)
 
-spec_dict <- c("YFT", "SKP", "ALB", "SWO", "BLUM", "FRI", "BET", "BFT", "SAU", "SAIL", "SBFT",
-               "SLT", "BON", "SHOS", "STRM", "LESC", "LIT")
+spec_dict <- tibble::tribble(
+  ~code, ~common,
+  "YFT", "Yellowfin tuna",
+  "SKP", "Skipjack tuna",
+  "ALB", "Albacore",
+  "SWO", "Swordfish",
+  "BLUM", "Blue marlin",
+  "FRI", "Frigate tuna",
+  "BET", "Bigeye tuna",
+  "BFT", "P. bluefin tuna",
+  "SAU", "Sauries",
+  "SAIL", "Sailfish",
+  "SBFT", "S. bluefin tuna",
+  "SLT", "Slender tuna",
+  "BON", "Bonitos",
+  "SHOS", "Shortbill spearfish",
+  "STRM", "Striped marlin",
+  "LESC", "Longfin escolar",
+  "LIT", "Little tuna"
+)
 seas_dict <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 
 #### 1. ASSEMBLE CHOSEN SPECIES ####
@@ -99,9 +117,15 @@ fPerformPearson <- function(df,
   
   res <- (Hmisc::rcorr(mat))$r
   
-  res <- res[1,2:ncol(res)] %>% 
-    base::as.matrix() %>% 
+  res <- res[1, order(res[1,], decreasing = TRUE)] %>%   # arrange columns according to their r values
+    as.matrix() %>% 
     t()
+  
+  colnames(res) <- c("PCA 1", 
+                     spec_dict[match(spp, spec_dict$code), "common"] %>% 
+                       pull())
+  
+  rownames(res) <- ""
   
   corrplot::corrplot(res,
                      # type = "upper",
@@ -126,3 +150,31 @@ pc1 <- plotPC(ggpc, "PCA_1", "PC1 score")
 pc2 <- plotPC(ggpc, "PCA_2", "PC2 score")
 
 #### 5. HOTSPOTS ####
+fDetermineHotspots <- function(df,
+                               spp
+                               ) {
+  
+  
+  
+  dum_list <- list()
+  
+  for(i in 1:length(spp)) {
+    dum_list[[i]] <- full %>% 
+      dplyr::mutate(!!sym(spp[i]) := case_when(!!sym(spp[i]) >= median(full[[spp[i]]], na.rm = TRUE) ~ 1, 
+                                               !!sym(spp[i]) < median(full[[spp[i]]], na.rm = TRUE) ~ 0,
+                                               is.na(!!sym(spp[i])) ~ NA)) %>% 
+      dplyr::select(cellID, grid_100_category, geometry, !!sym(spp[i]))
+  }
+  
+  bind_df <- purrr::reduce(dum_list, dplyr::left_join) %>% 
+    sf::st_as_sf(crs = cCRS) %>% 
+    rowwise() %>% 
+    dplyr::mutate(sum = sum(c_across(4:ncol(.)), na.rm = TRUE)) %>% 
+    dplyr::mutate(count = sum(is.na(c_across(4:ncol(.))))) %>% # count the number of NAs (should be the same for all species)
+    dplyr::mutate(count = ifelse(count > 0, yes = 1, no = 0)) %>% # count number of NAs
+    dplyr::select(cellID, grid_100_category, sum, count, geometry) %>% 
+    dplyr::rename(!!sym(season) := sum) %>% 
+    dplyr::rename(!!sym(paste("count", season, sep = "_")) := count) %>% 
+    ungroup() %>% 
+    dplyr::as_tibble()
+}
