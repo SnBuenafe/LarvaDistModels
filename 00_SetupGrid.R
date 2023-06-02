@@ -24,7 +24,7 @@ landmass <- rnaturalearth::ne_countries(scale = "medium") %>%
 oceans <- rnaturalearth::ne_download(category = "physical", scale = "medium", type = "geography_marine_polys", returnclass='sf') %>%
   dplyr::select(label) %>% 
   sf::st_as_sf(crs = lonlat) %>% 
-  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS)
+  fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) # Pacific-centered
 
 # Establish the grid
 Bndry <- SpatPlan_Get_Boundary(Limits = c(xmin = -40, xmax = 40, ymax = 40, ymin = -40),
