@@ -1,3 +1,4 @@
+# Changes
 # DESCRIPTION: Preliminary file for setting the study area
 
 # Load packages
