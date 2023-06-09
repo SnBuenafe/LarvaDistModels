@@ -33,7 +33,7 @@ spec_dict <- tibble::tribble(
 seas_dict <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 
 #### 1. ASSEMBLE CHOSEN SPECIES ####
-spp <- c("YFT", "SKP", "LESC", "LIT", "STRM") # species selected
+spp <- spec_dict$code # species selected
 season <- seas_dict[1]
 spec_subs_jm <- fAssemblePredictions(spp, season) # subset of species
   
@@ -51,12 +51,12 @@ for(i in 1:length(rep)) {
 }
 
 #### 2. RESTRICT AREA ####
-restricted_jm <- fRestrictArea(spec_subs_jm, bounds = c(ymax = 10, ymin = -20, xmax = 10, xmin = -170))
+restricted_jm <- fRestrictArea(spec_subs_jm, bounds = c(ymax = 40, ymin = -40, xmax = 40, xmin = -80))
 
 # And repeat this for the rest of the seasons
-restricted_aj <- fRestrictArea(spec_subs_aj, bounds = c(ymax = 10, ymin = -20, xmax = 10, xmin = -170))
-restricted_js <- fRestrictArea(spec_subs_js, bounds = c(ymax = 10, ymin = -20, xmax = 10, xmin = -170))
-restricted_od <- fRestrictArea(spec_subs_od, bounds = c(ymax = 10, ymin = -20, xmax = 10, xmin = -170))
+restricted_aj <- fRestrictArea(spec_subs_aj, bounds = c(ymax = 40, ymin = -40, xmax = 40, xmin = -80))
+restricted_js <- fRestrictArea(spec_subs_js, bounds = c(ymax = 40, ymin = -40, xmax = 40, xmin = -80))
+restricted_od <- fRestrictArea(spec_subs_od, bounds = c(ymax = 40, ymin = -40, xmax = 40, xmin = -80))
 
 #### 3. PERFORM PCA ####
 pc_jm <- fRunPCA(restricted_jm, spp) # January-March

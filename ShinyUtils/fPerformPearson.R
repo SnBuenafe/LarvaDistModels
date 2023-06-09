@@ -11,9 +11,9 @@ fPerformPearson <- function(df,
     as.matrix() %>% 
     t()
   
-  colnames(res) <- c("PCA 1", 
-                     spec_dict[match(spp, spec_dict$code), "common"] %>% 
-                       pull())
+  # colnames(res) <- c(axis, 
+  #                    spec_dict[match(spp, spec_dict$code), "common"] %>% 
+  #                      pull())
   
   rownames(res) <- ""
   

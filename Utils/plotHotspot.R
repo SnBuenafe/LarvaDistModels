@@ -3,6 +3,7 @@
 plotHotspot <- function(df, season, label) {
   ggplot() + 
     geom_sf(data = df %>% 
+              dplyr::filter(!!sym(paste("count", season, sep = "_")) == 0) %>% 
               sf::st_as_sf(crs = cCRS), 
             aes(fill = !!sym(season)), 
             color = NA, 
