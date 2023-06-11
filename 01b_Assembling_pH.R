@@ -1,9 +1,12 @@
 # DESCRIPTION: Creating seasonal pH layers
 
 # Load preliminaries
-source("00_PreparePredictors.R")
-label <- "phos_historical"
+source("00_Preliminaries.R")
+pacman::p_load(ggridges, patchwork, purrr)
 figure_dir <- here::here(figure_dir, "predictors")
+spp_list <- c("skp", "yft", "alb", "bet", "fri", "sbft", "bft", "lit", "slt", "bon", "blum", "shos", "swo", "strm", "sail", "lesc", "sau")
+
+fin_tmp <- assemblePreds("phos")
 
 # Function to prepare phos layer
 create_layer <- function(rs) {

@@ -17,8 +17,8 @@ expand = c(0.0001,0.0001)
                "skp", 
                breaks, limits, expand,
                "Skipjack tuna") +
-    ylab(expression('Δ'^"o"*'C km'^"-1")) +
-    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90)))
+    ylab(expression('Thermal gradient (Δ'^"o"*'C km'^"-1)")) +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 1)))
 (yft <- plotBP(fin_tmp, 
                "yft", 
                breaks, limits, expand,
@@ -30,7 +30,9 @@ expand = c(0.0001,0.0001)
 (bet <- plotBP(fin_tmp, 
                "bet", 
                breaks, limits, expand,
-               "Bigeye tuna"))
+               "Bigeye tuna") +
+    ylab(expression('Thermal gradient (Δ'^"o"*'C km'^"-1)")) +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 1)))
 (fri <- plotBP(fin_tmp, 
                "fri", 
                breaks, limits, expand,
@@ -38,13 +40,13 @@ expand = c(0.0001,0.0001)
 (sbft <- plotBP(fin_tmp,
                 "sbft", 
                 breaks, limits, expand,
-                "Southern bluefin tuna") +
-    ylab(expression('Δ'^"o"*'C km'^"-1")) +
-    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90)))
+                "Southern bluefin tuna"))
 (bft <- plotBP(fin_tmp, 
                "bft", 
                breaks, limits, expand,
-               "Pacific bluefin tuna"))
+               "Pacific bluefin tuna") +
+    ylab(expression('Thermal gradient (Δ'^"o"*'C km'^"-1)")) +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 1)))
 (lit <- plotBP(fin_tmp, 
                "lit", 
                breaks, limits, expand,
@@ -56,13 +58,13 @@ expand = c(0.0001,0.0001)
 (bon <- plotBP(fin_tmp, 
                "bon", 
                breaks, limits, expand,
-               "Bonitos"))
+               "Bonitos") +
+    ylab(expression('Thermal gradient (Δ'^"o"*'C km'^"-1)")) +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 1)))
 (blum <- plotBP(fin_tmp, 
                 "blum", 
                 breaks, limits, expand,
-                "Blue marlin") +
-    ylab(expression('Δ'^"o"*'C km'^"-1")) +
-    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90)))
+                "Blue marlin"))
 (shos <- plotBP(fin_tmp, 
                 "shos", 
                 breaks, limits, expand,
@@ -70,7 +72,9 @@ expand = c(0.0001,0.0001)
 (swo <- plotBP(fin_tmp, 
                "swo", 
                breaks, limits, expand,
-               "Swordfish"))
+               "Swordfish") +
+    ylab(expression('Thermal gradient (Δ'^"o"*'C km'^"-1)")) +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 1)))
 (strm <- plotBP(fin_tmp,
                 "strm", 
                 breaks, limits, expand,
@@ -83,8 +87,8 @@ expand = c(0.0001,0.0001)
                 "lesc", 
                 breaks, limits, expand,
                 "Longfin escolar") +
-    ylab(expression('Δ'^"o"*'C km'^"-1")) +
-    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90)))
+    ylab(expression('Thermal gradient (Δ'^"o"*'C km'^"-1)")) +
+    theme(axis.title.y = element_text(color = "black", size = 20, angle = 90, vjust = 1)))
 (sau <- plotBP(fin_tmp, 
                "sau", 
                breaks, limits, expand,
@@ -92,12 +96,10 @@ expand = c(0.0001,0.0001)
 
 all <- skp + yft + alb + bet + fri + sbft + bft + lit + slt + bon +
   blum + shos + swo + strm + sail +
-  lesc + sau + plot_spacer() + plot_spacer() + plot_spacer() +
-  plot_layout(ncol = 5, nrow = 4) +
-  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+  lesc + sau + plot_spacer() +
+  plot_layout(ncol = 3, nrow = 6)
 
-ggsave(plot = all, filename = here::here(figure_dir, "thermGrad_Seasonality.png"), width = 60, height = 20, dpi = 300, limitsize = FALSE)
+ggsave(plot = all, filename = here::here(figure_dir, "Seasonality_ThermalGradient.png"), width = 30, height = 25, dpi = 300, limitsize = FALSE)
 
 #### Kernel density plots ####
 # Abundant tunas

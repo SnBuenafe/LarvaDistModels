@@ -1,4 +1,5 @@
 # History files
+**/.DS_Store
 .DS_Store
 .Rhistory
 .Rapp.history
@@ -39,21 +40,12 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# Large Files
-Data/Climatology/crop/
-Data/Climatology/merged/
-Data/Climatology/Present/
-Data/Climatology/raw/
-Data/GEBCO/*.tif
-Data/GEBCO/*.pdf
-Data/WDPA/
-Data/Climatology/ensemble/
-Data/Climatology/newfreq/
-Data/Climatology/selectyears/
-Data/Climatology/temporary/
-Data/Climatology/remapped
-Data/Climatology/sf/
+# Large Files\
 Data/ne_50m_geography_marine_polys/
 Output/
-.DS_Store
-.DS_Store
+Data/Climatology/
+!Data/Climatology/*.sh
+*.tif
+*.pdf
+*.rmd # Don't include markdowns
+*.css

@@ -18,16 +18,17 @@ plotBP <- function(df, species, breaks, limits, expand, label) {
     scale_y_continuous(breaks = breaks,
                        limits = limits,
                        expand = expand) +
-    scale_x_discrete(name = "Seasons",
-                     labels = c("January-March", "April-June", "July-September", "October-December")) +
+    scale_x_discrete(name = " ",
+                     labels = c("Jan-Mar", "Apr-Jun", "Jul-Sept", "Oct-Dec")) +
     scale_fill_brewer(palette="Blues") + 
     ggtitle(label) +
     theme_classic() +
     theme(axis.title.y = element_blank(),
           plot.title = element_text(color = "black", size = 30),
           axis.ticks = element_line(color = "black"),
-          axis.text = element_text(color = "black", size = 20),
-          axis.title.x = element_text(color = "black", size = 25)
+          axis.text = element_text(color = "black", size = 25),
+          axis.title.x = element_blank(),
+          plot.margin = margin(1,1,1,1, "cm")
     )
   
 }

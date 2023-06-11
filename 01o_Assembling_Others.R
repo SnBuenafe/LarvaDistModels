@@ -48,14 +48,8 @@ ggsave(plot = ggBathy, filename = here::here(figure_dir, "PredictorPlots_MeanDep
 dist2coast <- calculateDist2Coast(grid) # distance to coast is calculated depending on the grid area provided
 # dist2coast <- readRDS(here::here(output_dir, "CoastDistance.rds"))
 
-dataCoast <- dist2coast %>% 
-  dplyr::as_tibble() %>% 
-  dplyr::select(-geometry) %>% 
-  dplyr::left_join(., grid) %>% 
-  sf::st_as_sf(crs = cCRS)
-
 ggCoast <- ggplot() +
-  geom_sf(data = dataCoast, aes(fill = coastDistance/1000), color = NA, size = 0.2) +
+  geom_sf(data = dist2coast, aes(fill = coastDistance/1000), color = NA, size = 0.2) +
   scale_fill_cmocean(name = "deep",
                       #   alpha = 1,
                       aesthetics = c("fill"),
@@ -81,4 +75,4 @@ ggCoast <- ggplot() +
         plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
   coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
 
-ggsave(plot = ggCoast, filename = here::here(figure_dir, "PredictorPlots_Distance2Coastline.png"), width = 15, height = 8, dpi = 300)
+ggsave(plot = ggCoast, filename = here::here(figure_dir, "PredictorPlots_Distance2Coastline_new.png"), width = 15, height = 8, dpi = 300)
