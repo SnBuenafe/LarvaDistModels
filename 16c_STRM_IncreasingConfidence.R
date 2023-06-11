@@ -35,7 +35,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "jan-mar.r
 
 # Plot model removing 10x10 areas with lower confidence
 gg1 <- plotConfidence(gg_filt, full_grid, limits)
-ggsave(plot = gg1, filename = here::here(figure_dir, paste(species, "model1", "highconf", "jan-mar.png", sep = "_")), width = 25, height = 9, dpi = 600)
+ggsave(plot = gg1, filename = here::here(figure_dir, paste(species, "model1", "highconf", "jan-mar.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
 #### April-June ####
 # Associate seasonal grids with the 10x10 grid
@@ -59,7 +59,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "apr-jun.r
 
 # Plot model removing 10x10 areas with lower confidence
 gg2 <- plotConfidence(gg_filt, full_grid, limits)
-ggsave(plot = gg2, filename = here::here(figure_dir, paste(species, "model1", "highconf", "apr-jun.png", sep = "_")), width = 25, height = 9, dpi = 600)
+ggsave(plot = gg2, filename = here::here(figure_dir, paste(species, "model1", "highconf", "apr-jun.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
 #### July-September ####
 # Associate seasonal grids with the 10x10 grid
@@ -83,7 +83,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "jul-sept.
 
 # Plot model removing 10x10 areas with lower confidence
 gg3 <- plotConfidence(gg_filt, full_grid, limits)
-ggsave(plot = gg3, filename = here::here(figure_dir, paste(species, "model1", "highconf", "jul-sept.png", sep = "_")), width = 25, height = 9, dpi = 600)
+ggsave(plot = gg3, filename = here::here(figure_dir, paste(species, "model1", "highconf", "jul-sept.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid
@@ -107,7 +107,7 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "oct-dec.r
 
 # Plot model removing 10x10 areas with lower confidence
 gg4 <- plotConfidence(gg_filt, full_grid, limits)
-ggsave(plot = gg4, filename = here::here(figure_dir, paste(species, "model1", "highconf", "oct-dec.png", sep = "_")), width = 25, height = 9, dpi = 600)
+ggsave(plot = gg4, filename = here::here(figure_dir, paste(species, "model1", "highconf", "oct-dec.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
 # gg_full <- (gg1 + gg2) / (gg3 + gg4) +
 #   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
