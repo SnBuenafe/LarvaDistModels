@@ -37,6 +37,11 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "jan-mar.r
 gg1 <- plotConfidence(gg_filt, full_grid, limits)
 ggsave(plot = gg1, filename = here::here(figure_dir, paste(species, "model1", "highconf", "jan-mar.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
+# Plot the longitude and latitude bar plots
+bps <- plotLonLat(gg_filt, full_grid)
+ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "model1", "longitude", "jan-mar.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
+ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "model1", "latitude", "jan-mar.png", sep = "_")), width = 5, height = 1, dpi = 600)
+
 #### April-June ####
 # Associate seasonal grids with the 10x10 grid
 full_grid <- associateGrids(`grid_BLUM_apr-jun`, grid_100)
@@ -60,6 +65,11 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "apr-jun.r
 # Plot model removing 10x10 areas with lower confidence
 gg2 <- plotConfidence(gg_filt, full_grid, limits)
 ggsave(plot = gg2, filename = here::here(figure_dir, paste(species, "model1", "highconf", "apr-jun.png", sep = "_")), width = 14, height = 5, dpi = 600)
+
+# Plot the longitude and latitude bar plots
+bps <- plotLonLat(gg_filt, full_grid)
+ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "model1", "longitude", "apr-jun.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
+ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "model1", "latitude", "apr-jun.png", sep = "_")), width = 5, height = 1, dpi = 600)
 
 #### July-September ####
 # Associate seasonal grids with the 10x10 grid
@@ -85,6 +95,11 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "jul-sept.
 gg3 <- plotConfidence(gg_filt, full_grid, limits)
 ggsave(plot = gg3, filename = here::here(figure_dir, paste(species, "model1", "highconf", "jul-sept.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
+# Plot the longitude and latitude bar plots
+bps <- plotLonLat(gg_filt, full_grid)
+ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "model1", "longitude", "jul-sept.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
+ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "model1", "latitude", "jul-sept.png", sep = "_")), width = 5, height = 1, dpi = 600)
+
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid
 full_grid <- associateGrids(`grid_BLUM_oct-dec`, grid_100)
@@ -108,6 +123,11 @@ saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "oct-dec.r
 # Plot model removing 10x10 areas with lower confidence
 gg4 <- plotConfidence(gg_filt, full_grid, limits)
 ggsave(plot = gg4, filename = here::here(figure_dir, paste(species, "model1", "highconf", "oct-dec.png", sep = "_")), width = 14, height = 5, dpi = 600)
+
+# Plot the longitude and latitude bar plots
+bps <- plotLonLat(gg_filt, full_grid)
+ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "model1", "longitude", "oct-dec.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
+ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "model1", "latitude", "oct-dec.png", sep = "_")), width = 5, height = 1, dpi = 600)
 
 # gg_full <- (gg1 + gg2) / (gg3 + gg4) +
 #   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
