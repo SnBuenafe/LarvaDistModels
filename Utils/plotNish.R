@@ -19,9 +19,9 @@ plotNish <- function(x) {
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title = element_blank(),
-          legend.text = element_text(size = 18, color = "black"),
-          legend.title = element_text(size = 25, color = "black"),
-          axis.text = element_text(size = 12, color = "black"),
+          legend.text = element_text(size = 30, color = "black"),
+          legend.title = element_text(size = 30, color = "black"),
+          axis.text = element_text(size = 25, color = "black"),
           panel.border = element_rect(linewidth = 2, color = "black"),
           plot.margin = unit(c(0,0.5,0,0.5), "cm"))
   
