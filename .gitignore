@@ -55,3 +55,5 @@ Data/Climatology/remapped
 Data/Climatology/sf/
 Data/ne_50m_geography_marine_polys/
 Output/
+.DS_Store
+.DS_Store
