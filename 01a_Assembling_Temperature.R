@@ -67,7 +67,7 @@ saveRDS(tos, here::here(output_dir,
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 tmp1 <- create_plot(tos, "January-March")
-# ggsave(plot = tmp1, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 15, height = 7, dpi = 600)
+# ggsave(plot = tmp1, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"

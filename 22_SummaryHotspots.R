@@ -49,16 +49,21 @@ full %<>%
   sf::st_as_sf(crs = cCRS)
   
 # Plot heatmaps for each season
-hm_jm <- plotHotspot(jm, "jan-mar", "January-March")
-hm_aj <- plotHotspot(aj, "apr-jun", "April-June")
-hm_js <- plotHotspot(js, "jul-sept", "July-September")
-hm_od <- plotHotspot(od, "oct-dec", "October-December")
+hm_jm <- plotHotspot(jm, "jan-mar")
+ggsave(plot = hm_jm, filename = here::here(figure_dir, paste("TaxaRichness", "jan-mar.png", sep = "_")), width = 14, height = 5, dpi = 600)
+hm_aj <- plotHotspot(aj, "apr-jun")
+ggsave(plot = hm_aj, filename = here::here(figure_dir, paste("TaxaRichness", "apr-jun.png", sep = "_")), width = 14, height = 5, dpi = 600)
+hm_js <- plotHotspot(js, "jul-sept")
+ggsave(plot = hm_js, filename = here::here(figure_dir, paste("TaxaRichness", "jul-sept.png", sep = "_")), width = 14, height = 5, dpi = 600)
+hm_od <- plotHotspot(od, "oct-dec")
+ggsave(plot = hm_od, filename = here::here(figure_dir, paste("TaxaRichness", "oct-dec.png", sep = "_")), width = 14, height = 5, dpi = 600)
   
 hm_sum <- plotHotspotSummary(full)
+ggsave(plot = hm_sum, filename = here::here(figure_dir, paste("TaxaRichness", "SummaryHotspots.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
-all <- hm_jm + hm_aj + hm_js + hm_od + hm_sum + plot_spacer() +
-  plot_layout(ncol = 2, nrow = 3) +
-  plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 25))
+# all <- hm_jm + hm_aj + hm_js + hm_od + hm_sum + plot_spacer() +
+#   plot_layout(ncol = 2, nrow = 3) +
+#   plot_annotation(tag_levels = "a", tag_prefix = "(", tag_suffix = ")") &
+#   theme(plot.tag = element_text(size = 25))
 
-ggsave(plot = all, filename = here::here(figure_dir, "Hotspots.png"), width = 20, height = 15, dpi = 300)
+# ggsave(plot = all, filename = here::here(figure_dir, "Hotspots.png"), width = 20, height = 15, dpi = 300)

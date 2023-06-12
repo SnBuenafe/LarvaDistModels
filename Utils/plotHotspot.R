@@ -1,6 +1,6 @@
 # DESCRIPTION: Plot heatmaps
 
-plotHotspot <- function(df, season, label) {
+plotHotspot <- function(df, season) {
   ggplot() + 
     geom_sf(data = df %>% 
               dplyr::filter(!!sym(paste("count", season, sep = "_")) == 0) %>% 
@@ -20,13 +20,12 @@ plotHotspot <- function(df, season, label) {
                          barwidth = grid::unit(0.25, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(label) +
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title = element_blank(),
-          legend.text = element_text(size = 18, color = "black"),
-          legend.title = element_text(size = 25, color = "black"),
-          axis.text = element_text(size = 12, color = "black"),
+          legend.text = element_text(size = 30, color = "black"),
+          legend.title = element_text(size = 30, color = "black"),
+          axis.text = element_text(size = 25, color = "black"),
           panel.border = element_rect(linewidth = 2, color = "black"),
           plot.title = element_text(size = 25, color = "black"),
           plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
@@ -44,9 +43,9 @@ plotHotspotSummary <- function(df) {
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title = element_blank(),
-          legend.text = element_text(size = 18, color = "black"),
-          legend.title = element_text(size = 25, color = "black"),
-          axis.text = element_text(size = 12, color = "black"),
+          legend.text = element_text(size = 30, color = "black"),
+          legend.title = element_text(size = 30, color = "black"),
+          axis.text = element_text(size = 25, color = "black"),
           panel.border = element_rect(linewidth = 2, color = "black"),
           plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)

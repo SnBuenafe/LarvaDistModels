@@ -50,7 +50,7 @@ plot_spp <- function(spp) {
     
   ggplot() + 
     geom_bar(data = fin, aes(x = season, y = sum, fill = hemisphere),
-             width = 1,
+             width = 0.9,
              stat = "identity", position = "identity", show.legend = FALSE) +
     scale_fill_manual(aesthetics = "fill",
       values = c("North" = "#0084C2", "South" = "#EAB47F")) +
