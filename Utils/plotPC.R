@@ -44,11 +44,10 @@ plotPC1_limits <- function(df, axis, label) {
     ylab("Latitude") +
     theme_bw() +
     theme(legend.position = "bottom",
-          axis.text = element_text(size = 12, color = "black"),
           axis.title = element_blank(),
-          legend.text = element_text(size = 20),
-          legend.title = element_text(size = 25, color = "black"),
-          #legend.title = element_blank(),
+          legend.text = element_text(size = 30, color = "black"),
+          legend.title = element_text(size = 30, color = "black"),
+          axis.text = element_text(size = 25, color = "black"),
           panel.border = element_rect(linewidth = 2, color = "black")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
 }
@@ -72,11 +71,10 @@ plotPC2_limits <- function(df, axis, label) {
     ylab("Latitude") +
     theme_bw() +
     theme(legend.position = "bottom",
-          axis.text = element_text(size = 12, color = "black"),
           axis.title = element_blank(),
-          legend.text = element_text(size = 20),
-          legend.title = element_text(size = 25, color = "black"),
-          #legend.title = element_blank(),
+          legend.text = element_text(size = 30, color = "black"),
+          legend.title = element_text(size = 30, color = "black"),
+          axis.text = element_text(size = 25, color = "black"),
           panel.border = element_rect(linewidth = 2, color = "black")) +
     coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim) 
 }
