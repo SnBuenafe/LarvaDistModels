@@ -7,15 +7,15 @@ source("14a_BON_Data.R") # Load BON data
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:23, 28), resp_in = 5)
 
-print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
+print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 10) # BEST TEST AUC
 
 # Building most optimal model
 BON_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:23, 28),
                                gbm.y = 5, family = "bernoulli", n.folds = 5,
-                               tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.01
+                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.008
 )
-saveRDS(BON_model1, here::here(model_dir, paste(species, "model1.rds")))
-# BON_model1 <- readRDS(here::here(model_dir, paste(species, "model1.rds")))
+saveRDS(BON_model1, here::here(model_dir, paste(species, "model1.rds", sep = "_")))
+BON_model1 <- readRDS(here::here(model_dir, paste(species, "model1.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(BON_model1)
@@ -28,6 +28,7 @@ BON_model1$cv.statistics$discrimination.mean # Validation AUC Score
 preds <- gbm::predict.gbm(BON_model1, test, n.trees = BON_model1$gbm.call$best.trees, type = "response")
 dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 get_testAUC(test$abundance_presence, preds) # Print testing AUC
+BON_model1$n.trees # number of trees
 
 # Plot maps
 train_tmp <- train %>% 

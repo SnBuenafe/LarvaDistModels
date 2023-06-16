@@ -14,8 +14,8 @@ SBFT_model1 <- dismo::gbm.step(data = train, gbm.x = c(7:23, 25),
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
                               tree.complexity = 1, bag.fraction = 0.5, learning.rate = 0.006
 )
-saveRDS(SBFT_model1, here::here(output_dir, paste(species, "model1.rds", sep = "_")))
-# SBFT_model1 <- readRDS(here::here(output_dir, paste(species, "model1.rds", sep = "_")))
+saveRDS(SBFT_model1, here::here(model_dir, paste(species, "model1.rds", sep = "_")))
+# SBFT_model1 <- readRDS(here::here(model_dir, paste(species, "model1.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(SBFT_model1)
