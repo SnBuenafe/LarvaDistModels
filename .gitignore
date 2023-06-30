@@ -42,11 +42,10 @@ vignettes/*.pdf
 
 # Large Files\
 Data/ne_50m_geography_marine_polys/
+Output/
 Data/Climatology/
 !Data/Climatology/*.sh
 *.tif
 *.pdf
 *.rmd # Don't include markdowns
 *.css
-.DS_Store
-Data/Fish/.DS_Store
