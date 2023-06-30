@@ -32,7 +32,7 @@ calculateDist2Coast <- function(grid) {
     dplyr::select(cellID, ocean, coastDistance, geometry) %>% # arrange columns
     sf::st_as_sf(crs = cCRS)
   
-  saveRDS(grid_out, here::here(output_dir, "CoastDistance_new.rds")) # save the coast distance df
+  saveRDS(grid_out, here::here(output_dir, "coast_distance.rds")) # save the coast distance df
   
   return(grid_out)
 }
