@@ -22,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggo2os, season) {
+create_plot <- function(ggo2os) {
   dataO2 <- ggo2os %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -36,24 +36,15 @@ create_plot <- function(ggo2os, season) {
                        na.value = "grey64",
                        guide = guide_colourbar(
                          title.vjust = 0.5,
-                         barheight = grid::unit(0.01, "npc"),
-                         barwidth = grid::unit(0.25, "npc"),
+                         barheight = grid::unit(0.035, "npc"),
+                         barwidth = grid::unit(0.5, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(season) +
     labs(fill = expression('Oxygen concentration (mol m'^"-3"*')')) +
-    theme_bw() +
-    theme(plot.title = element_text(size = 28, color = "black"),
-          axis.title = element_blank(),
-          legend.text = element_text(size = 22, color = "black"),
-          legend.title = element_text(size = 28, color = "black"),
-          axis.text = element_text(size = 20, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
-#### Create layers ####
+#### Create seasonal layers ####
 # i. January-March
 season <- "jan-mar"
 o2os_rs <- stars::read_ncdf(here::here(input_dir, 
@@ -64,7 +55,8 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox1 <- create_plot(o2os, "January-March")
+ox <- create_plot(o2os)
+ggsave(plot = ox, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -76,7 +68,8 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox2 <- create_plot(o2os, "April-June")
+ox <- create_plot(o2os)
+ggsave(plot = ox, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -88,7 +81,8 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox3 <- create_plot(o2os, "July-September")
+ox <- create_plot(o2os)
+ggsave(plot = ox, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -100,15 +94,6 @@ saveRDS(o2os, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-ox4 <- create_plot(o2os, "October-December")
+ox <- create_plot(o2os)
+ggsave(plot = ox, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
-# Full oxygen plot
-full_ox <- (ox1 + ox2) / (ox3 + ox4) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "a",
-                  tag_prefix = "(",
-                  tag_suffix = ")") &
-  theme(legend.position = "bottom",
-        plot.tag = element_text(size = 30))
-
-ggsave(plot = full_ox, filename = here::here(figure_dir, "PredictorLayers_o2os.png"), width = 27, height = 15, dpi = 300)

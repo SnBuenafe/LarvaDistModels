@@ -31,7 +31,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggsalinity, season) {
+create_plot <- function(ggsalinity) {
   dataSalinity <- ggsalinity %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -43,24 +43,15 @@ create_plot <- function(ggsalinity, season) {
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
-                           barheight = grid::unit(0.01, "npc"),
-                           barwidth = grid::unit(0.25, "npc"),
+                           barheight = grid::unit(0.035, "npc"),
+                           barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(season) +
     labs(fill = expression('Broad-scale thermal gradient (Δppt km'^"-1)")) +
-    theme_bw()  +
-    theme(plot.title = element_text(size = 28, color = "black"),
-          axis.title = element_blank(),
-          legend.text = element_text(size = 22, color = "black"),
-          legend.title = element_text(size = 28, color = "black"),
-          axis.text = element_text(size = 20, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
-#### Create layers ####
+#### Create seasonal layers ####
 # i. January-March
 season <- "jan-mar"
 rs <- raster::stack(here::here(input_dir, 
@@ -70,7 +61,8 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf1 <- create_plot(grad, "January-March")
+sf <- create_plot(grad)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -81,7 +73,8 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf2 <- create_plot(grad, "April-June")
+sf <- create_plot(grad)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -92,7 +85,8 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf3 <- create_plot(grad, "July-September")
+sf <- create_plot(grad)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -103,15 +97,5 @@ saveRDS(grad, here::here(output_dir,
                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sf4 <- create_plot(grad, "October-December")
-
-# Full thermal front plots
-full_sf <- (sf1 + sf2) / (sf3 + sf4) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "a",
-                  tag_prefix = "(",
-                  tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 30),
-        legend.position = "bottom")
-
-ggsave(plot = full_sf, filename = here::here(figure_dir, "PredictorPlots_SalinityFront.png"), width = 27, height = 15, dpi = 300)
+sf <- create_plot(grad)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

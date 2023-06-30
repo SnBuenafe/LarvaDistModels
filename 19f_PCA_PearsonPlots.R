@@ -8,12 +8,17 @@ PC <- c("PC1", "PC2")
 
 for(i in 1:length(seasons)) {
   for(j in 1:length(PC)) {
-    res <- read_csv(here::here(pc_dir, paste("CorrMatrix", PC[j], seasons[i], "r.csv", sep = "_")))
+    res <- read_csv(here::here(pc_dir, paste("CorrMatrix", PC[j], seasons[i], "r.csv", sep = "_"))) %>% 
+      base::as.matrix()
     
-    res <- res[1,2:ncol(res)]
+    res <- res[1,order(res[1,], decreasing = TRUE)] # arrange columns according to their r values
     
-    res <- res[,order(res[1,], decreasing = TRUE)] %>%  # arrange columns according to their r values
-      as.matrix()  # to plot only the top row
+    rownames(res) <- stringr::str_replace_all(rownames(res), "_", " ") # Remove underscore from PCA_
+    colnames(res) <- ""
+    
+    gg <- ggcorrplot::ggcorrplot(res[], method = "circle") +
+      ggplot2::theme(axis.text.y = ggplot2::element_blank()) #%>%
+    # ggplot2::scale_y_discrete(expand = c(0,0))
     
     file_path_test = here::here(figure_dir, paste("CorrMatrix", PC[j], paste0(seasons[i], ".png"), sep = "_"))
     png(height=1200, width=1200, res = 200, file=file_path_test, type = "cairo")

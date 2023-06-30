@@ -17,12 +17,13 @@ create_layer <- function(rs) {
     sf::st_as_sf(crs = cCRS) %>% 
     replaceNN(., grid, "po4os") %>%
     dplyr::as_tibble() %>% 
-    dplyr::select(cellID, po4os_transformed, geometry)  
+    dplyr::select(cellID, po4os_transformed, geometry) %>% 
+    dplyr::mutate(po4os_transformed = po4os_transformed*1000) # transform from mol m-3 to mmol m-3  
   
 }
 
 # Function to prepare plots
-create_plot <- function(ggpo4os, season) {
+create_plot <- function(ggpo4os) {
   dataPO4OS <- ggpo4os %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -34,24 +35,15 @@ create_plot <- function(ggpo4os, season) {
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
-                           barheight = grid::unit(0.01, "npc"),
-                           barwidth = grid::unit(0.25, "npc"),
+                           barheight = grid::unit(0.035, "npc"),
+                           barwidth = grid::unit(0.4, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(season) +
     labs(fill = expression('Phosphate concentration (mmol m'^"-3"*')')) +
-    theme_bw() +
-    theme(plot.title = element_text(size = 28, color = "black"),
-          axis.title = element_blank(),
-          legend.text = element_text(size = 22, color = "black"),
-          legend.title = element_text(size = 28, color = "black"),
-          axis.text = element_text(size = 20, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
-#### Create layers ####
+#### Create seasonal layers ####
 # i. January-March
 season <- "jan-mar"
 po4os_rs <- stars::read_ncdf(here::here(input_dir, 
@@ -62,8 +54,8 @@ saveRDS(po4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-phos1 <- create_plot(po4os %>% 
-                       dplyr::mutate(po4os_transformed = po4os_transformed*1000), "January-March")
+phos <- create_plot(po4os)
+ggsave(plot = phos, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -75,8 +67,8 @@ saveRDS(po4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-phos2 <- create_plot(po4os %>% 
-                       dplyr::mutate(po4os_transformed = po4os_transformed*1000), "April-June")
+phos <- create_plot(po4os)
+ggsave(plot = phos, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -88,8 +80,8 @@ saveRDS(po4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-phos3 <- create_plot(po4os %>% 
-                       dplyr::mutate(po4os_transformed = po4os_transformed*1000), "July-September")
+phos <- create_plot(po4os)
+ggsave(plot = phos, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -101,16 +93,5 @@ saveRDS(po4os, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-phos4 <- create_plot(po4os %>% 
-                       dplyr::mutate(po4os_transformed = po4os_transformed*1000), "October-December")
-
-# Full phosphate plot
-full_phos <- (phos1 + phos2) / (phos3 + phos4) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "a",
-                  tag_prefix = "(",
-                  tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 30),
-        legend.position = "bottom")
-
-ggsave(plot = full_phos, filename = here::here(figure_dir, "PredictorPlots_po4os.png"), width = 27, height = 15, dpi = 300)
+phos <- create_plot(po4os)
+ggsave(plot = phos, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

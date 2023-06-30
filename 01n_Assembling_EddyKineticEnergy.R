@@ -17,7 +17,7 @@ create_layer <- function(uo, vo) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggcomb, season) {
+create_plot <- function(ggcomb) {
   dataMeso <- ggcomb %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -29,24 +29,15 @@ create_plot <- function(ggcomb, season) {
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
-                           barheight = grid::unit(0.01, "npc"),
-                           barwidth = grid::unit(0.25, "npc"),
+                           barheight = grid::unit(0.035, "npc"),
+                           barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(season) +
     labs(fill = expression('Eddy kinetic energy (m'^"2"*'s'^"-2"*')')) +
-    theme_bw() +
-    theme(plot.title = element_text(size = 28, color = "black"),
-          axis.title = element_blank(),
-          legend.text = element_text(size = 22, color = "black"),
-          legend.title = element_text(size = 28, color = "black"),
-          axis.text = element_text(size = 20, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
-#### Create layers ####
+#### Create seasonal layers ####
 # i. January-March
 season <- "jan-mar"
 uo <- readRDS(here::here(input_dir, paste(input1, season, "interpolated.rds", sep = "_")))
@@ -55,7 +46,8 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke1 <- create_plot(comb, "January-March")
+eke <- create_plot(comb)
+ggsave(plot = eke, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -65,7 +57,8 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke2 <- create_plot(comb, "April-June")
+eke <- create_plot(comb)
+ggsave(plot = eke, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -75,7 +68,8 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke3 <- create_plot(comb, "July-September")
+eke <- create_plot(comb)
+ggsave(plot = eke, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -85,15 +79,6 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke4 <- create_plot(comb, "October-December")
+eke <- create_plot(comb)
+ggsave(plot = eke, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
-# Full mesoscale features plots
-full_eke <- (eke1 + eke2) / (eke3 + eke4) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "a",
-                  tag_prefix = "(",
-                  tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 30),
-        legend.position = "bottom")
-
-ggsave(plot = full_eke, filename = here::here(figure_dir, "PredictorPlots_EKE.png"), width = 27, height = 15, dpi = 300)

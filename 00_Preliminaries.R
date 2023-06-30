@@ -1,5 +1,5 @@
 # install.packages("pacman")
-pacman::p_load(tidyverse, here, dismo, gbm, cmocean, magrittr)
+pacman::p_load(tidyverse, here, dismo, gbm, cmocean, magrittr, patchwork)
 
 # Load all helper functions
 utils <- list.files(path = here::here("Utils"), pattern = "*.R", full.names = TRUE)

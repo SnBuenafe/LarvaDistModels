@@ -22,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggsos, season) {
+create_plot <- function(ggsos) {
   dataSalinity <- ggsos %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -33,25 +33,15 @@ create_plot <- function(ggsos, season) {
                          limits = c(29.5, 36.5),
                          guide = guide_colourbar(
                            title.vjust = 0.5,
-                           barheight = grid::unit(0.01, "npc"),
-                           barwidth = grid::unit(0.25, "npc"),
+                           barheight = grid::unit(0.035, "npc"),
+                           barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(season) +
     labs(fill = expression('Salinity (ppt)')) +
-    theme_bw() +
-    theme(plot.title = element_text(size = 28, color = "black"),
-          legend.position = "bottom",
-          axis.title = element_blank(),
-          legend.text = element_text(size = 22, color = "black"),
-          legend.title = element_text(size = 28, color = "black"),
-          axis.text = element_text(size = 20, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
-#### Create layers ####
+#### Create seasonal layers ####
 # i. January-March
 season <- "jan-mar"
 sos_rs <- stars::read_ncdf(here::here(input_dir, 
@@ -62,7 +52,8 @@ saveRDS(sos, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sal1 <- create_plot(sos, "January-March")
+sal <- create_plot(sos)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -74,7 +65,8 @@ saveRDS(sos, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sal2 <- create_plot(sos, "April-June")
+sal <- create_plot(sos)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -86,7 +78,8 @@ saveRDS(sos, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sal3 <- create_plot(sos, "July-September")
+sal <- create_plot(sos)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -98,15 +91,5 @@ saveRDS(sos, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-sal4 <- create_plot(sos, "October-December")
-
-# Full salinity plot
-full_sal <- (sal1 + sal2) / (sal3 + sal4) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "a",
-                  tag_prefix = "(",
-                  tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 30),
-        legend.position = "bottom")
-
-ggsave(plot = full_sal, filename = here::here(figure_dir, "PredictorPlots_sos.png"), width = 27, height = 15, dpi = 300)
+sal <- create_plot(sos)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
