@@ -22,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(ggtos, season) {
+create_plot <- function(ggtos) {
   dataTmp <- ggtos %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -40,21 +40,11 @@ create_plot <- function(ggtos, season) {
                          barwidth = grid::unit(0.5, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(season) +
     labs(fill = expression('Temperature ('^"o"*'C)')) +
-    theme_bw() +
-    theme(plot.title = element_text(size = 28, color = "black"),
-          legend.position = "bottom",
-          axis.title = element_blank(),
-          legend.text = element_text(size = 30, color = "black"),
-          legend.title = element_text(size = 30, color = "black"),
-          axis.text = element_text(size = 25, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
-#### Create layers ####
+#### Create seasonal layers ####
 
 # i. January-March
 season <- "jan-mar"
@@ -66,8 +56,8 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp1 <- create_plot(tos, "January-March")
-# ggsave(plot = tmp1, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+tmp <- create_plot(tos)
+ggsave(plot = tmp, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -79,7 +69,8 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp2 <- create_plot(tos, "April-June")
+tmp <- create_plot(tos)
+ggsave(plot = tmp, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -91,7 +82,8 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp3 <- create_plot(tos, "July-September")
+tmp <- create_plot(tos)
+ggsave(plot = tmp, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -103,15 +95,5 @@ saveRDS(tos, here::here(output_dir,
                         paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-tmp4 <- create_plot(tos, "October-December")
-
-# Full temperature plot
-full_tmp <- (tmp1 + tmp2) / (tmp3 + tmp4) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "a",
-                  tag_prefix = "(",
-                  tag_suffix = ")") &
-  theme(legend.position = "bottom",
-        plot.tag = element_text(size = 30))
-
-ggsave(plot = full_tmp, filename = here::here(figure_dir, "PredictorLayers_tos.png"), width = 27, height = 15, dpi = 300)
+tmp <- create_plot(tos)
+ggsave(plot = tmp, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

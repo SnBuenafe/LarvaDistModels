@@ -22,7 +22,7 @@ create_layer <- function(rs) {
 }
 
 # Function to prepare plots
-create_plot <- function(gguo, season) {
+create_plot <- function(gguo) {
   dataUO <- gguo %>% 
     sf::st_as_sf(sf_column_name = "geometry")
   
@@ -34,24 +34,15 @@ create_plot <- function(gguo, season) {
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
-                           barheight = grid::unit(0.01, "npc"),
-                           barwidth = grid::unit(0.25, "npc"),
+                           barheight = grid::unit(0.035, "npc"),
+                           barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    ggtitle(season) +
     labs(fill = expression('Zonal velocity (m s'^"-1"*')  ')) +
-    theme_bw() +
-    theme(plot.title = element_text(size = 28, color = "black"),
-          axis.title = element_blank(),
-          legend.text = element_text(size = 22, color = "black"),
-          legend.title = element_text(size = 28, color = "black"),
-          axis.text = element_text(size = 20, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
-#### Create layers ####
+#### Create seasonal layers ####
 # i. January-March
 season <- "jan-mar"
 uo_rs <- stars::read_ncdf(here::here(input_dir, 
@@ -62,7 +53,8 @@ saveRDS(uo, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-uo1 <- create_plot(uo, "January-March")
+uo <- create_plot(uo)
+ggsave(plot = uo, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -74,7 +66,8 @@ saveRDS(uo, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-uo2 <- create_plot(uo, "April-June")
+uo <- create_plot(uo)
+ggsave(plot = uo, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -86,7 +79,8 @@ saveRDS(uo, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-uo3 <- create_plot(uo, "July-September")
+uo <- create_plot(uo)
+ggsave(plot = uo, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -98,15 +92,5 @@ saveRDS(uo, here::here(output_dir,
                           paste(label, season, "interpolated.rds", sep = "_"))) # save object
 # uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-uo4 <- create_plot(uo, "October-December")
-
-# Full zonal velocity plots
-full_uo <- (uo1 + uo2) / (uo3 + uo4) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "a",
-                  tag_prefix = "(",
-                  tag_suffix = ")") &
-  theme(plot.tag = element_text(size = 30),
-        legend.position = "bottom")
-
-ggsave(plot = full_uo, filename = here::here(figure_dir, "PredictorPlots_uo.png"), width = 27, height = 15, dpi = 300)
+uo <- create_plot(uo)
+ggsave(plot = uo, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
