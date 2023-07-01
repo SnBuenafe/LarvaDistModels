@@ -2,6 +2,9 @@
 
 # Load preliminaries
 source("00_SetupGrid.R")
+source("Utils/combineFish.R")
+source("Utils/assembleGrid.R")
+source("Utils/joinPredictors.R")
 input_dir <- here::here("Data")
 
 # List all species in Nishikawa dataset
@@ -62,7 +65,7 @@ bathy <- readRDS(here::here(input_dir, "gebco.rds")) %>%
   dplyr::select(-geometry)
 
 # Coastline
-dist2coast <- readRDS(here::here(input_dir, "CoastDistance.rds")) %>% 
+dist2coast <- readRDS(here::here(input_dir, "coast_distance.rds")) %>% 
   dplyr::as_tibble() %>% 
   dplyr::select(-geometry, -ocean)
 
@@ -91,6 +94,6 @@ for(f in 1:nrow(species_code)) {
                          dist2coast = dist2coast,
                          species = aqua)
     
-    write_csv(df, file = paste0("Output/CSV/", species_code$code[f], "_historical_", seasons[s], ".csv"))
+    write_csv(df, file = paste0("Output/CSV/", paste(species_code$code[f], seasons[s], sep = "_"), ".csv"))
   }
 }

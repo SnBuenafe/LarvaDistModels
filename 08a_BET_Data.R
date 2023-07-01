@@ -4,7 +4,9 @@
 source("00_SetupGrid.R")
 source("00_Preliminaries.R")
 species <- "BET"
+figure_dir <- here::here(figure_dir, species)
 
+# Define functions
 # Function to restrict adult distribution predictor to just bigeye tunas
 restrict_predictor <- function(x){
   x %<>%
@@ -13,15 +15,6 @@ restrict_predictor <- function(x){
     dplyr::mutate(adult = mean(c(Thunnus_obesus, Thunnus_atlanticus), na.rm = TRUE)) %>% 
     ungroup() %>% 
     dplyr::mutate(adult = ifelse(is.na(adult), yes = 0, no = adult)) # replace NAs of adult predictions to 0s
-}
-
-# Function to hatch areas where adults are unlikely to be found
-restrict_adult <- function(x, y) {
-  sf <- x %>% 
-    dplyr::mutate(adult_cat = ifelse(adult >= 0.01, yes = 1, no = 0)) %>% 
-    dplyr::select(-geometry) %>% 
-    dplyr::left_join(., y) %>% 
-    sf::st_as_sf(crs = cCRS)
 }
 
 # Create species sf object
@@ -37,16 +30,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load bigeye tuna datasets
-BET_ds1 <- read_csv(here::here(input_dir, "BET_historical_jan-mar.csv"), show_col_types = FALSE) %>% # January-March
+BET_ds1 <- read_csv(here::here(input_dir, paste(species, "jan-mar.csv", sep = "_")), show_col_types = FALSE) %>% # January-March
   restrict_predictor()
 
-BET_ds2 <- read_csv(here::here(input_dir, "BET_historical_apr-jun.csv"), show_col_types = FALSE)  %>% # April-June
+BET_ds2 <- read_csv(here::here(input_dir, paste(species, "apr-jun.csv", sep = "_")), show_col_types = FALSE)  %>% # April-June
   restrict_predictor()
 
-BET_ds3 <- read_csv(here::here(input_dir, "BET_historical_jul-sept.csv"), show_col_types = FALSE)  %>% # July-September
+BET_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sept.csv", sep = "_")), show_col_types = FALSE)  %>% # July-September
   restrict_predictor()
 
-BET_ds4 <- read_csv(here::here(input_dir, "BET_historical_oct-dec.csv"), show_col_types = FALSE)  %>% # October-December
+BET_ds4 <- read_csv(here::here(input_dir, paste(species, "oct-dec.csv", sep = "_")), show_col_types = FALSE)  %>% # October-December
   restrict_predictor()
 
 # Build model with known data only
@@ -57,10 +50,10 @@ BET_build <- dplyr::bind_rows(BET_ds1 %>% dplyr::filter(!is.na(abundance)),
   organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(BET_build) * 0.9 # = 11063.7
+nrow(BET_build) * 0.8 # = 9834.4
 
 set.seed(2221096)
-train <- slice_sample(BET_build, n = 11063, replace = FALSE) # 90% training set
+train <- slice_sample(BET_build, n = 9834, replace = FALSE) # 90% training set
 test <- BET_build[!BET_build$row %in% train$row, ] # 10% testing set
 
 # Prepare data frame for predictions

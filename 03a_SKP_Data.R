@@ -4,21 +4,13 @@
 source("00_SetupGrid.R")
 source("00_Preliminaries.R")
 species <- "SKP"
+figure_dir <- here::here(figure_dir, species)
 
 # Function to restrict adult distribution predictor to just skipjack tunas
 restrict_predictor <- function(x){
   x %<>%
     dplyr::select(c(1:21, 23, 51)) %>%  # restrict the predictors
-    dplyr::mutate(Katsuwonus_pelamis = ifelse(is.na(Katsuwonus_pelamis), yes = 0, no = Katsuwonus_pelamis)) # replace NAs of adult predictions to 0s
-}
-
-# Function to hatch areas where adults are unlikely to be found
-restrict_adult <- function(x, y) {
-  sf <- x %>% 
-    dplyr::mutate(adult_cat = ifelse(Katsuwonus_pelamis >= 0.01, yes = 1, no = 0)) %>% 
-    dplyr::select(-geometry) %>% 
-    dplyr::left_join(., y) %>% 
-    sf::st_as_sf(crs = cCRS)
+    dplyr::mutate(adult = ifelse(is.na(Katsuwonus_pelamis), yes = 0, no = Katsuwonus_pelamis)) # replace NAs of adult predictions to 0s
 }
 
 # Create species sf object
@@ -34,16 +26,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load skipjack tuna datasets
-SKP_ds1 <- read_csv(here::here(input_dir, "SKP_historical_jan-mar.csv"), show_col_types = FALSE) %>% # January-March
+SKP_ds1 <- read_csv(here::here(input_dir, paste(species, "jan-mar.csv", sep = "_")), show_col_types = FALSE) %>% # January-March
   restrict_predictor()
 
-SKP_ds2 <- read_csv(here::here(input_dir, "SKP_historical_apr-jun.csv"), show_col_types = FALSE)  %>% # April-June
+SKP_ds2 <- read_csv(here::here(input_dir, paste(species, "apr-jun.csv", sep = "_")), show_col_types = FALSE)  %>% # April-June
   restrict_predictor()
 
-SKP_ds3 <- read_csv(here::here(input_dir, "SKP_historical_jul-sept.csv"), show_col_types = FALSE)  %>% # July-September
+SKP_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sept.csv", sep = "_")), show_col_types = FALSE)  %>% # July-September
   restrict_predictor()
 
-SKP_ds4 <- read_csv(here::here(input_dir, "SKP_historical_oct-dec.csv"), show_col_types = FALSE)  %>% # October-December
+SKP_ds4 <- read_csv(here::here(input_dir, paste(species, "oct-dec.csv", sep = "_")), show_col_types = FALSE)  %>% # October-December
   restrict_predictor()
 
 # Build model with known data only
@@ -54,10 +46,10 @@ SKP_build <- dplyr::bind_rows(SKP_ds1 %>% dplyr::filter(!is.na(abundance)),
   organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(SKP_build) * 0.9 # = 11063.7
+nrow(SKP_build) * 0.8 # = 9834.4
 
 set.seed(2170)
-train <- slice_sample(SKP_build, n = 11063, replace = FALSE) # 90% training set
+train <- slice_sample(SKP_build, n = 9834, replace = FALSE) # 90% training set
 test <- SKP_build[!SKP_build$row %in% train$row, ] # 10% testing set
 
 # Prepare data frame for predictions
