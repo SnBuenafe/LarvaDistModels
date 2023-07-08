@@ -30,8 +30,7 @@ CVgridSearch <- function(test,
                                  learning.rate = lr[l],
                                  bag.fraction = bf[b],
                                  family = "bernoulli",
-                                 n.folds = folds, 
-                                 n.trees = 10
+                                 n.folds = folds
         )
         
         # Populate the grid tibble
