@@ -34,7 +34,8 @@ preds <- gbm::predict.gbm(ALB_model, test, n.trees = ALB_model$gbm.call$best.tre
 dismo::calc.deviance(test[, "abundance_presence"], preds, family = "bernoulli")
 get_testAUC(test$abundance_presence, preds) # Print testing AUC
 
-# Plot maps
+#### Plotting maps ####
+
 train_tmp <- train %>% 
   dplyr::mutate(model = ALB_model$fitted)
 test_tmp <- test %>% 
