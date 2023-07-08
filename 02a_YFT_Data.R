@@ -6,7 +6,6 @@ source("00_Preliminaries.R")
 species <- "YFT"
 figure_dir <- here::here(figure_dir, species)
 
-# Define functions
 # Function to restrict adult distribution predictor to just yellowfin tunas
 restrict_predictor <- function(x){
   x %<>%
