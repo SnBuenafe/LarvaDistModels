@@ -4,21 +4,14 @@
 source("00_SetupGrid.R")
 source("00_Preliminaries.R")
 species <- "SWO"
+figure_dir <- here::here(figure_dir, species)
 
+# Define functions
 # Function to restrict adult distribution predictor to just swordfish
 restrict_predictor <- function(x){
   x %<>%
     dplyr::select(c(1:21, 29, 51)) %>%  # restrict the predictors
-    dplyr::mutate(Xiphias_gladius = ifelse(is.na(Xiphias_gladius), yes = 0, no = Xiphias_gladius)) # replace NAs of adult predictions to 0s
-}
-
-# Function to hatch areas where adults are unlikely to be found
-restrict_adult <- function(x, y) {
-  sf <- x %>% 
-    dplyr::mutate(adult_cat = ifelse(Xiphias_gladius >= 0.01, yes = 1, no = 0)) %>% 
-    dplyr::select(-geometry) %>% 
-    dplyr::left_join(., y) %>% 
-    sf::st_as_sf(crs = cCRS)
+    dplyr::mutate(adult = ifelse(is.na(Xiphias_gladius), yes = 0, no = Xiphias_gladius)) # replace NAs of adult predictions to 0s
 }
 
 # Create species sf object
@@ -34,16 +27,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load swordfish datasets
-SWO_ds1 <- read_csv(here::here(input_dir, "SWO_historical_jan-mar.csv"), show_col_types = FALSE) %>% # January-March
+SWO_ds1 <- read_csv(here::here(input_dir, paste(species, "jan-mar.csv", sep = "_")), show_col_types = FALSE) %>% # January-March
   restrict_predictor()
 
-SWO_ds2 <- read_csv(here::here(input_dir, "SWO_historical_apr-jun.csv"), show_col_types = FALSE)  %>% # April-June
+SWO_ds2 <- read_csv(here::here(input_dir, paste(species, "apr-jun.csv", sep = "_")), show_col_types = FALSE)  %>% # April-June
   restrict_predictor()
 
-SWO_ds3 <- read_csv(here::here(input_dir, "SWO_historical_jul-sept.csv"), show_col_types = FALSE)  %>% # July-September
+SWO_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sept.csv", sep = "_")), show_col_types = FALSE)  %>% # July-September
   restrict_predictor()
 
-SWO_ds4 <- read_csv(here::here(input_dir, "SWO_historical_oct-dec.csv"), show_col_types = FALSE)  %>% # October-December
+SWO_ds4 <- read_csv(here::here(input_dir, paste(species, "oct-dec.csv", sep = "_")), show_col_types = FALSE)  %>% # October-December
   restrict_predictor()
 
 # Build model with known data only
@@ -54,10 +47,10 @@ SWO_build <- dplyr::bind_rows(SWO_ds1 %>% dplyr::filter(!is.na(abundance)),
   organize_build()
 
 # We divide the data into train (training and validation) and test
-nrow(SWO_build) * 0.9 # = 11063.7
+nrow(SWO_build) * 0.8 # = 9834.4
 
 set.seed(471832519)
-train <- slice_sample(SWO_build, n = 11063, replace = FALSE) # 90% training set
+train <- slice_sample(SWO_build, n = 9834, replace = FALSE) # 90% training set
 test <- SWO_build[!SWO_build$row %in% train$row, ] # 10% testing set
 
 # Prepare data frame for predictions
