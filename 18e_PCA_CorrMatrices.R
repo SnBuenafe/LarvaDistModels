@@ -6,27 +6,6 @@ seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 PC <- c("PC1", "PC2")
 figure_dir <- here::here(figure_dir, "PCA")
 
-spec_dict <- tibble::tribble(
-  ~code, ~common,
-  "YFT", "Yellowfin tuna",
-  "SKP", "Skipjack tuna",
-  "ALB", "Albacore",
-  "SWO", "Swordfish",
-  "BLUM", "Blue marlin",
-  "FRI", "Frigate tuna",
-  "BET", "Bigeye tuna",
-  "BFT", "P. bluefin tuna",
-  "SAU", "Sauries",
-  "SAIL", "Sailfish",
-  "SBFT", "S. bluefin tuna",
-  "SLT", "Slender tuna",
-  "BON", "Bonitos",
-  "SHOS", "Shortbill spearfish",
-  "STRM", "Striped marlin",
-  "LESC", "Longfin escolar",
-  "LIT", "Little tuna"
-)
-
 #### January-March ####
 # PC1
 res <- prepare_corrmat_obj("jan-mar", "Comp.1")
