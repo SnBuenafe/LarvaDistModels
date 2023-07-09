@@ -53,8 +53,8 @@ BET_build <- dplyr::bind_rows(BET_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(BET_build) * 0.8 # = 9834.4
 
 set.seed(2221096)
-train <- slice_sample(BET_build, n = 9834, replace = FALSE) # 90% training set
-test <- BET_build[!BET_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(BET_build, n = 9834, replace = FALSE) # 80% training set
+test <- BET_build[!BET_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 BET_predict_season1 <- organize_predict(BET_ds1) # January-March

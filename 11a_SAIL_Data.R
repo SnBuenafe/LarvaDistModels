@@ -49,8 +49,8 @@ SAIL_build <- dplyr::bind_rows(SAIL_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(SAIL_build) * 0.8 # = 9834.4
 
 set.seed(5492) 
-train <- slice_sample(SAIL_build, n = 9834, replace = FALSE) # 90% training set
-test <- SAIL_build[!SAIL_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(SAIL_build, n = 9834, replace = FALSE) # 80% training set
+test <- SAIL_build[!SAIL_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 SAIL_predict_season1 <- organize_predict(SAIL_ds1) # January-March

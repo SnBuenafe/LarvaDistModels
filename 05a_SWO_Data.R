@@ -50,8 +50,8 @@ SWO_build <- dplyr::bind_rows(SWO_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(SWO_build) * 0.8 # = 9834.4
 
 set.seed(471832519)
-train <- slice_sample(SWO_build, n = 9834, replace = FALSE) # 90% training set
-test <- SWO_build[!SWO_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(SWO_build, n = 9834, replace = FALSE) # 80% training set
+test <- SWO_build[!SWO_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 SWO_predict_season1 <- organize_predict(SWO_ds1) # January-March

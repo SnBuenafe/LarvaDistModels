@@ -49,8 +49,8 @@ SKP_build <- dplyr::bind_rows(SKP_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(SKP_build) * 0.8 # = 9834.4
 
 set.seed(2170)
-train <- slice_sample(SKP_build, n = 9834, replace = FALSE) # 90% training set
-test <- SKP_build[!SKP_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(SKP_build, n = 9834, replace = FALSE) # 80% training set
+test <- SKP_build[!SKP_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 SKP_predict_season1 <- organize_predict(SKP_ds1) # January-March

@@ -52,8 +52,8 @@ BFT_build <- dplyr::bind_rows(BFT_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(BFT_build) * 0.8 # = 9834.4
 
 set.seed(3265)
-train <- slice_sample(BFT_build, n = 9834, replace = FALSE) # 90% training set
-test <- BFT_build[!BFT_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(BFT_build, n = 9834, replace = FALSE) # 80% training set
+test <- BFT_build[!BFT_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 BFT_predict_season1 <- organize_predict(BFT_ds1) # January-March

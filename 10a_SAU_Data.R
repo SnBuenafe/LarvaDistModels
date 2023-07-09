@@ -52,8 +52,8 @@ SAU_build <- dplyr::bind_rows(SAU_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(SAU_build) * 0.8 # = 9834.4
 
 set.seed(4411)
-train <- slice_sample(SAU_build, n = 9834, replace = FALSE) # 90% training set
-test <- SAU_build[!SAU_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(SAU_build, n = 9834, replace = FALSE) # 80% training set
+test <- SAU_build[!SAU_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 SAU_predict_season1 <- organize_predict(SAU_ds1) # January-March

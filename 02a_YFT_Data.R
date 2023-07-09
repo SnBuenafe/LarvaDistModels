@@ -49,8 +49,8 @@ YFT_build <- dplyr::bind_rows(YFT_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(YFT_build) * 0.8 # = 9834.4
 
 set.seed(1234)
-train <- slice_sample(YFT_build, n = 9834, replace = FALSE) # 90% training set
-test <- YFT_build[!YFT_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(YFT_build, n = 9834, replace = FALSE) # 80% training set
+test <- YFT_build[!YFT_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 YFT_predict_season1 <- organize_predict(YFT_ds1) # January-March

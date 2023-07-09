@@ -49,8 +49,8 @@ BLUM_build <- dplyr::bind_rows(BLUM_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(BLUM_build) * 0.8 # = 9834.4
 
 set.seed(5533285)
-train <- slice_sample(BLUM_build, n = 9834, replace = FALSE) # 90% training set
-test <- BLUM_build[!BLUM_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(BLUM_build, n = 9834, replace = FALSE) # 80% training set
+test <- BLUM_build[!BLUM_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 BLUM_predict_season1 <- organize_predict(BLUM_ds1) # January-March

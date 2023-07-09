@@ -49,8 +49,8 @@ ALB_build <- dplyr::bind_rows(ALB_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(ALB_build) * 0.8 # = 9834.4
 
 set.seed(5301)
-train <- slice_sample(ALB_build, n = 9834, replace = FALSE) # 90% training set
-test <- ALB_build[!ALB_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(ALB_build, n = 9834, replace = FALSE) # 80% training set
+test <- ALB_build[!ALB_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 ALB_predict_season1 <- organize_predict(ALB_ds1) # January-March

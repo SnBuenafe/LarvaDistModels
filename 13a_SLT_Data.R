@@ -52,8 +52,8 @@ SLT_build <- dplyr::bind_rows(SLT_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(SLT_build) * 0.8 # = 9834.4
 
 set.seed(187585)
-train <- slice_sample(SLT_build, n = 9834, replace = FALSE) # 90% training set
-test <- SLT_build[!SLT_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(SLT_build, n = 9834, replace = FALSE) # 80% training set
+test <- SLT_build[!SLT_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 SLT_predict_season1 <- organize_predict(SLT_ds1) # January-March

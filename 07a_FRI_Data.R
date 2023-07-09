@@ -52,8 +52,8 @@ FRI_build <- dplyr::bind_rows(FRI_ds1 %>% dplyr::filter(!is.na(abundance)),
 nrow(FRI_build) * 0.8 # = 9834.4
 
 set.seed(7500426)
-train <- slice_sample(FRI_build, n = 9834, replace = FALSE) # 90% training set
-test <- FRI_build[!FRI_build$row %in% train$row, ] # 10% testing set
+train <- slice_sample(FRI_build, n = 9834, replace = FALSE) # 80% training set
+test <- FRI_build[!FRI_build$row %in% train$row, ] # 20% testing set
 
 # Prepare data frame for predictions
 FRI_predict_season1 <- organize_predict(FRI_ds1) # January-March
