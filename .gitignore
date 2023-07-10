@@ -1,4 +1,6 @@
 # History files
+**/.DS_Store
+.DS_Store
 .Rhistory
 .Rapp.history
 
@@ -37,3 +39,16 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Large Files\
+Data/ne_50m_geography_marine_polys/
+Output/
+Data/Climatology/
+!Data/Climatology/*.sh
+*.tif
+*.pdf
+*.rmd # Don't include markdowns
+*.css
+
+# Old scripts
+OldScripts/
