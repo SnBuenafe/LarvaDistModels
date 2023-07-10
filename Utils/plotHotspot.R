@@ -16,20 +16,11 @@ plotHotspot <- function(df, season) {
                        guide = guide_colourbar(
                          title = "# of taxa",
                          title.vjust = 0.5,
-                         barheight = grid::unit(0.01, "npc"),
-                         barwidth = grid::unit(0.25, "npc"),
+                         barheight = grid::unit(0.035, "npc"),
+                         barwidth = grid::unit(0.5, "npc"),
                          frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    theme_bw() +
-    theme(legend.position = "bottom",
-          axis.title = element_blank(),
-          legend.text = element_text(size = 30, color = "black"),
-          legend.title = element_text(size = 30, color = "black"),
-          axis.text = element_text(size = 25, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.title = element_text(size = 25, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout()
 }
 
 plotHotspotSummary <- function(df) {
@@ -38,15 +29,9 @@ plotHotspotSummary <- function(df) {
               dplyr::filter(!is.na(hotspot_cat)), aes(fill = hotspot_cat), color = NA, size = 0.1) +
     scale_fill_manual(name = "Priority",
                       aesthetics = "fill",
-                      values = c("#062843", "#5C3E9A", "#B36080", "#FAAF64")) +
+                      values = c("#062843", "#5C3E9A", "#B36080", "#FAAF64")
+                      ) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    theme_bw() +
-    theme(legend.position = "bottom",
-          axis.title = element_blank(),
-          legend.text = element_text(size = 30, color = "black"),
-          legend.title = element_text(size = 30, color = "black"),
-          axis.text = element_text(size = 25, color = "black"),
-          panel.border = element_rect(linewidth = 2, color = "black"),
-          plot.margin = unit(c(0,0.5,0,0.5), "cm")) +
-    coord_sf(xlim = st_bbox(grid)$xlim, ylim = st_bbox(grid)$ylim)
+    change_gglayout() +
+    theme(legend.key.width = grid::unit(0.05, "npc"))
 }
