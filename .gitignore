@@ -49,3 +49,6 @@ Data/Climatology/
 *.pdf
 *.rmd # Don't include markdowns
 *.css
+
+# Old scripts
+OldScripts/
