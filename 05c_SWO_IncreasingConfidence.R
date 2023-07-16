@@ -96,8 +96,8 @@ ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sept", "
 
 # Plot the longitude and latitude bar plots
 bps <- plotLonLat(gg_filt, full_grid)
-ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "model1", "longitude", "jul-sept.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
-ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "model1", "latitude", "jul-sept.png", sep = "_")), width = 5, height = 1, dpi = 600)
+ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "longitude", "jul-sept.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
+ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "latitude", "jul-sept.png", sep = "_")), width = 5, height = 1, dpi = 600)
 
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid
