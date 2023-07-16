@@ -55,6 +55,10 @@ gg <- plotModel(gg_obj, limits) # plot extrapolations for Jan-Mar
 ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jan-mar", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
+nish <- plotNish(`grid_BLUM_jan-mar`) # plot nishikawa presence-absence data for Jan-Mar
+ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "jan-mar", "nishikawa.png", sep = "_")),
+       width = 14, height = 5, dpi = 600)
+
 # April-June
 gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                             test_tmp, # testing object with model column (predictions)
@@ -66,6 +70,10 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 
 gg <- plotModel(gg_obj, limits) # plot extrapolations for Apr-Jun
 ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "apr-jun", "base.png", sep = "_")), 
+       width = 14, height = 5, dpi = 600)
+
+nish <- plotNish(`grid_BLUM_apr-jun`) # plot nishikawa presence-absence data for Apr-Jun
+ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "apr-jun", "nishikawa.png", sep = "_")),
        width = 14, height = 5, dpi = 600)
 
 # July-September
@@ -81,6 +89,10 @@ gg <- plotModel(gg_obj, limits) # plot extrapolations for Jul-Sept
 ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sept", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
+nish <- plotNish(`grid_BLUM_jul-sept`) # plot nishikawa presence-absence data for Jul-Sept
+ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "jul-sept", "nishikawa.png", sep = "_")),
+       width = 14, height = 5, dpi = 600)
+
 # October-December
 gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                             test_tmp, # testing object with model column (predictions)
@@ -92,4 +104,8 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 
 gg <- plotModel(gg_obj, limits) # plot extrapolations for Oct-Dec
 ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "oct-dec", "base.png", sep = "_")), 
+       width = 14, height = 5, dpi = 600)
+
+nish <- plotNish(`grid_BLUM_oct-dec`) # plot nishikawa presence-absence data for Oct-Dec
+ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "oct-dec", "nishikawa.png", sep = "_")),
        width = 14, height = 5, dpi = 600)
