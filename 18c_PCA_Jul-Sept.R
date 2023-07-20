@@ -46,3 +46,9 @@ ggsave(plot = pc1, filename = here::here(figure_dir, "PCA1_jul-sept.png"), width
 # Plot PC2
 pc2 <- plotPC2_limits(pc_obj, "Comp.2", "PC2 score  ")
 ggsave(plot = pc2, filename = here::here(figure_dir, "PCA2_jul-sept.png"), width = 14, height = 5, dpi = 600)
+
+#### Plotting scree plots ####
+var_explained = PCA$sdev^2 / sum(PCA$sdev^2)
+scree_gg <- plotScree(var_explained)
+
+ggsave(plot = scree_gg, filename = here::here(figure_dir, "PCA_scree_jul-sept.png"), width = 7, height = 5, dpi = 600)
