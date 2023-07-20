@@ -44,7 +44,6 @@ vignettes/*.pdf
 Data/ne_50m_geography_marine_polys/
 Data/Climatology/
 !Data/Climatology/*.sh
-*.tif
 *.pdf
 *.rmd # Don't include markdowns
 *.css
