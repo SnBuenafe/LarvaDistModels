@@ -1,38 +1,5 @@
 # DESCRIPTION: Plots for Predictors
 
-# Plot box plots
-plotBP <- function(df, species, breaks, limits, expand, label) {
-  
-  x <- df %>% 
-    dplyr::select(starts_with(paste0(species, "_"))) %>% 
-    tidyr::pivot_longer(cols = everything(),
-                        names_to = "season",
-                        values_to = "predictor") %>% 
-    dplyr::mutate(season = case_when(str_detect(season, pattern = "January-March") ~ "January-March",
-                                     str_detect(season, pattern = "April-June") ~ "April-June",
-                                     str_detect(season, pattern = "July-September") ~ "July-September",
-                                     str_detect(season, pattern = "October-December") ~ "October-December"))
-  
-  ggplot(x, aes(x = season, y = predictor, fill = season)) +
-    geom_boxplot(show.legend = FALSE) +
-    scale_y_continuous(breaks = breaks,
-                       limits = limits,
-                       expand = expand) +
-    scale_x_discrete(name = " ",
-                     labels = c("Jan-Mar", "Apr-Jun", "Jul-Sept", "Oct-Dec")) +
-    scale_fill_brewer(palette="Blues") + 
-    ggtitle(label) +
-    theme_classic() +
-    theme(axis.title.y = element_blank(),
-          plot.title = element_text(color = "black", size = 30),
-          axis.ticks = element_line(color = "black"),
-          axis.text = element_text(color = "black", size = 25),
-          axis.title.x = element_blank(),
-          plot.margin = margin(1,1,1,1, "cm")
-    )
-  
-}
-
 # Prepare the object for plotting the KD plot
 prepareDF <- function(df, spp) {
   
