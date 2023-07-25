@@ -18,9 +18,21 @@ assemblePredictor <- function(spp_list, # species list
     
     df <- purrr::reduce(df, dplyr::left_join, by = c("cellID"))
     
-    predictor[[j]] <- readRDS(here::here(clim_dir, paste0(pred_label, paste("", "historical", season_list[j], "interpolated.rds", sep = "_")))) %>% # load predictor data set
-      dplyr::select(-geometry) %>% 
-      dplyr::left_join(df, ., by = "cellID")
+    if(pred_label %in% c("coast_distance", "gebco")) {
+      
+      predictor[[j]] <- readRDS(here::here("Data", paste0(pred_label, ".rds"))) %>% # load predictor data set
+        dplyr::select(-geometry) %>% 
+        dplyr::left_join(df, ., by = "cellID")
+      
+    } else {
+      
+      predictor[[j]] <- readRDS(here::here(clim_dir, paste0(pred_label, paste("", "historical", season_list[j], "interpolated.rds", sep = "_")))) %>% # load predictor data set
+        dplyr::select(-geometry) %>% 
+        dplyr::left_join(df, ., by = "cellID")
+      
+    }
+    
+
   }
   
   preds_allSeasons <- purrr::reduce(predictor, dplyr::bind_rows)
