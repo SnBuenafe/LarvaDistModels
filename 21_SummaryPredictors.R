@@ -192,8 +192,8 @@ for(i in 1:length(spp_list)) {
   gg <- plot_scatter_predictor(df, "salinity_front_transformed", spp_list[i])
   ggsave(filename = here::here(figure_dir, paste("salinity_front", paste0(spp_list[i], ".png"), sep = "_")), 
          plot = gg, 
-         width = 5,
-         height = 3,
+         width = 9,
+         height = 4,
          dpi = 600)
   
   print(spp_list[i]) # Sanity check
@@ -217,7 +217,8 @@ for(i in 1:length(spp_list)) {
 }
 
 #### Distance to nearest coastline (coast_distance) ####
-df <- assemblePredictor(spp_list, "coast_distance")
+df <- assemblePredictor(spp_list, "coast_distance") %>% 
+  dplyr::mutate(coastDistance = coastDistance/1000) # convert from m to km
 
 for(i in 1:length(spp_list)) {
   
