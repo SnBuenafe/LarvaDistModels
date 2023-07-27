@@ -233,7 +233,8 @@ for(i in 1:length(spp_list)) {
 }
 
 #### Mean depth (mean_depth) ####
-df <- assemblePredictor(spp_list, "gebco")
+df <- assemblePredictor(spp_list, "gebco") %>% 
+  dplyr::mutate(meanDepth = meanDepth/1000) # convert from m to km
 
 for(i in 1:length(spp_list)) {
   
