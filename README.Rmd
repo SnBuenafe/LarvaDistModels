@@ -1,0 +1,31 @@
+---
+title: "README"
+author: "Tin Buenafe"
+date: "2023-07-28"
+output: html_document
+---
+# Historical hotspots of pelagic fish larvae in the Indian and Pacific Oceans.
+This repository contains all the pertinent code and analysis of the paper (see Buenafe et al., submitted for the preprint).
+
+## DESCRIPTION
+This project aims to:
+
+1. Describe historical larval distributions in the Indian and Pacific Oceans of 15 taxa from the boosted regression tree models built using digitized presence/absence Nishikawa et al. (1985) data [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7) and historical environmental predictors (see __Data__ below).
+2. Delineate potential drivers of larval distribution and hemispheric seasonality across these taxa.
+3. Identify larval hotspots that could correspond to potential spawning grounds for these species.
+
+The repository hosts the subset of data used to generate the boosted regression tree models (in `Data/`), but the raw and complete data can be extracted from their original sources described in __Data__ below.
+
+## WORKFLOW
+The scripts are named sequentially. To rerun all the analyses, the user would have to go through all the scripts starting from scripts prefixed with `01_`. Note that scripts prefixed with `00_` are preliminary scripts and are called within the subsequent scripts. Therefore, there is no need to run them independently.
+
+### Summary of the code
+- `01_`: assembles all the predictors and creates seasonal data sets with the larval data
+- `02_` through `16_`: generate models for all 15 taxa. Scripts prefixed with `a_` refer to assembling the necessary data to run the models. `b_` scripts are where the full model is built. `c_` scripts are where the model outputs are restricted to areas where confidence is higher. Models are found in `Output/Models/` and model predictions for each taxa are found in `Output/Predictions/`
+- `17_`: assembling model outputs across taxa and saving them as rasters, which can be accessed in `Output/FinalRaster`
+- `18_`: Principal Component Analysis to determine hotspots
+- `19_`: plotting hemispheric seasonality
+- `20_`: generating seasonal taxa richness maps
+- `21_`: plotting model predictions vs predictors
+
+## DATA
