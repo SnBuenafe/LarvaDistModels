@@ -57,7 +57,8 @@ We used (in parentheses are the CMIP6 codes for the climate variables):
 10. zonal velocity (uo)
 11. meridional velocity (vo)
 
-Set of models used.
+
+__Table 1.__ Set of models used.
 | Model    | Reference |
 | -------- | ------- |
 | ACCESS-ESM1-5 | [Ziehn et al. (2019)](http://doi.org/10.22033/ESGF/CMIP6.4272) |
