@@ -7,8 +7,11 @@ pacman::p_load(purrr, Hmisc, RColorBrewer, patchwork)
 figure_dir <- here::here(figure_dir, "PCA")
 
 #### Prepare components for data frame ####
-spp_list <- c("yft", "skp", "alb", "swo", "blum", "fri", "bet", "bft", "sau", "sail", "sbft", "slt",
-              "shos", "strm", "lesc")
+spp_list <- spec_dict %>% 
+  dplyr::filter(!code %in% c("BON", "LIT")) %>% # remove bonitos and little tuna
+  dplyr::select(code) %>% 
+  pull() %>% 
+  tolower()
 
 df <- list() # empty list
 for(i in 1:length(spp_list)) {
