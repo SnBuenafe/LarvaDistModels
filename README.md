@@ -1,9 +1,3 @@
----
-title: "README"
-author: "Tin Buenafe"
-date: "2023-07-28"
-output: html_document
----
 # Historical hotspots of pelagic fish larvae in the Indian and Pacific Oceans.
 This repository contains all the pertinent code and analysis of the paper (see Buenafe et al., submitted for the preprint).
 
