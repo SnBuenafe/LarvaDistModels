@@ -80,3 +80,5 @@ __Table 1.__ Set of models used.
 | NorESM2-LM | [Seland et al. (2019)](http://doi.org/10.22033/ESGF/CMIP6.8036) |
 
 The mean depth was calculated using [The General Bathymetric Chart of the Oceans](https://www.gebco.net/data_and_products/gridded_bathymetry_data/).
+
+The AquaMaps data can be accessed in [AquaMaps](https://www.aquamaps.org/).
