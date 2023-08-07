@@ -14,8 +14,8 @@ determineHotspots <- function(season) {
   dum_list <- list() # empty list
   for(i in 1:length(spp_list)) {
     dum_list[[i]] <- full %>% 
-      dplyr::mutate(!!sym(spp_list[i]) := case_when(!!sym(spp_list[i]) >= median(full[[spp_list[i]]], na.rm = TRUE) ~ 1, # probabilities that are >= median are presences
-                                               !!sym(spp_list[i]) < median(full[[spp_list[i]]], na.rm = TRUE) ~ 0, # probabilities that are < median are absences
+      dplyr::mutate(!!sym(spp_list[i]) := case_when(!!sym(spp_list[i]) >= mean(full[[spp_list[i]]], na.rm = TRUE) ~ 1, # probabilities that are >= mean are presences
+                                               !!sym(spp_list[i]) < mean(full[[spp_list[i]]], na.rm = TRUE) ~ 0, # probabilities that are < mean are absences
                                                is.na(!!sym(spp_list[i])) ~ NA)) %>% 
       dplyr::select(cellID, !!sym(spp_list[i]))
   }

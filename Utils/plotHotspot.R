@@ -11,6 +11,7 @@ plotHotspot <- function(df, season) {
     scale_fill_cmocean(name = "thermal",
                        #   alpha = 1,
                        aesthetics = c("fill"),
+                       limits = c(0, 14),
                        direction = 1,
                        na.value = "grey64",
                        guide = guide_colourbar(
@@ -27,9 +28,9 @@ plotHotspotSummary <- function(df) {
   ggplot() +
     geom_sf(data = df %>% 
               dplyr::filter(!is.na(hotspot_cat)), aes(fill = hotspot_cat), color = NA, size = 0.1) +
-    scale_fill_manual(name = "Priority level",
+    scale_fill_manual(name = "Priority rank",
                       aesthetics = "fill",
-                      values = c("#062843", "#5C3E9A", "#B36080", "#FAAF64")
+                      values = c("#FAAF64", "#B36080", "#5C3E9A", "#062843")
                       ) +
     geom_sf(data = landmass, fill = "black", color = "black") +
     change_gglayout() +

@@ -2,7 +2,7 @@
 
 prepare_corrmat_obj <- function(season, axis) {
   
-  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "loadings.csv", sep = "_"))) %>% 
+  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "spearmancorr.csv", sep = "_"))) %>% 
     dplyr::rename(Species = `...1`) %>% 
     dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
     dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation

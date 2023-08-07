@@ -23,7 +23,7 @@ df <- purrr::reduce(df, dplyr::left_join, by = c("cellID", "grid_100_category", 
 
 #### Run PCA ####
 PCA <- stats::princomp(df %>% 
-                         dplyr::select(-cellID, -grid_100_category, -geometry), cor = FALSE)
+                         dplyr::select(-cellID, -grid_100_category, -geometry), cor = TRUE)
 
 summary(PCA)
 
@@ -35,6 +35,15 @@ write.csv(PC_scores, file = here::here(pc_dir, "hotspots_apr-jun_scores.csv"))
 loadings <- PCA$loadings %>% 
   as.data.frame.matrix()
 write.csv(loadings, file = here::here(pc_dir, "hotspots_apr-jun_loadings.csv"))
+
+# Spearman correlation of PC scores with the individual maps
+cor_df <- df %>% 
+  dplyr::bind_cols(PC_scores, .)
+
+sp_cor <- cor(cor_df %>% 
+                dplyr::select(-cellID, -grid_100_category, -geometry),
+              method = "spearman")
+write.csv(sp_cor, file = here::here(pc_dir, "hotspots_apr-jun_spearmancorr.csv"))
 
 #### Plotting PCA ####
 pc_obj <- df %>% 
