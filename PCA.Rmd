@@ -1,0 +1,879 @@
+---
+title: "PCA"
+author: "Tin Buenafe"
+date: "2023-08-07"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE,
+                      warning = FALSE)
+```
+
+```{r preliminaries, include = FALSE}
+# Define preliminaries
+source("00_SetupGrid.R")
+source("00_Preliminaries.R")
+pacman::p_load(purrr, Hmisc, RColorBrewer, patchwork)
+seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
+PC <- c("PC1", "PC2")
+figure_dir <- here::here(figure_dir, "PCA")
+
+#### Prepare components for data frame ####
+spp_list <- spec_dict %>% 
+  dplyr::filter(!code %in% c("BON", "LIT")) %>% # remove bonitos and little tuna
+  dplyr::select(code) %>% 
+  pull() %>% 
+  tolower()
+
+df <- list() # empty list
+for(i in 1:length(spp_list)) {
+  obj <- readRDS(here::here(preds_dir, paste(toupper(spp_list[i]), "jan-mar.rds", sep = "_")))
+  df[[i]] <- prepare_components(obj, spp_list[i])
+}
+
+df <- purrr::reduce(df, dplyr::left_join, by = c("cellID", "grid_100_category", "geometry"))
+```
+## Running PCA with covariances
+
+For this I'm going to use __January-March__ as an example. First running the PCA with `cor = FALSE` to use covariances.
+
+```{r PCA_cov, include = TRUE}
+PCA <- stats::princomp(df %>% 
+                         dplyr::select(-cellID, -grid_100_category, -geometry), cor = FALSE)
+summary(PCA)
+```
+
+Then we use the PC scores to plot the map... for PC1
+
+```{r PCA_cov_map1}
+PC_scores <- PCA$scores[,1:2] %>% # first two axes
+  tibble::as_tibble()
+
+pc_obj <- df %>% 
+  dplyr::select(cellID, grid_100_category, geometry) %>% 
+  cbind(., PC_scores) %>% 
+  sf::st_as_sf(crs = cCRS)
+
+# Plot PC1
+pc1 <- plotPC1_limits(pc_obj, "Comp.1", "PC1 score") +
+  theme(legend.text = element_text(size = 18, color = "black"))
+pc1
+```
+
+and PC2
+
+```{r PCA_cov_map2}
+# Plot PC2
+pc2 <- plotPC2_limits(pc_obj, "Comp.2", "PC2 score") +
+  theme(legend.text = element_text(size = 18, color = "black"))
+pc2
+```
+
+We take the __loadings__ of each of the species (PC1) and plot them. Loadings are the association coefficients between the components and the variables. They are the covariances/correlations between the original variables and the unit-scaled components. They are directly comparable with association coefficients computed between the variables— covariances, correlations and other scalar products. See: [link1](https://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues/35653#35653) and [link2](https://stats.stackexchange.com/questions/143905/loadings-vs-eigenvectors-in-pca-when-to-use-one-or-another).
+
+```{r PCA_cov_loadings}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(axis) {
+  
+  res <- PCA$loadings %>% 
+    as.data.frame.matrix() %>% 
+    tibble::rownames_to_column(var = "Species") %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1]  # get string of species
+  
+  res <- res[,2] %>%  # just get loadings
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] # rearrange the species
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+  
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Loadings",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+And now we look at the __correlation coefficients__ of the Spearman correlation analysis between the PC scores and the individual species model outputs
+
+```{r PCA_cov_spearman}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(season, axis) {
+  
+  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "spearmancorr.csv", sep = "_"))) %>% 
+    dplyr::rename(Species = `...1`) %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1] %>% 
+    pull() # get string of species
+  
+  res <- res %>%  # just get loadings
+    dplyr::filter(!Species %in% c("Comp.1", "Comp.2")) # remove axes
+
+  res <- res[,2] %>% 
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] %>%  # rearrange the species
+    tidyr::drop_na() # remove NAs
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Correlation coefficient",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("jan-mar", "Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+## Running PCA with correlation
+
+First, I'm going to use __January-March__ as an example. PCA is ran with `cor = TRUE` to use correlation.
+
+```{r PCA_cor, include = TRUE}
+PCA <- stats::princomp(df %>% 
+                         dplyr::select(-cellID, -grid_100_category, -geometry), cor = TRUE)
+summary(PCA)
+```
+
+Then we use the PC scores to plot the map... for PC1
+
+```{r PCA_cor_map1}
+PC_scores <- PCA$scores[,1:2] %>% # first two axes
+  tibble::as_tibble()
+
+pc_obj <- df %>% 
+  dplyr::select(cellID, grid_100_category, geometry) %>% 
+  cbind(., PC_scores) %>% 
+  sf::st_as_sf(crs = cCRS)
+
+# Plot PC1
+pc1 <- plotPC1_limits(pc_obj, "Comp.1", "PC1 score") +
+  theme(legend.text = element_text(size = 18, color = "black"))
+pc1
+```
+
+and PC2
+
+```{r PCA_cor_map2}
+# Plot PC2
+pc2 <- plotPC2_limits(pc_obj, "Comp.2", "PC2 score") +
+  theme(legend.text = element_text(size = 18, color = "black"))
+pc2
+```
+
+And we take the __loadings__ of each of the species (PC1) and plot them...
+
+```{r PCA_cor_loadings}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(axis) {
+  
+  res <- PCA$loadings %>% 
+    as.data.frame.matrix() %>% 
+    tibble::rownames_to_column(var = "Species") %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1]  # get string of species
+  
+  res <- res[,2] %>%  # just get loadings
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] # rearrange the species
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+  
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Loadings",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+And now we look at the __correlation coefficients__ of the Spearman correlation analysis between the PC scores and the individual species model outputs
+
+```{r PCA_cor_spearman}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(season, axis) {
+  
+  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "spearmancorr.csv", sep = "_"))) %>% 
+    dplyr::rename(Species = `...1`) %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1] %>% 
+    pull() # get string of species
+  
+  res <- res %>%  # just get loadings
+    dplyr::filter(!Species %in% c("Comp.1", "Comp.2")) # remove axes
+
+  res <- res[,2] %>% 
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] %>%  # rearrange the species
+    tidyr::drop_na() # remove NAs
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Correlation coefficient",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("jan-mar", "Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+## Then for the rest of the seasons
+
+### April-June
+
+```{r df_apr-jun, include = FALSE}
+df <- list() # empty list
+for(i in 1:length(spp_list)) {
+  obj <- readRDS(here::here(preds_dir, paste(toupper(spp_list[i]), "apr-jun.rds", sep = "_")))
+  df[[i]] <- prepare_components(obj, spp_list[i])
+}
+
+df <- purrr::reduce(df, dplyr::left_join, by = c("cellID", "grid_100_category", "geometry"))
+```
+
+```{r PCA2_cor, include = TRUE}
+PCA <- stats::princomp(df %>% 
+                         dplyr::select(-cellID, -grid_100_category, -geometry), cor = TRUE)
+summary(PCA)
+```
+
+Then we use the PC scores to plot the map... for PC1
+
+```{r PCA2_cor_map1}
+PC_scores <- PCA$scores[,1:2] %>% # first two axes
+  tibble::as_tibble()
+
+pc_obj <- df %>% 
+  dplyr::select(cellID, grid_100_category, geometry) %>% 
+  cbind(., PC_scores) %>% 
+  sf::st_as_sf(crs = cCRS)
+
+# Plot PC1
+pc1 <- plotPC1_limits(pc_obj, "Comp.1", "PC1 score") +
+  theme(legend.text = element_text(size = 18, color = "black"))
+pc1
+```
+
+Loadings...
+
+```{r PCA2_cor_loadings}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(axis) {
+  
+  res <- PCA$loadings %>% 
+    as.data.frame.matrix() %>% 
+    tibble::rownames_to_column(var = "Species") %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1]  # get string of species
+  
+  res <- res[,2] %>%  # just get loadings
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] # rearrange the species
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+  
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Loadings",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+Spearman correlation coefficients...
+
+```{r PCA2_cor_spearman}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(season, axis) {
+  
+  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "spearmancorr.csv", sep = "_"))) %>% 
+    dplyr::rename(Species = `...1`) %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1] %>% 
+    pull() # get string of species
+  
+  res <- res %>%  # just get loadings
+    dplyr::filter(!Species %in% c("Comp.1", "Comp.2")) # remove axes
+
+  res <- res[,2] %>% 
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] %>%  # rearrange the species
+    tidyr::drop_na() # remove NAs
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Correlation coefficient",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("apr-jun", "Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+### July-September
+
+```{r df_jul-sept, include = FALSE}
+df <- list() # empty list
+for(i in 1:length(spp_list)) {
+  obj <- readRDS(here::here(preds_dir, paste(toupper(spp_list[i]), "jul-sept.rds", sep = "_")))
+  df[[i]] <- prepare_components(obj, spp_list[i])
+}
+
+df <- purrr::reduce(df, dplyr::left_join, by = c("cellID", "grid_100_category", "geometry"))
+```
+
+```{r PCA3_cor, include = TRUE}
+PCA <- stats::princomp(df %>% 
+                         dplyr::select(-cellID, -grid_100_category, -geometry), cor = TRUE)
+summary(PCA)
+```
+
+Then we use the PC scores to plot the map... for PC1
+
+```{r PCA3_cor_map1}
+PC_scores <- PCA$scores[,1:2] %>% # first two axes
+  tibble::as_tibble()
+
+pc_obj <- df %>% 
+  dplyr::select(cellID, grid_100_category, geometry) %>% 
+  cbind(., PC_scores) %>% 
+  sf::st_as_sf(crs = cCRS)
+
+# Plot PC1
+pc1 <- plotPC1_limits(pc_obj, "Comp.1", "PC1 score") +
+  theme(legend.text = element_text(size = 18, color = "black"))
+pc1
+```
+
+Loadings...
+
+```{r PCA3_cor_loadings}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(axis) {
+  
+  res <- PCA$loadings %>% 
+    as.data.frame.matrix() %>% 
+    tibble::rownames_to_column(var = "Species") %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1]  # get string of species
+  
+  res <- res[,2] %>%  # just get loadings
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] # rearrange the species
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+  
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Loadings",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+Spearman correlation coefficients...
+
+```{r PCA3_cor_spearman}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(season, axis) {
+  
+  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "spearmancorr.csv", sep = "_"))) %>% 
+    dplyr::rename(Species = `...1`) %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1] %>% 
+    pull() # get string of species
+  
+  res <- res %>%  # just get loadings
+    dplyr::filter(!Species %in% c("Comp.1", "Comp.2")) # remove axes
+
+  res <- res[,2] %>% 
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] %>%  # rearrange the species
+    tidyr::drop_na() # remove NAs
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Correlation coefficient",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("jul-sept", "Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+### October-December
+
+```{r df_oct-dec, include = FALSE}
+df <- list() # empty list
+for(i in 1:length(spp_list)) {
+  obj <- readRDS(here::here(preds_dir, paste(toupper(spp_list[i]), "oct-dec.rds", sep = "_")))
+  df[[i]] <- prepare_components(obj, spp_list[i])
+}
+
+df <- purrr::reduce(df, dplyr::left_join, by = c("cellID", "grid_100_category", "geometry"))
+```
+
+```{r PCA4_cor, include = TRUE}
+PCA <- stats::princomp(df %>% 
+                         dplyr::select(-cellID, -grid_100_category, -geometry), cor = TRUE)
+summary(PCA)
+```
+
+Then we use the PC scores to plot the map... for PC1
+
+```{r PCA4_cor_map1}
+PC_scores <- PCA$scores[,1:2] %>% # first two axes
+  tibble::as_tibble()
+
+pc_obj <- df %>% 
+  dplyr::select(cellID, grid_100_category, geometry) %>% 
+  cbind(., PC_scores) %>% 
+  sf::st_as_sf(crs = cCRS)
+
+# Plot PC1
+pc1 <- plotPC1_limits(pc_obj, "Comp.1", "PC1 score") +
+  theme(legend.text = element_text(size = 18, color = "black"))
+pc1
+```
+
+Loadings...
+
+```{r PCA4_cor_loadings}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(axis) {
+  
+  res <- PCA$loadings %>% 
+    as.data.frame.matrix() %>% 
+    tibble::rownames_to_column(var = "Species") %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1]  # get string of species
+  
+  res <- res[,2] %>%  # just get loadings
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] # rearrange the species
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+  
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Loadings",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
+
+Spearman correlation coefficients...
+
+```{r PCA4_cor_spearman}
+# DESCRIPTION: Prepare the object that would feed into plotting the correlation matrix
+
+prepare_corrmat_obj <- function(season, axis) {
+  
+  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "spearmancorr.csv", sep = "_"))) %>% 
+    dplyr::rename(Species = `...1`) %>% 
+    dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
+    dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
+    dplyr::mutate(!!sym(axis) := as.numeric(!!sym(axis)))
+  
+  spp_str <- res[,1] %>% 
+    pull() # get string of species
+  
+  res <- res %>%  # just get loadings
+    dplyr::filter(!Species %in% c("Comp.1", "Comp.2")) # remove axes
+
+  res <- res[,2] %>% 
+    as.matrix()
+  
+  idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
+  spp_str_new <- spec_dict[idx,] %>%  # rearrange the species
+    tidyr::drop_na() # remove NAs
+  
+  rownames(res) <- spp_str_new[,2] %>% 
+    pull()
+  
+  return(res)
+}
+
+# DESCRIPTION: Plot correlation matrices
+plotCorrMat <- function(x) {
+  
+  gg_cor <- ggcorrplot::ggcorrplot(x, 
+                                   method = "circle",
+                                   outline.color = "black"
+  ) +
+    expand_limits(y = c(0.5,1.5)) +
+    scale_fill_gradient2(
+      name = "Correlation coefficient",
+      low = "#8c510a",
+      mid = "#f5f5f5",
+      high = "#01665e",
+      limits = c(-1, 1)
+      ) +
+    scale_x_discrete(guide = guide_axis(angle = 90)) +
+    theme_bw() +
+    theme(legend.title = element_text(),
+          legend.text = element_text(color = "black", size = 10),
+          panel.grid = element_blank(),
+          panel.grid.major = element_line(color = "grey86"),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.text.y = element_blank(),
+          axis.title = element_blank(),
+          axis.text.x = element_text(color = "black", size = 12))
+  
+  return(gg_cor)
+  
+}
+
+res <- prepare_corrmat_obj("oct-dec", "Comp.1")
+gg <- plotCorrMat(res)
+gg
+```
