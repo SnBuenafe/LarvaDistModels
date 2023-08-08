@@ -65,6 +65,3 @@ ggplot(data = full, aes(x = common, y = ind, color = groups)) +
         legend.text = element_text(color = "black", size = 15))
 
 ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 12, height = 7)
-
-# add the number of cells above the mean of each species
-# do more clumped species have more cells above the mean?
