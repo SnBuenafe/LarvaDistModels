@@ -17,8 +17,7 @@ index <- function(x) {
   ind <- sd(x)/(mean(x))
 }
 
-#### SPATIAL DISPERSION ####
-
+# Prepare data
 df <- list()
 for(i in 1:length(seasons)) {
   # Load file
@@ -35,7 +34,7 @@ for(i in 1:length(seasons)) {
                         names_to = "species", 
                         values_to = "ind") %>% 
     #dplyr::arrange(desc(ind)) %>% 
-    dplyr::rename(!!sym(paste("ind", seasons[i], sep = "_")) := ind) # Rename
+    dplyr::rename(!!sym(paste("ind", seasons[i], sep = "_")) := ind) # Rename columns
 }
 
 # Calculate across seasons
@@ -43,20 +42,25 @@ full <- purrr::reduce(df, dplyr::left_join, by = c("species", "hemisphere")) %>%
   dplyr::rowwise() %>% 
   dplyr::mutate(ind = mean(c_across(starts_with("ind"))),
                 ind_sd = sd(c_across(starts_with("ind"))),
-                temp_cv = ind_sd/ind) %>% # Take the mean and SD across species
+                temp_cv = ind_sd/ind) %>% # Take the mean and SD across seasons per species (temporal dispersion)
   dplyr::select(species, hemisphere, ind, ind_sd, temp_cv) %>% 
   dplyr::mutate(code = toupper(species)) %>% 
   dplyr::select(-species) %>% 
   dplyr::ungroup() %>% 
   dplyr::group_by(hemisphere) %>% 
   dplyr::left_join(., spec_dict, by = "code") %>% 
-  dplyr::mutate(common = fct_reorder(common, desc(ind))) %>% 
+  dplyr::mutate(common = fct_reorder(common, desc(ind))) %>% # We want to plot it with the common names
   dplyr::bind_cols(., )
 
-# Plot points with error bars
+# Transform data for the secondary axis (temporal dispersion)
+transformer <- full %>% 
+  ungroup() %>% 
+  transformer_dual_Y_axis(ind, temp_cv, FALSE)
+
+# Plot mean index across seasons per species (spatial dispersion) and the CV of the indices per season per species (temporal dispersion)
 ggplot(data = full, aes(x = common, y = ind, color = groups)) +
   geom_point(size = 2) +
-  geom_errorbar(aes(ymin = ind-ind_sd, ymax = ind+ind_sd), size = 1) +
+  geom_errorbar(aes(ymin = ind-ind_sd, ymax = ind+ind_sd), linewidth = 1) +
   geom_point(aes(y = transformer$scale_func(temp_cv)),
             colour = "#ec7014",
             size = 5,
@@ -64,7 +68,7 @@ ggplot(data = full, aes(x = common, y = ind, color = groups)) +
   scale_y_continuous(
     sec.axis = sec_axis(
       trans = ~ transformer$inv_func(.),
-      name = expression('Temporal dispersion')
+      name = expression("Temporal dispersion")
     )) +
   facet_grid(rows = vars(hemisphere)) +
   scale_color_manual(name = "Taxa grouping",
@@ -82,65 +86,5 @@ ggplot(data = full, aes(x = common, y = ind, color = groups)) +
         strip.background=element_rect(fill="white"),
         strip.text = element_text(color = "black", size = 20))
 
-ggsave(filename = here::here(figure_dir, "Dispersion_Spatial.png"), dpi = 600, width = 20, height = 8, units = "in")
+ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 20, height = 8, units = "in")
 
-
-
-
-
-
-
-
-
-
-
-
-# Transform data for dual-y axes
-# Written by Dave S (david.schoeman@gmail.com)
-# Transformer function based on: https://www.r-bloggers.com/2022/12/how-to-make-a-plot-with-two-different-y-axis-in-r-with-ggplot2-a-secret-ggplot2-hack/
-# There were many errors that had to be fixed!
-transformer_dual_Y_axis <- function (data,
-                                     primary_column, secondary_column,
-                                     include_y_zero = FALSE) {
-  # PARAMETER SETUP 
-  params_tbl <- data %>%
-    summarise(
-      max_primary = max (!! enquo (primary_column)),
-      min_primary = min (!! enquo (primary_column)),
-      max_secondary = max(!! enquo (secondary_column)),
-      min_secondary = min(!! enquo (secondary_column))
-    )
-  
-  if (include_y_zero) {
-    params_tbl$min_primary <- 0
-    params_tbl$min_secondary <- 0
-  }
-  
-  params_tbl <- params_tbl  %>% 
-    mutate(
-      scale = (max_primary - min_primary) / (max_secondary - min_secondary), #b
-      shift = min_primary - scale * min_secondary #a
-    )
-  
-  # MAKE SCALER FUNCTIONS
-  scale_func <- function (x) {
-    params_tbl$shift + (x * params_tbl$scale)
-  }
-  inv_func <- function(x) {
-    (x - params_tbl$shift) / params_tbl$scale
-  }
-  
-  # RETURN
-  ret <- list(
-    scale_func = scale_func,
-    inv_func = inv_func,
-    params_tbl = params_tbl
-  )
-  
-  return (ret)
-}  
-
-# Transform data
-transformer <- full %>% 
-  ungroup() %>% 
-  transformer_dual_Y_axis(ind, temp_cv, FALSE)
