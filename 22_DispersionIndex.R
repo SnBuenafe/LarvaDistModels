@@ -79,12 +79,19 @@ ggplot(data = full, aes(x = common, y = ind, color = groups)) +
   theme_bw() +
   theme(axis.text.x = element_text(color = "black", size = 17, angle = 45, hjust = 1),
         axis.title.x = element_blank(),
-        axis.title.y = element_text(color = "black", size = 19, vjust = 2),
+        axis.title.y.left = element_text(color = "black", size = 19, vjust = 2),
+        axis.title.y.right = element_text(color = "black", size = 19, vjust = 2),
         axis.text.y = element_text(color = "black", size = 18),
         legend.title = element_text(color = "black", size = 18),
         legend.text = element_text(color = "black", size = 15),
         strip.background=element_rect(fill="white"),
-        strip.text = element_text(color = "black", size = 20))
+        strip.text = element_text(color = "black", size = 20),
+        legend.position = "bottom")
 
-ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 20, height = 8, units = "in")
+ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 17, height = 8, units = "in")
 
+# Printing for interpretation
+full %>% 
+  dplyr::filter(hemisphere == "North") %>% 
+  dplyr::arrange(ind) %>% 
+  print(n = 5)
