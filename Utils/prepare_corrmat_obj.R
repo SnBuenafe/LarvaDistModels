@@ -2,7 +2,7 @@
 
 prepare_corrmat_obj <- function(season, axis) {
   
-  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "loadings.csv", sep = "_"))) %>% 
+  res <- read_csv(here::here(pc_dir, paste("hotspots", season, "spearmancorr.csv", sep = "_"))) %>% 
     dplyr::rename(Species = `...1`) %>% 
     dplyr::select(Species, !!sym(axis)) %>% # just select species and principal component of interest
     dplyr::arrange(desc(!!sym(axis))) %>% # arrange in decreasing order of positive correlation
@@ -11,11 +11,15 @@ prepare_corrmat_obj <- function(season, axis) {
   spp_str <- res[,1] %>% 
     pull() # get string of species
   
-  res <- res[,2] %>%  # just get loadings
+  res <- res %>%  # just get loadings
+    dplyr::filter(!Species %in% c("Comp.1", "Comp.2")) # remove axes
+
+  res <- res[,2] %>% 
     as.matrix()
   
   idx <- match(toupper(spp_str), spec_dict$code) # get indices of match
-  spp_str_new <- spec_dict[idx,] # rearrange the species
+  spp_str_new <- spec_dict[idx,] %>%  # rearrange the species
+    tidyr::drop_na() # remove NAs
   
   rownames(res) <- spp_str_new[,2] %>% 
     pull()

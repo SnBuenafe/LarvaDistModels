@@ -12,7 +12,8 @@ plotCorrMat <- function(x) {
       low = "#8c510a",
       mid = "#f5f5f5",
       high = "#01665e",
-      limits = c(-1, 1)) +
+      limits = c(-1, 1)
+      ) +
     scale_x_discrete(guide = guide_axis(angle = 90)) +
     theme_bw() +
     theme(legend.title = element_text(),

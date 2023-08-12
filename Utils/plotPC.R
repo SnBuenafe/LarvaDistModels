@@ -8,7 +8,7 @@ plotPC1_limits <- function(df, axis, label) {
                          colors = rev(brewer.pal(11, "RdBu")),
                          na.value = "grey64",
                          oob = scales::squish,
-                         limits = c(-0.15, 1.75),
+                         limits = c(-1, 20),
                          guide = guide_colourbar(
                            title.vjust = 0.5,
                            barheight = grid::unit(0.035, "npc"),
@@ -26,7 +26,7 @@ plotPC2_limits <- function(df, axis, label) {
                          colors = rev(brewer.pal(11, "RdBu")),
                          na.value = "grey64",
                          oob = scales::squish,
-                         limits = c(-0.5, 1),
+                         limits = c(-5, 10),
                          guide = guide_colourbar(
                            title.vjust = 0.5,
                            barheight = grid::unit(0.035, "npc"),

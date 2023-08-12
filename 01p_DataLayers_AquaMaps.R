@@ -2,6 +2,8 @@
 
 # Load preliminaries
 source("00_SetupGrid.R")
+source(here::here("Utils", "change_gglayout.R"))
+pacman::p_load(cmocean)
 input_dir <- file.path("/Volumes", "SeagateHub", "01_Spatial Datasets")
 output_dir <- here::here("Data")
 figure_dir <- here::here("Figures", "predictors")
@@ -126,7 +128,10 @@ saveRDS(AquaMaps_sf, here::here(output_dir, "AquaMaps_sf.rds")) # save file
 
 # Plot number of features
 ggaq <- AquaMaps_sf %>%
-   dplyr::select(-Istiompax_indica, -Thunnus_thynnus) %>% # Remove species that will not be included
+   dplyr::select(-Istiompax_indica, -Thunnus_thynnus, 
+                 -Euthynnus_affinis, -Euthynnus_alletteratus, -Euthynnus_lineatus,
+                 -Sarda_australis, -Sarda_orientalis, -Sarda_chiliensis,
+                 -Sarda_sarda) %>% # Remove species that will not be included
   create_plot()
 
 ggsave(plot = ggaq, filename = here::here(figure_dir, "aquamaps.png"), width = 14, height = 5, dpi = 300)

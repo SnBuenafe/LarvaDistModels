@@ -40,10 +40,10 @@ full %<>%
 quant <- quantile(full$gm, c(0.5, 0.8, 0.95)) # get quantiles for categories
 
 fin <- full %>% 
-  dplyr::mutate(hotspot_cat = case_when(gm <= quant[[1]] ~ "1",
-                                        (gm > quant[[1]] & gm <= quant[[2]]) ~ "2",
-                                        (gm > quant[[2]] & gm <= quant[[3]]) ~ "3",
-                                        (gm > quant[[3]] ~ "4"))) %>% # assign hotspot categories
+  dplyr::mutate(hotspot_cat = case_when(gm <= quant[[1]] ~ "4",
+                                        (gm > quant[[1]] & gm <= quant[[2]]) ~ "3",
+                                        (gm > quant[[2]] & gm <= quant[[3]]) ~ "2",
+                                        (gm > quant[[3]] ~ "1"))) %>% # assign hotspot categories
   dplyr::mutate(hotspot_cat = fct_relevel(hotspot_cat, c("1", "2", "3", "4"))) %>%
   sf::st_as_sf(crs = cCRS)
   

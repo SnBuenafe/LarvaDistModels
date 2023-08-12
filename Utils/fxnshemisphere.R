@@ -1,5 +1,10 @@
 # DESCRIPTION: Functions for creating seasonal bar plots
 
+# Make latitude labels all positive
+make_lat_lon_label <- function (x) {
+  format(abs(x), scientific = FALSE)
+}
+
 prepare_hemis_obj <- function(seas_list) {
   
   empt <- list() # empty vector
@@ -63,14 +68,16 @@ plot_hemis_spp <- function(full_df, spp) {
     geom_line(data = fin2, aes(x = season, y = mean, group = 1), color = "black", linewidth = 3) +
     geom_point(data = fin2, aes(x = season, y = mean), size = 5) +
     scale_x_discrete(expand = expansion(add = c(0.5, 0.5))) +
-    scale_y_continuous(limits = c(-max(abs(fin$sum)), max(abs(fin$sum)))) +
+    scale_y_continuous(limits = c(-max(abs(fin$sum)), max(abs(fin$sum))),
+                       label = make_lat_lon_label) +
     xlab("Seasons") +
     ylab("Sum of probabilities") +
     theme_bw() +
     theme(axis.ticks.y = element_blank(),
           axis.title.y = element_blank(),
           axis.ticks.x = element_line(color = "black"),
-          axis.text = element_text(size = 25, color = "black"),
+          axis.text.y = element_text(size = 30, color = "black"),
+          axis.text.x = element_text(size = 30, angle = 45, hjust = 1, color = "black"),
           plot.margin = unit(c(1,0.5,1,0.5), "cm"),
           axis.title.x = element_blank()
           #plot.title = element_text(color = "black", size = 30))
