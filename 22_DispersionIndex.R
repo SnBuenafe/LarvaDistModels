@@ -58,11 +58,11 @@ transformer <- full %>%
   transformer_dual_Y_axis(ind, temp_cv, FALSE)
 
 # Plot mean index across seasons per species (spatial dispersion) and the CV of the indices per season per species (temporal dispersion)
-ggplot(data = full, aes(x = common, y = ind, color = groups)) +
+ggplot(data = full, aes(x = common, y = ind)) +
   geom_point(size = 2) +
   geom_errorbar(aes(ymin = ind-ind_sd, ymax = ind+ind_sd), linewidth = 1) +
   geom_point(aes(y = transformer$scale_func(temp_cv)),
-            colour = "#ec7014",
+            colour = "#ABA3D6",
             size = 5,
             shape = 8) +
   scale_y_continuous(
@@ -71,10 +71,10 @@ ggplot(data = full, aes(x = common, y = ind, color = groups)) +
       name = expression("Temporal dispersion")
     )) +
   facet_grid(rows = vars(hemisphere)) +
-  scale_color_manual(name = "Taxa grouping",
-                    aesthetics = c("color"),
-                    values = c("#ABA3D6", "#615A89", "#26223D")
-  ) +
+  # scale_color_manual(name = "Taxa grouping",
+  #                   aesthetics = c("color"),
+  #                   values = c("#ABA3D6", "#615A89", "#26223D")
+  # ) +
   ylab("Spatial dispersion") +
   theme_bw() +
   theme(axis.text.x = element_text(color = "black", size = 17, angle = 45, hjust = 1),

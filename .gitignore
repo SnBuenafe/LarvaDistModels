@@ -41,8 +41,8 @@ vignettes/*.pdf
 .Renviron
 
 # Large Files\
-Data/ne_50m_geography_marine_polys/
-Data/Climatology/
+Data/
+!Data/grid.rds
 !Data/Climatology/*.sh
 *.pdf
 *.rmd # Don't include markdowns
@@ -50,3 +50,6 @@ Data/Climatology/
 
 # Old scripts
 OldScripts/
+
+# Figures
+Figures/
