@@ -47,7 +47,7 @@ create_plot <- function(ggsalinity) {
                            barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('Broad-scale thermal gradient (Δppt km'^"-1)")) +
+    labs(fill = expression('Salinity gradient (Δppt km'^"-1)")) +
     change_gglayout()
 }
 
@@ -62,7 +62,7 @@ saveRDS(grad, here::here(output_dir,
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
-ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 15, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -74,7 +74,7 @@ saveRDS(grad, here::here(output_dir,
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
-ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 15, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sept"
@@ -86,7 +86,7 @@ saveRDS(grad, here::here(output_dir,
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
-ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 15, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -98,4 +98,4 @@ saveRDS(grad, here::here(output_dir,
 # grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
-ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sf, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 15, height = 5, dpi = 600)
