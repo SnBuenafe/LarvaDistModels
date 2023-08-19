@@ -11,16 +11,28 @@ This project aims to:
 The repository hosts the subset of data used to generate the boosted regression tree models (in `Data/`), but the raw and complete data can be extracted from their original sources described in __Data__ below.
 
 ## WORKFLOW
-The scripts are named sequentially. To rerun all the analyses, the user would have to go through all the scripts starting from scripts prefixed with `01_`. Note that scripts prefixed with `00_` are preliminary scripts and are called within the subsequent scripts. Therefore, there is no need to run them independently.
+The scripts are named sequentially. To rerun __all__ the analyses, the user would have to go through all the scripts starting from scripts prefixed with `01_`. This requires that the user downloads all necessary data from their original sources (see __Data__ below).
+
+Note that scripts prefixed with `00_` are preliminary scripts and are called within the subsequent scripts. Therefore, there is no need to run them independently.
 
 ### Summary of the code
-- `01_`: assembles all the predictors and creates seasonal data sets with the larval data
+- `01_`: assembles all the predictors and creates seasonal data sets with the larval data.
+
+To redo all analyses, make sure all the data are in their respective directories. To reproduce the climatology data, download Earth System Model outputs (see __Data__ below) and run the `processModels.sh` and `calculateOceanographicFeats.sh` scripts in `Climatology/`. The assembled data frames with all the predictor data and species data are found in `Output/CSV/`.
+
 - `02_` through `16_`: generate models for all 15 taxa. Scripts prefixed with `a_` refer to assembling the necessary data to run the models. `b_` scripts are where the full model is built. `c_` scripts are where the model outputs are restricted to areas where confidence is higher. Models are found in `Output/Models/` and model predictions for each taxa are found in `Output/Predictions/`
+
 - `17_`: assembling model outputs across taxa and saving them as rasters, which can be accessed in `Output/FinalRaster`
+
 - `18_`: Principal Component Analysis to determine hotspots
+
 - `19_`: plotting hemispheric seasonality
+
 - `20_`: generating seasonal taxa richness maps
+
 - `21_`: plotting model predictions vs predictors
+
+- `22_`: calculating spatiotemporal dispersion
 
 ## DATA
 The digitized larval data are found in [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7). The following species were included in this study:
