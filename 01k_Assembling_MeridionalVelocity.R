@@ -38,7 +38,7 @@ create_plot <- function(ggvo) {
                            barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('Meridional velocity (m s'^"-1"*') ')) +
+    labs(fill = expression('Meridional velocity (m s'^"-1"*')  ')) +
     change_gglayout()
 }
 
