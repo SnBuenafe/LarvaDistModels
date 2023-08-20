@@ -22,7 +22,11 @@ Note that scripts prefixed with `00_` are preliminary scripts and are called wit
 
 To redo all analyses, make sure all the data are in their respective directories. To reproduce the climatology data, download Earth System Model outputs (see __Data__ below) and run the `processModels.sh` and `calculateOceanographicFeats.sh` scripts in `Climatology/`. The assembled data frames with all the predictor data and species data are found in `Output/CSV/`.
 
-- `02_` through `16_`: generate models for all 15 taxa. Scripts prefixed with `a_` refer to assembling the necessary data to run the models. `b_` scripts are where the full model is built. `c_` scripts are where the model outputs are restricted to areas where confidence is higher. Models are found in `Output/Models/` and model predictions for each taxa are found in `Output/Predictions/`
+- `02_` through `16_`: generate models for all 15 taxa. Scripts prefixed with `a_` refer to assembling the necessary data to run the models. `b_` scripts are where the full model is built. `c_` scripts are where the model outputs are restricted to areas where confidence is higher. 
+
+To redo building the BRTs, make sure that the larval data (in `.rds` format) from [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7) is in `Data/Fish`. Please also make sure that the `crs` for these files are in `+proj=longlat +lon_0=180 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0` (see lines 14-15 of `00_SetupGrid.R`). The files in this repository are reprojected files of [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7).
+
+Models are found in `Output/Models/` and model predictions for each taxa are found in `Output/Predictions/`
 
 - `17_`: assembling model outputs across taxa and saving them as rasters, which can be accessed in `Output/FinalRaster`
 

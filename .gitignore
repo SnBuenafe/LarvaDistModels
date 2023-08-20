@@ -42,6 +42,9 @@ vignettes/*.pdf
 
 # Large Files\
 Data/
+!Data/gebco.rds
+!Data/coast_distance.rds
+!Data/Fish/*.rds
 !Data/grid.rds
 !Data/Climatology/*.sh
 *.pdf
