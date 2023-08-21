@@ -1,5 +1,5 @@
 # Historical hotspots of pelagic fish larvae in the Indian and Pacific Oceans.
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8264849.svg)](https://doi.org/10.5281/zenodo.8264849)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8271292.svg)](https://doi.org/10.5281/zenodo.8271292)
 
 This repository contains all the pertinent code and analysis of Buenafe et al. (submitted).
 
