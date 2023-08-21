@@ -65,6 +65,7 @@ ggplot(data = full, aes(x = common, y = ind)) +
             colour = "#ABA3D6",
             size = 5,
             shape = 8) +
+  coord_fixed(ratio = 1.05) +
   scale_y_continuous(
     sec.axis = sec_axis(
       trans = ~ transformer$inv_func(.),
@@ -77,7 +78,7 @@ ggplot(data = full, aes(x = common, y = ind)) +
   # ) +
   ylab("Spatial dispersion") +
   theme_bw() +
-  theme(axis.text.x = element_text(color = "black", size = 17, angle = 45, hjust = 1),
+  theme(axis.text.x = element_text(color = "black", size = 15, angle = 45, hjust = 1),
         axis.title.x = element_blank(),
         axis.title.y.left = element_text(color = "black", size = 19, vjust = 2),
         axis.title.y.right = element_text(color = "black", size = 19, vjust = 2),
@@ -88,7 +89,7 @@ ggplot(data = full, aes(x = common, y = ind)) +
         strip.text = element_text(color = "black", size = 20),
         legend.position = "bottom")
 
-ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 17, height = 8, units = "in")
+ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 15, height = 8, units = "in")
 
 # Printing for interpretation
 full %>% 
