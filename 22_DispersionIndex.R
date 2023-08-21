@@ -42,7 +42,7 @@ full <- purrr::reduce(df, dplyr::left_join, by = c("species", "hemisphere")) %>%
   dplyr::rowwise() %>% 
   dplyr::mutate(ind = mean(c_across(starts_with("ind"))),
                 ind_sd = sd(c_across(starts_with("ind"))),
-                temp_cv = ind_sd/ind) %>% # Take the mean and SD across seasons per species (temporal dispersion)
+                temp_cv = ind_sd) %>% # Take the SD across seasons per species (temporal dispersion)
   dplyr::select(species, hemisphere, ind, ind_sd, temp_cv) %>% 
   dplyr::mutate(code = toupper(species)) %>% 
   dplyr::select(-species) %>% 
@@ -53,45 +53,47 @@ full <- purrr::reduce(df, dplyr::left_join, by = c("species", "hemisphere")) %>%
   dplyr::bind_cols(., )
 
 # Transform data for the secondary axis (temporal dispersion)
-transformer <- full %>% 
-  ungroup() %>% 
-  transformer_dual_Y_axis(ind, temp_cv, FALSE)
+# transformer <- full %>% 
+#   ungroup() %>% 
+#   transformer_dual_Y_axis(ind, temp_cv, FALSE)
 
 # Plot mean index across seasons per species (spatial dispersion) and the CV of the indices per season per species (temporal dispersion)
 ggplot(data = full, aes(x = common, y = ind)) +
   geom_point(size = 2) +
-  geom_errorbar(aes(ymin = ind-ind_sd, ymax = ind+ind_sd), linewidth = 1) +
-  geom_point(aes(y = transformer$scale_func(temp_cv)),
-            colour = "#ABA3D6",
-            size = 5,
-            shape = 8) +
-  scale_y_continuous(
-    sec.axis = sec_axis(
-      trans = ~ transformer$inv_func(.),
-      name = expression("Temporal dispersion")
-    )) +
+  geom_errorbar(aes(ymin = ind-ind_sd, ymax = ind+ind_sd), linewidth = 0.5) +
+  # geom_point(aes(y = transformer$scale_func(temp_cv)),
+  #           colour = "#827CBD",
+  #           size = 3,
+  #           shape = 8) +
+  coord_fixed(ratio = 1.3) +
+  # scale_y_continuous(
+  #   sec.axis = sec_axis(
+  #     trans = ~ transformer$inv_func(.),
+  #     name = expression("Temporal dispersion")
+  #   )) +
   facet_grid(rows = vars(hemisphere)) +
   # scale_color_manual(name = "Taxa grouping",
   #                   aesthetics = c("color"),
   #                   values = c("#ABA3D6", "#615A89", "#26223D")
   # ) +
-  ylab("Spatial dispersion") +
+  ylab("Dispersion") +
   theme_bw() +
-  theme(axis.text.x = element_text(color = "black", size = 17, angle = 45, hjust = 1),
+  theme(axis.text.x = element_text(color = "black", size = 12, angle = 45, hjust = 1),
         axis.title.x = element_blank(),
-        axis.title.y.left = element_text(color = "black", size = 19, vjust = 2),
-        axis.title.y.right = element_text(color = "black", size = 19, vjust = 2),
-        axis.text.y = element_text(color = "black", size = 18),
+        axis.title.y = element_text(color = "black", size = 16, vjust = 2),
+        #axis.title.y.right = element_text(color = "#827CBD", size = 19, vjust = 2),
+        axis.text.y = element_text(color = "black", size = 12),
+        #axis.text.y.right = element_text(colour = "#827CBD"),
         legend.title = element_text(color = "black", size = 18),
         legend.text = element_text(color = "black", size = 15),
-        strip.background=element_rect(fill="white"),
-        strip.text = element_text(color = "black", size = 20),
+        strip.background = element_blank(),
+        strip.text = element_blank(),
         legend.position = "bottom")
 
-ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 17, height = 8, units = "in")
+ggsave(filename = here::here(figure_dir, "Dispersion.png"), dpi = 600, width = 15, height = 8, units = "in")
 
 # Printing for interpretation
 full %>% 
   dplyr::filter(hemisphere == "North") %>% 
-  dplyr::arrange(ind) %>% 
+  dplyr::arrange(desc(temp_cv)) %>% 
   print(n = 5)
