@@ -34,7 +34,7 @@ create_plot <- function(ggtos) {
                        aesthetics = c("fill"),
                        direction = -1,
                        na.value = "grey64",
-                       limits = c(5,35),
+                       limits = c(0,35),
                        guide = guide_colourbar(
                          title.vjust = 0.5,
                          barheight = grid::unit(0.035, "npc"),
