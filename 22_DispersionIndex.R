@@ -76,7 +76,7 @@ ggplot(data = full, aes(x = common, y = ind)) +
   #                   aesthetics = c("color"),
   #                   values = c("#ABA3D6", "#615A89", "#26223D")
   # ) +
-  ylab("Dispersion") +
+  ylab("Index of dispersion") +
   theme_bw() +
   theme(axis.text.x = element_text(color = "black", size = 12, angle = 45, hjust = 1),
         axis.title.x = element_blank(),

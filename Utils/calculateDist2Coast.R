@@ -1,3 +1,6 @@
+# Written by: Kristine Buenafe
+  # k.buenafe@uq.edu.au
+  # March/April 2023
 # Description: Calculate the distance to the nearest coastline
 
 calculateDist2Coast <- function(grid) {
