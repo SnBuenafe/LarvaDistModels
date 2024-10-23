@@ -2,7 +2,8 @@
 
 # Load preliminaries
 source("00_PreparePredictors.R")
-label <- "phos_historical"
+old_label <- paste("phos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19560101-19811231", sep = "_")
+new_label <- "phos_omip2"
 figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare phos layer
@@ -45,51 +46,51 @@ create_plot <- function(ggphos) {
 # i. January-March
 season <- "jan-mar"
 phos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                       paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
-                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                        paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
-ggsave(plot = ph, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
 phos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                       paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
-                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                        paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
-ggsave(plot = ph, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
-season <- "jul-sept"
+season <- "jul-sep"
 phos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                       paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
-                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                        paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
-ggsave(plot = ph, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
 phos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                       paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
-                        paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                        paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
-ggsave(plot = ph, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
