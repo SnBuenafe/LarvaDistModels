@@ -45,7 +45,6 @@ vignettes/*.pdf
 !Data/Fish/*.rds
 !Data/gebco.rds
 !Data/coast_distance.rds
-!Data/AquaMaps_sf.rds
 *.pdf
 *.rmd # Don't include markdowns
 *.css
@@ -56,4 +55,4 @@ OldScripts/
 Data/Climatology/trash/
 
 # Figures
-Figures/
+
