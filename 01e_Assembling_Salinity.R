@@ -2,7 +2,8 @@
 
 # Load preliminaries
 source("00_PreparePredictors.R")
-label <- "sos_historical"
+old_label <- paste("sos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19560101-19811231", sep = "_")
+new_label <- "sos_omip2"
 figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare sos layer
@@ -30,7 +31,7 @@ create_plot <- function(ggsos) {
     geom_sf(data = dataSalinity, aes(fill = sos_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = rev(brewer.pal(9, "PuBuGn")),
                          na.value = "grey64",
-                         limits = c(29.5, 36.5),
+                         limits = c(0, 50),
                          guide = guide_colourbar(
                            title.vjust = 0.5,
                            barheight = grid::unit(0.035, "npc"),
@@ -45,51 +46,51 @@ create_plot <- function(ggsos) {
 # i. January-March
 season <- "jan-mar"
 sos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
-                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
-ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
 sos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
-                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
-ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
-season <- "jul-sept"
+season <- "jul-sep"
 sos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
-                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
-ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
 sos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                        paste(label, "1956", "1981", season, "ensemble.nc", sep = "_"))) %>% 
+                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
   terra::rast()
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
-                          paste(label, season, "interpolated.rds", sep = "_"))) # save object
+                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
-ggsave(plot = sal, filename = here::here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
