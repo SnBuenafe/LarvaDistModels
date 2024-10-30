@@ -2,13 +2,13 @@
 
 # Load preliminaries
 source("00_PreparePredictors.R")
-old_label <- paste("sos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19560101-19811231", sep = "_")
+old_label <- paste("sos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "sos_omip2"
 figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare sos layer
 create_layer <- function(rs) {
-  names(rs) <- paste0("X", seq(1956, 1981, by = 1))  
+  names(rs) <- paste0("X", seq(1963, 1981, by = 1))  
   
   sos <- rs2sf(rs) %>% 
     dplyr::rename(sos = mean) %>% # using the mean of the models

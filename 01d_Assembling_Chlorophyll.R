@@ -2,13 +2,13 @@
 
 # Load preliminaries
 source("00_PreparePredictors.R")
-old_label <- paste("chlos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19560101-19811231", sep = "_")
+old_label <- paste("chlos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "chlos_omip2"
 figure_dir <- here::here(figure_dir, "predictors")
 
 # Function to prepare chlos layer
 create_layer <- function(rs) {
-  names(rs) <- paste0("X", seq(1956, 1981, by = 1))  
+  names(rs) <- paste0("X", seq(1963, 1981, by = 1))  
   
   chlos <- rs2sf(rs) %>% 
     dplyr::rename(chlos = mean) %>% # using the mean of the models
@@ -32,7 +32,7 @@ create_plot <- function(ggchlos, season) {
     geom_sf(data = dataChlorophyll, aes(fill = chlos_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = brewer.pal(9, "YlGn"),
                          na.value = "grey64",
-                         limits = c(0.02, 0.45),
+                         limits = c(0.02, 1200),
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
