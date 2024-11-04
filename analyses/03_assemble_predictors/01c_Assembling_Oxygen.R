@@ -1,7 +1,11 @@
 # DESCRIPTION: Creating seasonal oxygen layers
 
 # Load preliminaries
-source("00_PreparePredictors.R")
+library(here)
+preliminaries_dir <- here("analyses", "02_preliminaries")
+source(here(preliminaries_dir, "00_PreparePredictors.R"))
+
+# Set labeling parameters
 old_label <- paste("o2os", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "o2os_omip2"
 figure_dir <- here::here(figure_dir, "predictors")

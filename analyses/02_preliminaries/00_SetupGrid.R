@@ -4,8 +4,8 @@
 # install.packages("pacman")
 # devtools::install_github("ropensci/rnaturalearthhires")
 pacman::p_load(here, sf, rnaturalearth, rnaturalearthhires, tidyverse, magrittr)
-source("Utils/fSpatPlan_Convert2PacificCentered.R")
-source("Utils/spatialplanrfxns.R")
+source("functions/fSpatPlan_Convert2PacificCentered.R")
+source("functions/spatialplanrfxns.R")
 
 # Define map projections
 sf_use_s2(FALSE)
