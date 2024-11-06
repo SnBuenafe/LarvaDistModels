@@ -53,52 +53,52 @@ create_plot <- function(ggtos) {
 
 # i. January-March
 season <- "jan-mar"
-tos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
-  terra::rast()
+tos_rs <- read_ncdf(here(input_dir, 
+                         paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
+  rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, 
+saveRDS(tos, here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 tmp <- create_plot(tos)
-ggsave(plot = tmp, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = tmp, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
-tos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
-  terra::rast()
+tos_rs <- read_ncdf(here(input_dir, 
+                         paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
+  rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, 
+saveRDS(tos, here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 tmp <- create_plot(tos)
-ggsave(plot = tmp, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = tmp, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sep"
-tos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
-  terra::rast()
+tos_rs <- read_ncdf(here(input_dir, 
+                         paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
+  rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, 
-                        paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
+saveRDS(tos, here(output_dir, 
+                  paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 tmp <- create_plot(tos)
-ggsave(plot = tmp, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = tmp, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
-tos_rs <- stars::read_ncdf(here::here(input_dir, 
-                                      paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
-  terra::rast()
+tos_rs <- read_ncdf(here(input_dir, 
+                                paste(old_label, paste0(season, ".nc"), sep = "_"))) %>% 
+  rast()
 tos <- create_layer(tos_rs)
-saveRDS(tos, here::here(output_dir, 
-                        paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
+saveRDS(tos, here(output_dir, 
+                  paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
 # tos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 tmp <- create_plot(tos)
-ggsave(plot = tmp, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+ggsave(plot = tmp, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

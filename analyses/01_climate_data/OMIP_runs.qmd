@@ -1,7 +1,13 @@
 ---
-title: "OMIP runs"
+title: "Preparing climate model outputs"
 author: "Tin Buenafe"
 editor: source
+format:
+  html:
+    code-fold: true
+    code-overflow: wrap
+    code-tools: true
+    code-copy: true
 ---
 
 ```{r, include = FALSE}
@@ -10,33 +16,44 @@ knitr::opts_chunk$set(
   message = FALSE,
   warning = FALSE,
   output = FALSE,
+  eval = FALSE,
   comment = "#>"
 )
 
-base_dir <- path.expand(file.path("~", "Documents", "GitHub", "hotrstuff", "data-raw"))
+base_dir <- path.expand(file.path("~", "Documents", "GitHub", "LarvaDistModels", "data_input"))
 volumes_dir <- file.path("/", "Volumes", "Expansion", "LarvaBRT_Submission2")
 
 variable = "vo"
 ```
 
+We used Climate Data Operators ([cdo](https://code.mpimet.mpg.de/projects/cdo)) to process the netcdf files from [ESGF (Earth System Grid Federation) MetaGrid](https://aims2.llnl.gov/search). To do this in R, we used [`hotrstuff`](https://snbuenafe.github.io/hotrstuff/), an R package that we are currently developing to more easily wrangle Earth System Model (ESM) data in R.
+
+To rerun all of this, the user must:
+- [x] define the file paths. Here we purposely used two different file paths to spread the memory load because some models take up to 700gb of storage space.
+- [x] define the variable that will be used and use the proper ESGF code (e.g., "tos", "o2os", "thetao", etc.)
+
 ```{r setup}
-# To install `hotrstuff`, an R package that wrangles ESM data (currently in development), check out: https://snbuenafe.github.io/hotrstuff/ 
 library(hotrstuff)
 library(terra)
+
+# Properly define file paths as necessary.
+# variable = "tos" # Change this as needed
 ```
 
-## Download
+## 1. Download model outputs
 
-Downloading OMIP outputs from <https://aims2.llnl.gov/> into their respective folders.
+wget scripts are downloaded from [ESGF (Earth System Grid Federation) MetaGrid](https://aims2.llnl.gov/search). For this analyses we used Ocean Model Intercomparison Project Phase 2 (OMIP2).
+
 ```{r download, echo = FALSE}
 # htr_download_ESM(indir = file.path(volumes_dir, "raw", "wget"), # input directory
 #                  outdir = file.path(volumes_dir, "raw", "omip", variable) # output directory
 # )
 ```
 
-## Shift years
+## 2. Shift years
 
-OMIP runs are six cycles of simulations using the 61-year JRA55-do forcing data set (1958-2018), resulting in *366-year* model outputs. So, we need to shift the years 1652 years forward for some of the models (e.g., starting at 0001) to standardize across models.
+OMIP runs are six cycles of simulations using the 61-year JRA55-do forcing data set (1958-2018), resulting in *366-year* model outputs. So, we need to shift the years 1652 years forward for some of the models (e.g., starting at 0001) to standardize across models (see [Tsujino et al., 2020](https://gmd.copernicus.org/articles/13/3643/2020/)). *Note*: When working with depth-resolved models, I would highly suggest running steps 2-3 per model unless you're working on an HPC or a very powerful laptop/workstation.
+
 
 ```{r shift_years}
 htr_shift_years(indir = file.path(volumes_dir, "raw", "omip", "vo_temporary"),
@@ -44,9 +61,9 @@ htr_shift_years(indir = file.path(volumes_dir, "raw", "omip", "vo_temporary"),
                 adjust_value = 1652)
 ```
 
-## Merge
+## 3. Merge
 
-Now, we merge the files by model-variable-scenario-frequency combination and only take the files that have the years 1956-1981 to match the Nishikawa dataset.
+Now, we merge the files by model-variable-scenario-frequency combination and only take the files that have the years 1956-1981 to match the Nishikawa dataset. 
 
 ```{r merge}
 htr_merge_files(indir = file.path(volumes_dir, "proc", "shifted", "omip", variable), #input directory
@@ -56,9 +73,9 @@ htr_merge_files(indir = file.path(volumes_dir, "proc", "shifted", "omip", variab
             )
 ```
 
-## Select years
+## 4. Select years
 
-Because we're using OMIP models with six simulations of 1958-2018, we need to account for the spin-up of the models and the fact that after each cycle, the model experiences a large shock from 2018 going back to 1958 (Huguenin et al., 2022). So, even though the Nishikawa dataset is from 1956-1981, we are going to calculate predictors from 1963 (+5 years from the initial year of each simulation cycle) until 1981, resulting in a 19-year summary.
+Because we're using OMIP models with six simulations of 1958-2018, we need to account for the spin-up of the models and the fact that after each cycle, the model experiences a large shock from 2018 going back to 1958 (see [Huguenin et al., 2022](https://www.nature.com/articles/s41467-022-32540-5)). So, even though the Nishikawa dataset is from 1956-1981, we are going to calculate predictors from 1963 (+5 years from the initial year of each simulation cycle) until 1981, resulting in a 19-year summary.
 
 ```{r adjust}
 htr_slice_period(indir = file.path(base_dir, "data", "proc", "merged", "omip", variable), #input directory
@@ -72,7 +89,7 @@ htr_slice_period(indir = file.path(base_dir, "data", "proc", "merged", "omip", v
 
 ```
 
-## Fix calendar periods (if needed)
+## 5. Fix calendar periods (if needed)
 
 This function fixes the calendar days, for days with leap years. This is to standardize the calendar across the different models.
 
@@ -80,9 +97,9 @@ This function fixes the calendar days, for days with leap years. This is to stan
 htr_fix_calendar(indir = file.path(base_dir, "data", "proc", "sliced", "omip", variable)) #will be rewritten
 ```
 
-## Change frequency
+## 6. Change frequency
 
-Now, we create objects for the different seasons according to Nishikawa: 1) Jan-Mar; 2) Apr-Jun; 3) Jul-Sep; and 4) Oct-Dec.
+Now, we create objects for the different seasons according to the Nishikawa dataset: 1) Jan-Mar; 2) Apr-Jun; 3) Jul-Sep; and 4) Oct-Dec. This code will result in 4 files for each model-scenario-variable-frequency, combination.
 
 ```{r seasons}
 # January - March
@@ -117,14 +134,12 @@ htr_seasonal_frequency(indir = file.path(base_dir, "data", "proc", "sliced", "om
                        months_name = "oct-dec" # define season name 
 )
 
-system(paste0("rm ", paste0(file.path(base_dir, "data", "temporary"), "/*")))
+system(paste0("rm ", paste0(file.path(base_dir, "data", "temporary"), "/*"))) # remove some of the intermediate files to save space
 ```
 
-This code will result in 4 files for each model-scenario-variable-frequency, combination.
+## 7. Regridding
 
-## Regridding
-
-The climate models have different grids, so now we need to regrid and standardize the grid. This requires a base, empty raster that will be made automatically in the `regrid_esm()`.
+The climate models have different grids, so now we need to standardize the grids across models. This requires a base, empty raster that will be made automatically in `htr_regrid_esm()`.
 
 ```{r regrid}
 htr_regrid_esm(indir = file.path(base_dir, "data", "proc", "seasonal", "omip", variable),
@@ -144,7 +159,7 @@ plot(model2[[var_name]])
 
 Looks good!
 
-## [FOR DEPTH-RESOLVED MODELS] Define depth domains
+## 8. [FOR DEPTH-RESOLVED MODELS] Define depth domains
 
 This is only applicable for depth-resolved models and this step should be skipped if only looking at surface models. We first define the depth domains using the levels. Each model has different levels.
 
@@ -166,30 +181,32 @@ htr_integrate_levels(indir = file.path(base_dir, "data", "proc", "regridded", "y
                      )
 ```
 
-## Create ensemble
+## 9. Create ensemble
 
 Input the `model_list` for the members of the ensemble per variable.
 
 The ensemble members for each variable are as follows:
 
--   **tos**: ACCESS-OM2, ACCESS-OM2-025, CESM2, CMCC-CM2-HR4, CMCC-CM2-SR5, CNRM-CM6-1, CNRM-CM6-1-HR, EC-Earth3, FGOALS-f3-L, MIROC6, MRI-ESM2-0, NorESM2-LM, and TaiESM1-TIMCOM2 (n = 13)
--   **o2os**: ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, and NorESM2-LM (n = 5)
--   **phos**: CESM2, MRI-ESM2-0, NorESM2-LM (n = 3)
--   **chlos**: ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, NorESM2-LM (n = 5)
--   **sos**: ACCESS-OM2, ACCESS-OM2-025, CESM2, CMCC_CM2-HR4, CMCC-CM2-SR5, CNRM-CM6-1, CNRM-CM6-1-HR, EC-Earth3, FGOALS-f3-L, GFDL-CM4, MIROC6, MRI-ESM2-0, NorESM2-LM, TaiESM1-TIMCOM2 (n = 14)
--   **mlotst**: ACCESS-OM2, ACCESS-OM2-025, CESM2, CMCC-CM2-HR4, CMCC-CM2-SR5, CNRM-CM6-1, CNRM-CM6-1-HR, EC-Earth3, FGOALS-f3-L, GFDL-CM4, MIROC6, MRI-ESM2-0, NorESM2-LM, TaiESM1-TIMCOM2 (n = 14)
--   **no3os**: ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, NorESM2-LM (n = 5)
--   **po4os**: ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, NorESM2-LM (n = 5)
--   **nh4os**: 
--   **uo**: ACCESS-OM2, ACCESS-OM2-O25, CNRM-CM6-1, EC-Earth3, FGOALS-f3-L, GFDL-CM4, MIROC6, MRI-ESM2-0, TaiESM1-TIMCOM2 (n = 9)
--   **vo**
+| Variables | Models |
+|:-|:------:|
+|`tos` (n =13)|ACCESS-OM2, ACCESS-OM2-025, CESM2, CMCC-CM2-HR4, CMCC-CM2-SR5, CNRM-CM6-1, CNRM-CM6-1-HR, EC-Earth3, FGOALS-f3-L, MIROC6, MRI-ESM2-0, NorESM2-LM, TaiESM1-TIMCOM2|
+|`o2os` (n = 5)|ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, NorESM2-LM|
+|`phos` (n = 3)|CESM2, MRI-ESM2-0, NorESM2-LM|
+|`chlos` (n = 5)|ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, NorESM2-LM|
+|`sos` (n = 14)|ACCESS-OM2, ACCESS-OM2-025, CESM2, CMCC-CM2-HR4, CMCC-CM2-SR5, CNRM-CM6-1, CNRM-CM6-1-HR, EC-Earth3, FGOALS-f3-L, GFDL-CM4, MIROC6, MRI-ESM2-0, NorESM2-LM, TaiESM1-TIMCOM2|
+|`mlotst` (n = 14)|ACCESS-OM2, ACCESS-OM2-025, CESM2, CMCC-CM2-HR4, CMCC-CM2-SR5, CNRM-CM6-1, CNRM-CM6-1-HR, EC-Earth3, FGOALS-f3-L, GFDL-CM4, MIROC6, MRI-ESM2-0, NorESM2-LM, TaiESM1-TIMCOM2|
+|`no3os` (n = 5)|ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, NorESM2-LM|
+|`po4os` (n = 5)|ACCESS-OM2, CESM2, EC-Earth3, MRI-ESM2-0, NorESM2-LM|
+|`nh40s` (n = x)|... |
+|`uo` (n = 9)|ACCESS-OM2, ACCESS-OM2-025, CNRM-CM6-1, EC-Earth3, FGOALS-f3-L, GFDL-CM4, MIROC6, MRI-ESM2-0, TaiESM1-TIMCOM2|
+|`vo` (n = x)|...|
 
 ```{r ensemble}
 ensemble <- c("ACCESS-OM2", "ACCESS-OM2-O25", "CNRM-CM6-1", "EC-Earth3", "FGOALS-f3-L", "GFDL-CM4", "MIROC6", "MRI-ESM2-0", "TaiESM1-TIMCOM2")
 
 # January-March
 htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "omip", variable), #input directory
-                    outdir = file.path(base_dir, "data", "proc", "ensemble", "mean", "omip", variable), #output directory
+                    outdir = file.path(base_dir, "climate_ensemble"), #output directory
                     model_list = ensemble, #list of models for ensemble
                     variable = variable, #variable name
                     freq = "Omon", #original frequency of data
@@ -200,7 +217,7 @@ htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "o
 
 # April-June
 htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "omip", variable), #input directory
-                    outdir = file.path(base_dir, "data", "proc", "ensemble", "mean", "omip", variable), #output directory
+                    outdir = file.path(base_dir, "climate_ensemble"), #output directory
                     model_list = ensemble, #list of models for ensemble
                     variable = variable, #variable name
                     freq = "Omon", #original frequency of data
@@ -211,7 +228,7 @@ htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "o
 
 # July-September
 htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "omip", variable), #input directory
-                    outdir = file.path(base_dir, "data", "proc", "ensemble", "mean", "omip", variable), #output directory
+                    outdir = file.path(base_dir, "climate_ensemble"), #output directory
                     model_list = ensemble, #list of models for ensemble
                     variable = variable, #variable name
                     freq = "Omon", #original frequency of data
@@ -222,7 +239,7 @@ htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "o
 
 # October-December
 htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "omip", variable), #input directory
-                    outdir = file.path(base_dir, "data", "proc", "ensemble", "mean", "omip", variable), #output directory
+                    outdir = file.path(base_dir, "climate_ensemble"), #output directory
                     model_list = ensemble, #list of models for ensemble
                     variable = variable, #variable name
                     freq = "Omon", #original frequency of data
@@ -235,7 +252,7 @@ htr_create_ensemble(indir = file.path(base_dir, "data", "proc", "integrated", "o
 Then, we plot to see how it looks.
 
 ```{r plot_ensemble, output = TRUE}
-ensemble_model <- list.files(file.path(base_dir, "data", "proc", "ensemble", "mean", "omip", variable), full.names = TRUE)
+ensemble_model <- list.files(file.path(base_dir, "climate_ensemble"), full.names = TRUE)
 ensemble_jm <- rast(ensemble_model[1])
 ensemble_aj <- rast(ensemble_model[2])
 ensemble_js <- rast(ensemble_model[3])

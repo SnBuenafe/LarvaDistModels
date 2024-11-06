@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("uo", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "uo_omip2"
-figure_dir <- here::here(figure_dir, "predictors")
+figure_dir <- here(figure_dir, "predictors")
 
 # Function to prepare uo layer
 create_layer <- function(rs) {

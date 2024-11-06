@@ -1,5 +1,5 @@
 # Description: Convert bathymetry data (.TIFF) to sf (based on the grid provided)
-# CAUTION: You need the raw files to run this code. See https://www.gebco.net/data_and_products/gridded_bathymetry_data/
+# NOTE: This code is data-intensive. You need the raw files to run this code. See https://www.gebco.net/data_and_products/gridded_bathymetry_data/
 
 # Load packages
 # install.packages("pacman")

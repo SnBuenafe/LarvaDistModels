@@ -1,7 +1,7 @@
 # Description: Combine seasonal data of species into one sf object
 combineFish <- function(species) {
   
-  path <- here::here("Data", "Fish")
+  path <- here::here("data_input", "fish")
   list <- list.files(path)
   param <- c(species, ".rds")
   x <- apply(outer(list, param, stringr::str_detect), 1, all) %>% as.numeric()
