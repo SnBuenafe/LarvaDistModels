@@ -41,18 +41,6 @@ vignettes/*.pdf
 .Renviron
 
 # Large Files
-!Data/Climatology/*.sh
-!Data/Fish/*.rds
-!Data/gebco.rds
-!Data/coast_distance.rds
 *.pdf
 *.rmd # Don't include markdowns
 *.css
-*.nc
-
-# Old scripts
-OldScripts/
-Data/Climatology/trash/
-
-# Figures
-
