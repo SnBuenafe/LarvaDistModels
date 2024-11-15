@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for frigate tuna
 
 # Load preliminaries
-source("07a_FRI_Data.R") # Load FRI data
+source(file.path("analyses", "04_models", "07a_FRI_Data.R")) # Load FRI data
 
 #### Create model ####
 

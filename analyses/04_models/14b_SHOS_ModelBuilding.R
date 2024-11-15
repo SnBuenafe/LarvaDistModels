@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for shortbill spearfish
 
 # Load preliminaries
-source("14a_SHOS_Data.R") # Load SHOS data
+source(file.path("analyses", "04_models", "14a_SHOS_Data.R")) # Load SHOS data
 
 #### Create model ####
 

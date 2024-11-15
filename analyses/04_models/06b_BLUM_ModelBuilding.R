@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for blue marlin
 
 # Load preliminaries
-source("06a_BLUM_Data.R") # Load BLUM data
+source(file.path("analyses", "04_models", "06a_BLUM_Data.R")) # Load BLUM data
 
 #### Create model ####
 

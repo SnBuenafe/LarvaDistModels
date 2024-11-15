@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for longfin escolar
 
 # Load preliminaries
-source("16a_LESC_Data.R") # Load LESC data
+source(file.path("analyses", "04_models", "16a_LESC_Data.R")) # Load LESC data
 
 #### Create model ####
 

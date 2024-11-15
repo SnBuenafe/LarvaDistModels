@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for swordfish
 
 # Load preliminaries
-source("05a_SWO_Data.R") # Load SWO data
+source(file.path("analyses", "04_models", "05a_SWO_Data.R")) # Load SWO data
 
 #### Create model ####
 

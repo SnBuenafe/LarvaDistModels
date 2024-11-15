@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for bigeye tuna
 
 # Load preliminaries
-source("08a_BET_Data.R") # Load BET data
+source(file.path("analyses", "04_models", "08a_BET_Data.R")) # Load BET data
 
 #### Create model ####
 

@@ -1,7 +1,7 @@
 # DESCRIPTION: Correlation matrices using the PCA loadings
 
 # Load preliminaries
-source("00_Preliminaries.R")
+source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 PC <- c("PC1", "PC2")
 figure_dir <- here::here(figure_dir, "PCA")

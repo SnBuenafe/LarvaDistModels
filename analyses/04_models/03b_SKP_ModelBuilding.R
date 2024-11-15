@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for skipjack tuna
 
 # Load preliminaries
-source("03a_SKP_Data.R") # Load SKP data
+source(file.path("analyses", "04_models", "03a_SKP_Data.R")) # Load SKP data
 
 #### Create model ####
 

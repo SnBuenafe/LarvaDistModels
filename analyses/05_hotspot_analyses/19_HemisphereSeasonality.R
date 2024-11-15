@@ -1,9 +1,11 @@
 # DESCRIPTION: Barplots showing seasonality between N. and S. Hemispheres
 
 # Load preliminaries
-#source("00_SetupGrid.R")
-source("00_Preliminaries.R")
-source("Utils/fxnshemisphere.R")
+#source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
+source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
+
+# source("Utils/fxnshemisphere.R")
+
 pacman::p_load(patchwork, purrr)
 seas_list <- c("Jan-Mar", "Apr-Jun", "Jul-Sept", "Oct-Dec")
 
@@ -11,7 +13,8 @@ seas_list <- c("Jan-Mar", "Apr-Jun", "Jul-Sept", "Oct-Dec")
 full_df <- prepare_hemis_obj(seas_list)
 
 spp_list <- spec_dict %>%  # remove species we're not interested in
-  dplyr::filter(!code %in% c("LIT", "BON"))
+  dplyr::filter(!code %in% c("LIT", "BON")) %>% 
+  dplyr::filter(!code %in% "SAU") # Temporarily removed while we sort out the BRT
 
 #### Plot hemispheric seasonality across species ####
 for(i in 1:nrow(spp_list)) {

@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("04a_ALB_Data.R") # Load ALB data
+source(file.path("analyses", "04_models", "04a_ALB_Data.R")) # Load ALB data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions

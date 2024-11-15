@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for albacore
 
 # Load preliminaries
-source("04a_ALB_Data.R") # Load ALB data
+source(file.path("analyses", "04_models", "04a_ALB_Data.R")) # Load ALB data
 
 #### Create model ####
 

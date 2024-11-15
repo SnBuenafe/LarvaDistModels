@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for slender tuna
 
 # Load preliminaries
-source("13a_SLT_Data.R") # Load SLT data
+source(file.path("analyses", "04_models", "13a_SLT_Data.R")) # Load SLT data
 
 #### Create model ####
 

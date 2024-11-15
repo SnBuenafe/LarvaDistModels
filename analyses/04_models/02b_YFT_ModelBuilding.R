@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for yellowfin tuna
 
 # Load preliminaries
-source("02a_YFT_Data.R") # Load YFT data
+source(file.path("analyses", "04_models", "02a_YFT_Data.R")) # Load YFT data
 
 #### Create model ####
 

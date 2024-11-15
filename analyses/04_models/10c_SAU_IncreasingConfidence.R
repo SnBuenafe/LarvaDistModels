@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("10a_SAU_Data.R") # Load SAU data
+source(file.path("analyses", "04_models", "10a_SAU_Data.R")) # Load SAU data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions

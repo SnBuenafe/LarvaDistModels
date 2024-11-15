@@ -1,7 +1,7 @@
 # DESCRIPTION: Identify core hotspots across species using the model outputs
 
-source("00_SetupGrid.R")
-source("00_Preliminaries.R")
+source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
+source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 seas_list <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
 new_names <- c("jm", "aj", "js", "od")
 figure_dir <- here::here(figure_dir, "taxa_richness")
@@ -10,10 +10,16 @@ figure_dir <- here::here(figure_dir, "taxa_richness")
 a_grid <- associateGrids(grid, grid_100) %>% 
   dplyr::as_tibble()
 
+spp_list <- spec_dict %>% 
+  dplyr::filter(!code %in% c("LIT", "BON")) %>% 
+  dplyr::filter(!code %in% "SAU") %>%  # Temporarily removed while we sort out the BRT
+  dplyr::pull(code) %>% 
+  tolower()
+
 #### Calculate hotspot metric ####
 df <- list() # empty list
 for(i in 1:length(seas_list)) {
-  df[[i]] <- determineHotspots(seas_list[i])
+  df[[i]] <- determineHotspots(seas_list[i], spp_list)
 }
 
 full <- purrr::reduce(df, dplyr::full_join) %>% # join all seasons together
@@ -58,3 +64,4 @@ for(i in 1:length(seas_list)) {
 # Summary map
 sum_map <- plotHotspotSummary(fin)
 ggsave(plot = sum_map, filename = here::here(figure_dir, paste("TaxaRichness", "SummaryHotspots.png", sep = "_")), width = 14, height = 5, dpi = 600)
+

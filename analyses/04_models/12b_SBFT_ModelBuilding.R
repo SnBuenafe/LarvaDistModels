@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for southern bluefin tuna
 
 # Load preliminaries
-source("12a_SBFT_Data.R") # Load SBFT data
+source(file.path("analyses", "04_models", "12a_SBFT_Data.R")) # Load SBFT data
 
 #### Create model ####
 

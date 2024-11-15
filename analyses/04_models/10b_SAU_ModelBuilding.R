@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for sauries
 
 # Load preliminaries
-source("10a_SAU_Data.R") # Load SAU data
+source(file.path("analyses", "04_models", "10a_SAU_Data.R")) # Load SAU data
 
 #### Create model ####
 

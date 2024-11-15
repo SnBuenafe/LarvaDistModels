@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("05a_SWO_Data.R") # Load SWO data
+source(file.path("analyses", "04_models", "05a_SWO_Data.R")) # Load SWO data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions

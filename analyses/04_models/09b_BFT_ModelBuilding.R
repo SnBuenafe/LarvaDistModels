@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for striped marlin
 
 # Load preliminaries
-source("09a_BFT_Data.R")
+source(file.path("analyses", "04_models", "09a_BFT_Data.R"))
 
 #### Create model ####
 

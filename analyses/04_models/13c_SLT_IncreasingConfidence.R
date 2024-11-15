@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("13a_SLT_Data.R") # Load SLT data
+source(file.path("analyses", "04_models", "13a_SLT_Data.R")) # Load SLT data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions

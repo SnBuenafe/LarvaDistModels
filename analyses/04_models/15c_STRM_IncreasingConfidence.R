@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("15a_STRM_Data.R") # Load STRM data
+source(file.path("analyses", "04_models", "15a_STRM_Data.R")) # Load STRM data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions

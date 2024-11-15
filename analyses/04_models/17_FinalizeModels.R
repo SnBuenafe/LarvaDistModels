@@ -1,8 +1,8 @@
 # DESCRIPTION: Reproject and prepare rasters of models
 
-source("00_Preliminaries.R")
-source("Utils/create_rast.R")
-
+source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
+source(file.path("functions","create_rast.R"))
+          
 #### Make grid ####
 lonlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
@@ -19,7 +19,7 @@ grid <- grid %>%
   dplyr::mutate(cellID = dplyr::row_number()) # Add a cell ID reference
 
 #### Create raster for all species ####
-spp_list <- c("yft", "skp", "alb", "swo", "blum", "fri", "bet", "bft", "sau", "sail", "sbft", "slt",
+spp_list <- c("yft", "skp", "alb", "swo", "blum", "fri", "bet", "bft", "sail", "sbft", "slt", # "sau",
               "shos", "strm", "lesc")
 
 # January-March

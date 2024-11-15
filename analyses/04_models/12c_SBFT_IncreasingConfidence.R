@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("12a_SBFT_Data.R") # Load SBFT data
+source(file.path("analyses", "04_models", "12a_SBFT_Data.R")) # Load SBFT data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions

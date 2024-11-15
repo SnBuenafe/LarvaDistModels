@@ -1,8 +1,8 @@
 # DESCRIPTION: Using PCA to determine hotspots for January-March
 
 # Define preliminaries
-source("00_SetupGrid.R")
-source("00_Preliminaries.R")
+source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
+source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 pacman::p_load(purrr, Hmisc, RColorBrewer, patchwork)
 figure_dir <- here::here(figure_dir, "PCA")
 

@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("06a_BLUM_Data.R") # Load BLUM data
+source(file.path("analyses", "04_models", "06a_BLUM_Data.R")) # Load BLUM data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions
@@ -127,3 +127,4 @@ ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "oct-dec", "h
 bps <- plotLonLat(gg_filt, full_grid)
 ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "longitude", "oct-dec.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
 ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "latitude", "oct-dec.png", sep = "_")), width = 5, height = 1, dpi = 600)
+

@@ -1,8 +1,8 @@
 # DESCRIPTION: Assembling bluefin tuna dataset
 
 # Load preliminaries
-source("00_SetupGrid.R")
-source("00_Preliminaries.R")
+source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
+source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 species <- "BFT"
 figure_dir <- here::here(figure_dir, species)
 

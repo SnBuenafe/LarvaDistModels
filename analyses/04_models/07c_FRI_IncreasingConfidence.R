@@ -1,7 +1,7 @@
 # DESCRIPTION: Increasing confidence of seasonal species distribution maps
 
 # Load preliminaries
-source("07a_FRI_Data.R") # Load FRI data
+source(file.path("analyses", "04_models", "07a_FRI_Data.R")) # Load FRI data
 model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_"))) # load model
 
 # Making sure train and test data sets have the fitted predictions

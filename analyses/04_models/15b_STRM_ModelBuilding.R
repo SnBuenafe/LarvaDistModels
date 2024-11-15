@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for striped marlin
 
 # Load preliminaries
-source("15a_STRM_Data.R") # Load STRM data
+source(file.path("analyses", "04_models", "15a_STRM_Data.R")) # Load STRM data
 
 #### Create model ####
 

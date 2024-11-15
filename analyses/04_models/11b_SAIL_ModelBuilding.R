@@ -1,7 +1,7 @@
 # DESCRIPTION: Building optimal model for sailfish
 
 # Load preliminaries
-source("11a_SAIL_Data.R") # Load SAIL data
+source(file.path("analyses", "04_models", "11a_SAIL_Data.R")) # Load SAIL data
 
 #### Create model ####
 

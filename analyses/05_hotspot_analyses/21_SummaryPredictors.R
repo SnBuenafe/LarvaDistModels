@@ -2,12 +2,13 @@
 # Scatter plots with Loess smoother
 
 # Define preliminaries
-source("00_Preliminaries.R")
+source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 pacman::p_load(ggridges, patchwork, purrr, sf)
 figure_dir <- here::here(figure_dir, "predictors")
 
 spp_list <- spec_dict %>% 
   dplyr::filter(!code %in% c("BON", "LIT")) %>% # remove bonitos and little tuna
+  dplyr::filter(!code %in% "SAU") %>%  # Temporarily removed while we sort out the BRT
   dplyr::select(code) %>% 
   pull() %>% 
   tolower()
