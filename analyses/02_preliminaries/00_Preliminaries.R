@@ -16,6 +16,12 @@ clim_dir <- here("Data", "Climatology", "sf")
 pc_dir <- here("data_output", "PCA")
 rast_dir <- here("data_output", "FinalRaster")
 
+brt_cols <- c("longitude", "latitude", "season", "tos_transformed", "o2os_transformed",
+              "phos_transformed", "chlos_transformed", "sos_transformed", 
+              "mlotst_transformed", "no3os_transformed", "po4os_transformed", 
+              "nh4os_transformed", "thermal_front_transformed", 
+              "salinity_front_transformed", "eke", "meanDepth", "coastDistance") # "adult" # c(7:23, 25)
+
 spec_dict <- tibble::tribble(
   ~code, ~common,
   "YFT", "Yellowfin tuna",

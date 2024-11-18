@@ -7,12 +7,12 @@ source(file.path("analyses", "04_models", "03a_SKP_Data.R")) # Load SKP data
 
 # With longitude and latitude
 # 5-fold grid search
-CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = c(7:23, 25), resp_in = 5)
+CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = brt_cols, resp_in = 5)
 
 print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
 
 # Building most optimal model
-SKP_model <- dismo::gbm.step(data = train, gbm.x = c(7:23, 25),
+SKP_model <- dismo::gbm.step(data = train, gbm.x = brt_cols,
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
                               tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.01
 )
