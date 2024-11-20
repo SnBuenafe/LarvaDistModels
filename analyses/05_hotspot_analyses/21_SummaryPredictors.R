@@ -8,7 +8,6 @@ figure_dir <- here::here(figure_dir, "predictors")
 
 spp_list <- spec_dict %>% 
   dplyr::filter(!code %in% c("BON", "LIT")) %>% # remove bonitos and little tuna
-  dplyr::filter(!code %in% "SAU") %>%  # Temporarily removed while we sort out the BRT
   dplyr::select(code) %>% 
   pull() %>% 
   tolower()

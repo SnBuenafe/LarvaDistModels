@@ -13,8 +13,7 @@ seas_list <- c("Jan-Mar", "Apr-Jun", "Jul-Sept", "Oct-Dec")
 full_df <- prepare_hemis_obj(seas_list)
 
 spp_list <- spec_dict %>%  # remove species we're not interested in
-  dplyr::filter(!code %in% c("LIT", "BON")) %>% 
-  dplyr::filter(!code %in% "SAU") # Temporarily removed while we sort out the BRT
+  dplyr::filter(!code %in% c("LIT", "BON"))
 
 #### Plot hemispheric seasonality across species ####
 for(i in 1:nrow(spp_list)) {

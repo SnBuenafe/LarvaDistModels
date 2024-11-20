@@ -12,7 +12,6 @@ a_grid <- associateGrids(grid, grid_100) %>%
 
 spp_list <- spec_dict %>% 
   dplyr::filter(!code %in% c("LIT", "BON")) %>% 
-  dplyr::filter(!code %in% "SAU") %>%  # Temporarily removed while we sort out the BRT
   dplyr::pull(code) %>% 
   tolower()
 
