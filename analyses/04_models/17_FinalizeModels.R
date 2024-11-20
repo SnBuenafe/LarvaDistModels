@@ -19,21 +19,21 @@ grid <- grid %>%
   dplyr::mutate(cellID = dplyr::row_number()) # Add a cell ID reference
 
 #### Create raster for all species ####
-spp_list <- c("yft", "skp", "alb", "swo", "blum", "fri", "bet", "bft", "sail", "sbft", "slt", # "sau",
+spp_list <- c("yft", "skp", "alb", "swo", "blum", "fri", "bet", "bft", "sail", "sbft", "slt", "sau",
               "shos", "strm", "lesc")
 
 # January-March
 seas1 <- rast(create_rast(spp_list, "jan-mar"))
-writeRaster(seas1, filename = here::here(rast_dir, "ModelOutputs_jan-mar.tif"))
+writeRaster(seas1, filename = here::here(rast_dir, "ModelOutputs_jan-mar.tif"), overwrite = TRUE)
 
 # April-June
 seas2 <- rast(create_rast(spp_list, "apr-jun"))
-writeRaster(seas2, filename = here::here(rast_dir, "ModelOutputs_apr-jun.tif"))
+writeRaster(seas2, filename = here::here(rast_dir, "ModelOutputs_apr-jun.tif"), overwrite = TRUE)
 
 # July-September
 seas3 <- rast(create_rast(spp_list, "jul-sept"))
-writeRaster(seas3, filename = here::here(rast_dir, "ModelOutputs_jul-sept.tif"))
+writeRaster(seas3, filename = here::here(rast_dir, "ModelOutputs_jul-sept.tif"), overwrite = TRUE)
 
 # October-December
 seas4 <- rast(create_rast(spp_list, "oct-dec"))
-writeRaster(seas4, filename = here::here(rast_dir, "ModelOutputs_oct-dec.tif"))
+writeRaster(seas4, filename = here::here(rast_dir, "ModelOutputs_oct-dec.tif"), overwrite = TRUE)
