@@ -2,7 +2,7 @@
 
 source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
 source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
-seas_list <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
+seas_list <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
 new_names <- c("jm", "aj", "js", "od")
 figure_dir <- here::here(figure_dir, "taxa_richness")
 

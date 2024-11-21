@@ -72,32 +72,32 @@ ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "la
 
 #### July-September ####
 # Associate seasonal grids with the 10x10 grid
-full_grid <- associateGrids(`grid_STRM_jul-sept`, grid_100)
+full_grid <- associateGrids(`grid_STRM_jul-sep`, grid_100)
 
 # Create seasonal map
 gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                             test_tmp, # testing object with model column (predictions)
-                            "jul-sept", # season
+                            "jul-sep", # season
                             STRM_predict_season3, # rest of the ocean cells
                             model, # BRT model
-                            `grid_STRM_jul-sept` # grid of species for specific season
+                            `grid_STRM_jul-sep` # grid of species for specific season
 )
 
 # Filtering 10x10 grid cells that have at least 5% of its area as sampling points
 gg_filt <- restrictThreshold(full_grid,
                              gg_obj,
                              5)
-saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "jul-sept.rds", sep = "_"))) # save predictions
-# gg_filt <- readRDS(here::here(preds_dir, paste(species, "jul-sept.rds", sep = "_")))
+saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "jul-sep.rds", sep = "_"))) # save predictions
+# gg_filt <- readRDS(here::here(preds_dir, paste(species, "jul-sep.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
 gg <- plotConfidence(gg_filt, full_grid, limits)
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sept", "highconf.png", sep = "_")), width = 14, height = 5, dpi = 600)
+ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sep", "highconf.png", sep = "_")), width = 14, height = 5, dpi = 600)
 
 # Plot the longitude and latitude bar plots
 bps <- plotLonLat(gg_filt, full_grid)
-ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "longitude", "jul-sept.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
-ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "latitude", "jul-sept.png", sep = "_")), width = 5, height = 1, dpi = 600)
+ggsave(plot = bps$longitude, filename = here::here(figure_dir, paste(species, "longitude", "jul-sep.png", sep = "_")), width = 7, height = 0.5, dpi = 600)
+ggsave(plot = bps$latitude, filename = here::here(figure_dir, paste(species, "latitude", "jul-sep.png", sep = "_")), width = 5, height = 1, dpi = 600)
 
 #### October-December ####
 # Associate seasonal grids with the 10x10 grid

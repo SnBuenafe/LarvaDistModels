@@ -21,7 +21,7 @@ sf <- combineFish(species = "slender-tuna") %>%
   fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
   sf::st_centroid() # transform into point data
 
-seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
+seasons <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
 for(s in 1:length(seasons)) {
   gridded <- assembleGrid(grid, sf %>% dplyr::filter(season == seasons[s]))
   
@@ -35,7 +35,7 @@ SLT_ds1 <- read_csv(here::here(input_dir, paste(species, "jan-mar.csv", sep = "_
 SLT_ds2 <- read_csv(here::here(input_dir, paste(species, "apr-jun.csv", sep = "_")), show_col_types = FALSE) %>% # April-June
   restrict_predictor()
 
-SLT_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sept.csv", sep = "_")), show_col_types = FALSE) %>% # July-September
+SLT_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sep.csv", sep = "_")), show_col_types = FALSE) %>% # July-September
   restrict_predictor()
 
 SLT_ds4 <- read_csv(here::here(input_dir, paste(species, "oct-dec.csv", sep = "_")), show_col_types = FALSE) %>% # October-December

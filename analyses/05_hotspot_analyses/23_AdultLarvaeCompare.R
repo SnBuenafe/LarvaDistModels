@@ -249,7 +249,7 @@ plot_AdultLarval <- function(sp, season, aq2, range_limits, landmass){
 
 
 
-seasons = c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
+seasons = c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
 
 gg1 <- purrr::map(sort(unique(spp$Abbrev)), plot_AdultLarval, seasons[1], aq2, range_limits, landmass)
 gg2 <- purrr::map(sort(unique(spp$Abbrev)), plot_AdultLarval, seasons[2], aq2, range_limits, landmass)

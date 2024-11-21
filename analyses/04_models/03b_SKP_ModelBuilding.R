@@ -70,14 +70,14 @@ ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "apr-jun", "b
 # July-September
 gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitted values)
                             test_tmp, # testing object with model column (predictions)
-                            "jul-sept", # season
+                            "jul-sep", # season
                             SKP_predict_season3, # rest of the ocean cells
                             SKP_model, # BRT model
-                            `grid_SKP_jul-sept` # grid of species for specific season
+                            `grid_SKP_jul-sep` # grid of species for specific season
 )
 
-gg <- plotModel(gg_obj, limits) # plot extrapolation for Jul-Sept
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sept", "base.png", sep = "_")), 
+gg <- plotModel(gg_obj, limits) # plot extrapolation for jul-sep
+ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sep", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 # October-December

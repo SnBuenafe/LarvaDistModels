@@ -7,7 +7,7 @@ source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 # source("Utils/fxnshemisphere.R")
 
 pacman::p_load(patchwork, purrr)
-seas_list <- c("Jan-Mar", "Apr-Jun", "Jul-Sept", "Oct-Dec")
+seas_list <- c("Jan-Mar", "Apr-Jun", "jul-sep", "Oct-Dec")
 
 #### Calculate mean larval probabilities of hemispheres ####
 full_df <- prepare_hemis_obj(seas_list)
@@ -39,7 +39,7 @@ for(i in 1:nrow(spp_list)) {
   
   
 }
-dummy_df <- tibble::tribble(~hemisphere, ~`spp_jan-mar`, ~`spp_apr-jun`, ~`spp_jul-sept`, ~`spp_oct-dec`,
+dummy_df <- tibble::tribble(~hemisphere, ~`spp_jan-mar`, ~`spp_apr-jun`, ~`spp_jul-sep`, ~`spp_oct-dec`,
                             "North", 0.5, 0.5, 0.5, 0.5,
                             "South", 0.5, 0.5, 0.5, 0.5)
 plot <- plot_hemis_spp(dummy_df, "spp") +

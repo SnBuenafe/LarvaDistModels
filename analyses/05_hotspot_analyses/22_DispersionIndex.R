@@ -2,7 +2,7 @@
 source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 # source(here::here("Utils", "fxnshemisphere.R"))
 pacman::p_load(purrr, magrittr)
-seasons <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
+seasons <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
 
 # Add the groups
 spec_dict

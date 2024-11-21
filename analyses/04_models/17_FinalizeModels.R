@@ -31,8 +31,8 @@ seas2 <- rast(create_rast(spp_list, "apr-jun"))
 writeRaster(seas2, filename = here::here(rast_dir, "ModelOutputs_apr-jun.tif"), overwrite = TRUE)
 
 # July-September
-seas3 <- rast(create_rast(spp_list, "jul-sept"))
-writeRaster(seas3, filename = here::here(rast_dir, "ModelOutputs_jul-sept.tif"), overwrite = TRUE)
+seas3 <- rast(create_rast(spp_list, "jul-sep"))
+writeRaster(seas3, filename = here::here(rast_dir, "ModelOutputs_jul-sep.tif"), overwrite = TRUE)
 
 # October-December
 seas4 <- rast(create_rast(spp_list, "oct-dec"))
