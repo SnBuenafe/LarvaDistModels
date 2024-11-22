@@ -9,13 +9,19 @@ source(file.path("analyses", "04_models", "02a_YFT_Data.R")) # Load YFT data
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = brt_cols, resp_in = 5)
 
-print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
+saveRDS(CVGrid, here::here(CVgrid_dir, paste(species, "CVGrid.rds", sep = "_")))
+
+best <- CVGrid %>% 
+  dplyr::arrange(desc(test_AUC)) %>%  # BEST TEST AUC
+  dplyr::slice_head(n = 1)
 
 # Building most optimal model
 YFT_model <- dismo::gbm.step(data = train, gbm.x = brt_cols,
-                              gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.75, learning.rate = 0.008
-)
+                             gbm.y = 5, family = "bernoulli", n.folds = 5,
+                             tree.complexity = best$tree_complexity, 
+                             bag.fraction = best$bag_fraction, 
+                             learning.rate = best$learning_rate)
+
 saveRDS(YFT_model, here::here(model_dir, paste(species, "model.rds", sep = "_")))
 # YFT_model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_")))
 
@@ -57,7 +63,7 @@ ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jan-mar", "b
 
 nish <- plotNish(`grid_YFT_jan-mar`) # plot nishikawa presence-absence data for Jan-Mar
 ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "jan-mar", "nishikawa.png", sep = "_")),
-      width = 14, height = 5, dpi = 600)
+       width = 14, height = 5, dpi = 600)
 
 # April-June
 gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitted values)

@@ -9,13 +9,20 @@ source(file.path("analyses", "04_models", "06a_BLUM_Data.R")) # Load BLUM data
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = brt_cols, resp_in = 5)
 
-print(CVGrid %>% dplyr::arrange(desc(test_AUC)), n = 1) # BEST TEST AUC
+saveRDS(CVGrid, here::here(CVgrid_dir, paste(species, "CVGrid.rds", sep = "_")))
+
+best <- CVGrid %>% 
+  dplyr::arrange(desc(test_AUC)) %>%  # BEST TEST AUC
+  dplyr::slice_head(n = 1)
 
 # Building most optimal model
 BLUM_model <- dismo::gbm.step(data = train, gbm.x = brt_cols,
                               gbm.y = 5, family = "bernoulli", n.folds = 5,
-                              tree.complexity = 2, bag.fraction = 0.5, learning.rate = 0.009
-)
+                              tree.complexity = best$tree_complexity, 
+                              bag.fraction = best$bag_fraction, 
+                              learning.rate = best$learning_rate)
+
+
 saveRDS(BLUM_model, here::here(model_dir, paste(species, "model.rds", sep = "_")))
 # BLUM_model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_")))
 
