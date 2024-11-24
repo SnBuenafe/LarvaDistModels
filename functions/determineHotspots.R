@@ -1,7 +1,6 @@
 # DESCRIPTION: Get the sum of species per grid cell
 
-determineHotspots <- function(season) {
-  spp_list <- tolower(spec_dict$code)
+determineHotspots <- function(season, spp_list) {
   
   df <- list() # empty list
   for(i in 1:length(spp_list)) {
