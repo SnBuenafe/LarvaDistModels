@@ -1,7 +1,7 @@
 # Description: Do a k-fold grid search
 
-CVgridSearch <- function(test, 
-                         train, 
+CVgridSearch <- function(train, 
+                         test,
                          tc, # tree complexity list
                          bf, # bag fraction list
                          lr, # learning rate list
