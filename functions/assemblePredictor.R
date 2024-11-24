@@ -4,7 +4,7 @@ assemblePredictor <- function(spp_list, # species list
                               pred_label # predictor label
                               ) {
   
-  season_list <- c("jan-mar", "apr-jun", "jul-sept", "oct-dec")
+  season_list <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
   
   predictor <- list()
   for(j in 1:length(season_list)) {
