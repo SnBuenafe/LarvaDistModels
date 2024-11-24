@@ -18,7 +18,8 @@ create_rast <- function(spp_list = c("yft", "skp", "alb", "swo", "blum",
       dplyr::select(cellID, model)
     
     # Load predictors for that month
-    preds <- read_csv(here::here(input_dir, paste(toupper(spp_list[i]), paste0(season, ".csv"), sep = "_")), show_col_types = FALSE) %>% 
+    # preds <- read_csv(here::here(input_dir, paste(toupper(spp_list[i]), paste0(season, ".csv"), sep = "_")), show_col_types = FALSE) %>% 
+      preds <- readRDS(here::here(input_dir, paste(toupper(spp_list[i]), paste0(season, ".rds"), sep = "_"))) %>% 
       dplyr::select(cellID, longitude, latitude)
     
     # Create SpatVect
