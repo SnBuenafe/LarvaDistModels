@@ -26,16 +26,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load blue marlin datasets
-BLUM_ds1 <- read_csv(here::here(input_dir, paste(species, "jan-mar.csv", sep = "_")), show_col_types = FALSE) %>% # January-March
+BLUM_ds1 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
   restrict_predictor()
 
-BLUM_ds2 <- read_csv(here::here(input_dir, paste(species, "apr-jun.csv", sep = "_")), show_col_types = FALSE)  %>% # April-June
+BLUM_ds2 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
   restrict_predictor()
 
-BLUM_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sep.csv", sep = "_")), show_col_types = FALSE)  %>% # July-September
+BLUM_ds3 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
   restrict_predictor()
 
-BLUM_ds4 <- read_csv(here::here(input_dir, paste(species, "oct-dec.csv", sep = "_")), show_col_types = FALSE)  %>% # October-December
+BLUM_ds4 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
   restrict_predictor()
 
 # Build model with known data only

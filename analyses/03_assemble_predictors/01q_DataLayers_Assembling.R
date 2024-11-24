@@ -100,6 +100,6 @@ for(f in 1:nrow(species_code)) {
                          dist2coast = dist2coast,
                          species = aqua)
     
-    write_csv(df, file = paste0("data_output/CSV/", paste(species_code$code[f], seasons[s], sep = "_"), ".csv"))
+    saveRDS(df, file = paste0("data_output/ModelPredictors/", paste(species_code$code[f], seasons[s], sep = "_"), ".rds"))
   }
 }

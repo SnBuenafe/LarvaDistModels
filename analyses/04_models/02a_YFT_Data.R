@@ -6,6 +6,8 @@ source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 source(file.path("functions", "combineFish.R"))
 
 species <- "YFT"
+seasons <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
+
 figure_dir <- here::here(figure_dir, species)
 
 # Function to restrict adult distribution predictor to just yellowfin tunas
@@ -20,7 +22,6 @@ sf <- combineFish(species = "yellowfin-tuna") %>%
   fSpatPlan_Convert2PacificCentered(., cCRS = cCRS) %>% 
   sf::st_centroid() # transform into point data
 
-seasons <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
 for(s in 1:length(seasons)) {
   gridded <- assembleGrid(grid, sf %>% dplyr::filter(season == seasons[s])) 
   
@@ -28,16 +29,17 @@ for(s in 1:length(seasons)) {
 }
 
 # Load yellowfin tuna datasets
-YFT_ds1 <- read_csv(here::here(input_dir, paste(species, "jan-mar.csv", sep = "_")), show_col_types = FALSE) %>% # January-March
+
+YFT_ds1 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
   restrict_predictor()
 
-YFT_ds2 <- read_csv(here::here(input_dir, paste(species, "apr-jun.csv", sep = "_")), show_col_types = FALSE)  %>% # April-June
-  restrict_predictor()
-  
-YFT_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sep.csv", sep = "_")), show_col_types = FALSE)  %>% # July-September
+YFT_ds2 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
   restrict_predictor()
 
-YFT_ds4 <- read_csv(here::here(input_dir, paste(species, "oct-dec.csv", sep = "_")), show_col_types = FALSE)  %>% # October-December
+YFT_ds3 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
+  restrict_predictor()
+
+YFT_ds4 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>%
   restrict_predictor()
 
 # Build model with known data only

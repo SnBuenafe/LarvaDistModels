@@ -1,16 +1,17 @@
 # DESCRIPTION: Setting preliminaries for the rest of the code
 
 # install.packages("pacman")
-pacman::p_load(tidyverse, here, dismo, gbm, cmocean, magrittr, patchwork)
+pacman::p_load(tidyverse, here, dismo, gbm, cmocean, magrittr, patchwork, sf)
 
 # Load all helper functions
 utils <- list.files(path = here("functions"), pattern = "*.R", full.names = TRUE)
 sapply(X = utils, FUN = source) %>% invisible()
 
 # Directories
-input_dir <- here("data_output", "CSV")
+input_dir <- here("data_output", "ModelPredictors")
 figure_dir <- here("Figures")
 model_dir <- here("data_output", "Models")
+CVgrid_dir <- here("data_output", "CVGrid")
 preds_dir <- here("data_output", "Predictions")
 clim_dir <- here("Data", "Climatology", "sf")
 pc_dir <- here("data_output", "PCA")

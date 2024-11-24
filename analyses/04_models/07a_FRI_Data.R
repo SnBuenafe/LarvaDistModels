@@ -29,16 +29,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load frigate tuna datasets
-FRI_ds1 <- read_csv(here::here(input_dir, paste(species, "jan-mar.csv", sep = "_")), show_col_types = FALSE) %>% # January-March
+FRI_ds1 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
   restrict_predictor()
 
-FRI_ds2 <- read_csv(here::here(input_dir, paste(species, "apr-jun.csv", sep = "_")), show_col_types = FALSE)  %>% # April-June
+FRI_ds2 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
   restrict_predictor()
 
-FRI_ds3 <- read_csv(here::here(input_dir, paste(species, "jul-sep.csv", sep = "_")), show_col_types = FALSE)  %>% # July-September
+FRI_ds3 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
   restrict_predictor()
 
-FRI_ds4 <- read_csv(here::here(input_dir, paste(species, "oct-dec.csv", sep = "_")), show_col_types = FALSE)  %>% # October-December
+FRI_ds4 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
   restrict_predictor()
 
 # Build model with known data only
