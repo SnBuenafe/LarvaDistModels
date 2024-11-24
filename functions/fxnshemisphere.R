@@ -45,7 +45,7 @@ plot_hemis_spp <- function(full_df, spp) {
     tidyr::pivot_longer(!hemisphere, names_to = "season", values_to = "sum") %>% 
     dplyr::mutate(season = case_when(str_detect(season, "jan-mar") ~ "Jan-Mar",
                                      str_detect(season, "apr-jun") ~ "Apr-Jun",
-                                     str_detect(season, "jul-sept") ~ "Jul-Sept",
+                                     str_detect(season, "jul-sep") ~ "jul-sep",
                                      str_detect(season, "oct-dec") ~ "Oct-Dec")) %>% 
     dplyr::mutate(season = fct_relevel(season, seas_list))
   
@@ -56,7 +56,7 @@ plot_hemis_spp <- function(full_df, spp) {
                         values_to = "mean") %>% 
     dplyr::mutate(season = case_when(str_detect(season, "jan-mar") ~ "Jan-Mar",
                                      str_detect(season, "apr-jun") ~ "Apr-Jun",
-                                     str_detect(season, "jul-sept") ~ "Jul-Sept",
+                                     str_detect(season, "jul-sep") ~ "jul-sep",
                                      str_detect(season, "oct-dec") ~ "Oct-Dec"))
   
   gg <- ggplot() + 
