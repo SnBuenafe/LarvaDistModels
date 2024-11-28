@@ -3,15 +3,15 @@
 # different models working for vo, you’d need to rerun the Meridional Velocity 
 # R script as well as the EKE to update the predictor layers
 
-source("analyses/03_assemble_predictors/01k_Assembling_MeridionalVelocity.R")
-
-source("analyses/03_assemble_predictors/01j_Assembling_ZonalVelocity.R")
-
-source("analyses/03_assemble_predictors/01n_Assembling_EddyKineticEnergy.R")
-
-source("analyses/03_assemble_predictors/01q_DataLayers_Assembling.R")
-
-source("analyses/03_assemble_predictors/01r_NumberSamplingPoints.R")
+# source("analyses/03_assemble_predictors/01k_Assembling_MeridionalVelocity.R")
+# 
+# source("analyses/03_assemble_predictors/01j_Assembling_ZonalVelocity.R")
+# 
+# source("analyses/03_assemble_predictors/01n_Assembling_EddyKineticEnergy.R")
+# 
+# source("analyses/03_assemble_predictors/01q_DataLayers_Assembling.R")
+# 
+# source("analyses/03_assemble_predictors/01r_NumberSamplingPoints.R")
 
 
 
@@ -88,3 +88,12 @@ source("analyses/05_hotspot_analyses/20_SummaryHotspots.R")
 # source("analyses/05_hotspot_analyses/21_SummaryPredictors.R") # Can't run because the data is not on GitHub
 
 source("analyses/05_hotspot_analyses/22_DispersionIndex.R")
+
+source("analyses/05_hotspot_analyses/23_AdultLarvaeCompare.R")
+
+source("analyses/05_hotspot_analyses/24_ExtractModelParams.R")
+
+
+
+
+
