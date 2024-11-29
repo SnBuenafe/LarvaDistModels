@@ -50,23 +50,12 @@ aq <- readRDS("data_input/AquaMaps_sf.rds") %>%
   dplyr::mutate(Thunnus_atlanticus = max(Thunnus_atlanticus, Thunnus_obesus, 0, na.rm = TRUE)) %>% 
   dplyr::select(-Thunnus_obesus) %>% 
   dplyr::ungroup() %>% 
-  # dplyr::mutate(dplyr::across(
-  #   -dplyr::any_of(c("cellID", "geometry")), # Apply to all columns except geometry and cellID
-  #   ~ dplyr::if_else(. < 0.5, NA, .))) %>% 
-  # mutate(across(!geometry, ~ if_else(.x >= median(.x, na.rm = TRUE), .x, NA))) %>%
   mutate(across(!geometry, ~ if_else(.x >= 0.01, .x, NA))) %>%
-  # mutate(across(!geometry, ~ if_else(.x > 0, .x, NA))) %>%
   dplyr::mutate(Area_km2 = as.numeric(units::set_units(st_area(.), "km2")))
 
 aq <- aq %>% 
   rename(deframe(spp %>% dplyr::filter(Species %in% colnames(aq)))) %>% 
   pivot_longer(cols = tidyselect::all_of(spp$Abbrev), values_to = "Probability", names_to = "Species", values_drop_na = TRUE)
-
-# From Ants Notes: 
-# Calculating the area of high spawning (above median?) for each species 
-# as a percentage of their whole adult distribution in our area of interest. 
-# Are species spawning throughout their range or only in a small area??? 
-
 
 
 # Create a dataframe of the area of each species and calculate proportion
@@ -117,43 +106,6 @@ aq2 <- aq %>%
 # Get range limits for adults from aquamaps -------------------------------
 
 
-range_limits <- aq2 %>% 
-  sf::st_centroid() %>% 
-  mutate(
-    Longitude = st_coordinates(.)[, 1],
-    Latitude = st_coordinates(.)[, 2],
-    Hemisphere = if_else(Longitude <0, "W", "E")
-  ) %>% 
-  group_by(Species, Hemisphere) %>% 
-  summarise(MinLon = min(Longitude), # Need to do it in 2 lots to deal with dateline
-            MaxLon = max(Longitude),
-            MinLat = min(Latitude),
-            MaxLat = max(Latitude)) %>% 
-  ungroup() %>% 
-  group_by(Species) %>% 
-  summarise(MinLon = max(MinLon),
-            MaxLon = min(MaxLon),
-            MinLat = first(MinLat),
-            MaxLat = first(MaxLat)) %>% 
-  sf::st_drop_geometry()
-
-
-reduce_sp_range <- function(sp, range_limits, m2){
-  
-  range_limits2 <- range_limits %>% 
-    filter(Species == sp)
-  
-  m2_sp <- m2 %>% 
-    filter(Species == sp) %>% 
-    mutate(Longitude = sf::st_centroid(.) %>% sf::st_coordinates(.) %>% as.data.frame() %>% pull("X"),
-           Latitude = sf::st_centroid(.) %>% sf::st_coordinates(.)%>% as.data.frame() %>% pull("Y")) %>% 
-    dplyr::filter(
-      (Longitude >= range_limits2$MinLon | Longitude <= range_limits2$MaxLon) &
-        (Latitude >= range_limits2$MinLat & Latitude <= range_limits2$MaxLat)) %>% 
-    dplyr::select(-c("Longitude", "Latitude"))
-  
-}
-
 
 # Modify world dataset to remove overlapping portions with world's polygons
 landmass <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
@@ -167,15 +119,15 @@ landmass <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>
 colours <- c("Adult" = "blue", "Larvae" = "red", "Nishikawa" = "black")
 
 plot_AdultLarval <- function(sp, season, aq2, range_limits, landmass){
-
+  
   m <- terra::rast(file.path(rast_dir,paste0("ModelOutputs_", season, ".tif"))) %>% 
-    terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm = TRUE, round = FALSE) %>%
+    terra::as.polygons(trunc = FALSE, dissolve = FALSE, na.rm = TRUE, na.all = TRUE, round = FALSE) %>%
     sf::st_as_sf() %>% 
     # Set all values below the median of the column to NA
-    mutate(across(!geometry, ~ if_else(.x >= median(.x, na.rm = TRUE), .x, NA))) %>%
+    # mutate(across(!geometry, ~ if_else(.x >= median(.x, na.rm = TRUE), .x, NA))) %>%
+    # mutate(across(!geometry, ~ if_else(.x > 0, .x, NA))) %>%
     dplyr::mutate(Area_km2 = as.numeric(units::set_units(st_area(.), "km2"))) %>% 
-    tidyr::pivot_longer(cols = tidyselect::all_of(unique(spp$Abbrev)), values_to = "Probability", names_to = "Species", values_drop_na = TRUE) %>% 
-    dplyr::mutate(Binary = 1)
+    tidyr::pivot_longer(cols = tidyselect::all_of(unique(spp$Abbrev)), values_to = "Probability", names_to = "Species", values_drop_na = TRUE)
   
   
   # Modify world dataset to remove overlapping portions with world's polygons
@@ -223,13 +175,11 @@ plot_AdultLarval <- function(sp, season, aq2, range_limits, landmass){
     sf::st_make_valid() %>%
     sf::st_shift_longitude()
   
-    
-  m2r <- reduce_sp_range(sp, range_limits, m2)
   
   ggplot() + 
     geom_sf(data = landmass, fill = "grey60") +
     geom_sf(data = aq2 %>% filter(Species == sp), aes(fill = "Adult"), colour = "blue", linewidth = 0.00001, alpha = 0.5, show.legend = TRUE) +
-    geom_sf(data = m2r %>% filter(Species == sp), aes(fill = "Larvae"), colour = "red", linewidth = 0.00001, alpha = 0.5, show.legend = TRUE) +
+    geom_sf(data = m2 %>% filter(Species == sp), aes(fill = "Larvae"), colour = "red", linewidth = 0.00001, alpha = 0.5, show.legend = TRUE) +
     geom_sf(data = obs %>% filter(Species == sp), aes(fill = "Nishikawa"), linewidth = 0.00001, size = 0.0000001, alpha = 1, shape = 20) +
     theme_bw(base_size = 18) +
     theme(legend.title = element_blank(), axis.title = element_blank()) +
@@ -239,7 +189,7 @@ plot_AdultLarval <- function(sp, season, aq2, range_limits, landmass){
                         override.aes = list(colour = NA, 
                                             linewidth = 0.000001),
                         direction = "horizontal"
-                        )
+                      )
     ) +
     scale_x_continuous(expand = c(0,0), limits = c(40, 290)) +
     scale_y_continuous(expand = c(0,0), limits = c(-40, 40)) +
@@ -247,6 +197,7 @@ plot_AdultLarval <- function(sp, season, aq2, range_limits, landmass){
   
 }
 
+plot_AdultLarval(spp$Abbrev[1], seasons[1], aq2, range_limits, landmass)
 
 
 seasons = c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
@@ -270,15 +221,17 @@ ggsave(file.path("Figures", "AdultLarval", "AdultLarvalMaps4.pdf"),
        patchwork::wrap_plots(gg4, ncol = 4, guides = "collect") + patchwork::guide_area(),
        width = 21*4, height = 11*4, units = "cm")
 
+
+# These plots don't work as intended because they seem to ignore the `byrow` argument
+
 # p <- list(patchwork::wrap_plots(gg1, ncol = 1, guides = "collect") + patchwork::guide_area(),
 #      patchwork::wrap_plots(gg2, ncol = 1, guides = "collect") + patchwork::guide_area(),
 #      patchwork::wrap_plots(gg3, ncol = 1, guides = "collect") + patchwork::guide_area(),
 #      patchwork::wrap_plots(gg4, ncol = 1, guides = "collect") + patchwork::guide_area())
-# 
 
-gg <- c(gg1, gg2, gg3, gg4)
+# gg <- c(gg1, gg2, gg3, gg4)
 
-p <- patchwork::wrap_plots(gg, nrow = 16, ncol = 4, byrow = FALSE, guides = "collect") + patchwork::guide_area()
+# p <- patchwork::wrap_plots(gg, nrow = 16, ncol = 4, byrow = FALSE, guides = "collect") + patchwork::guide_area()
 
-ggsave(file.path("Figures", "AdultLarval", "AdultLarvalMaps_All.pdf"), p, width = 11*4, height = 21*4, units = "cm")
+# ggsave(file.path("Figures", "AdultLarval", "AdultLarvalMaps_All.pdf"), p, width = 11*4, height = 21*4, units = "cm")
 
