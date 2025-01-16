@@ -4,7 +4,8 @@
 #source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
 source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 
-# source("Utils/fxnshemisphere.R")
+# source("utils/fxnshemisphere.R")
+# source("functions/fxnshemisphere.R")
 
 pacman::p_load(patchwork, purrr)
 seas_list <- c("Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec")
@@ -51,29 +52,3 @@ ggsave(plot = plot,
        dpi = 600,
        width = 8,
        height = 12)
-
-# Investigate spawning data by hemisphere...
-full_df2 <- full_df %>% 
-  pivot_longer(cols = !hemisphere, names_to = "Species", values_to = "Mean") %>% 
-  tidyr::separate(col = Species, into = c("Species", "Season"), sep = "_")
-
-Tempory <- full_df2 %>% 
-  group_by(Species, hemisphere) %>% 
-  summarise(Mn = mean(Mean), SD = sd(Mean), Rn = range(Mean), CV = SD / Mn)
-
-ggplot(dat = Tempory, 
-       aes(x = Mn, y = CV)) + 
-  geom_point() # Need to try a measure of dispersion other than sd or range
-
-
-
-Tempory2 <- left_join(full_df2, Tempory) %>% 
-  group_by(Species, hemisphere) %>% 
-  summarise(SI = Mean-Mn)
-
-Tempory3 <- left_join(Tempory2, Tempory)
-
-
-
-# full_df2 %>% 
-#   summaris
