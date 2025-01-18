@@ -5,7 +5,7 @@ source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
 source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 
 species <- "SKP"
-figure_dir <- here::here(figure_dir, species)
+figure_dir <- file.path(figure_dir, species)
 
 # Function to restrict adult distribution predictor to just skipjack tunas
 restrict_predictor <- function(x){
@@ -27,16 +27,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load skipjack tuna datasets
-SKP_ds1 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
+SKP_ds1 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
   restrict_predictor()
 
-SKP_ds2 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
+SKP_ds2 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
   restrict_predictor()
 
-SKP_ds3 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
+SKP_ds3 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
   restrict_predictor()
 
-SKP_ds4 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
+SKP_ds4 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
   restrict_predictor()
 
 # Build model with known data only
