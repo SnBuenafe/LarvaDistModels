@@ -64,7 +64,7 @@ gg_filt <- restrictThreshold(full_grid,
                              5) %>% 
   restrictAQM("yft")
 
-saveRDS(object = gg_filt, file = here::here(preds_dir, paste(species, "apr-jun.rds", sep = "_"))) # save predictions
+saveRDS(object = gg_filt, file = file.path(preds_dir, paste(species, "apr-jun.rds", sep = "_"))) # save predictions
 # gg_filt <- readRDS(here::here(preds_dir, paste(species, "apr-jun.rds", sep = "_")))
 
 # Plot model removing 10x10 areas with lower confidence
