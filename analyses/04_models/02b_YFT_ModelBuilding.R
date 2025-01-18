@@ -22,8 +22,8 @@ YFT_model <- dismo::gbm.step(data = train, gbm.x = brt_cols,
                              bag.fraction = best$bag_fraction, 
                              learning.rate = best$learning_rate)
 
-saveRDS(YFT_model, here::here(model_dir, paste(species, "model.rds", sep = "_")))
-# YFT_model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_")))
+saveRDS(YFT_model, file.path(model_dir, paste(species, "model.rds", sep = "_")))
+# YFT_model <- readRDS(file.path(model_dir, paste(species, "model.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(YFT_model)
