@@ -9,7 +9,7 @@ sapply(X = utils, FUN = source) %>% invisible()
 
 # Directories
 input_dir <- here("data_output", "ModelPredictors")
-figure_dir <- here("Figures")
+figure_dir <- here("figures")
 model_dir <- here("data_output", "Models")
 CVgrid_dir <- here("data_output", "CVGrid")
 preds_dir <- here("data_output", "Predictions")

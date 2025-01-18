@@ -8,7 +8,7 @@ source(file.path("functions", "combineFish.R"))
 species <- "YFT"
 seasons <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
 
-figure_dir <- here::here(figure_dir, species)
+figure_dir <- file.path(figure_dir, species)
 
 # Function to restrict adult distribution predictor to just yellowfin tunas
 restrict_predictor <- function(x){
@@ -30,16 +30,16 @@ for(s in 1:length(seasons)) {
 
 # Load yellowfin tuna datasets
 
-YFT_ds1 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
+YFT_ds1 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
   restrict_predictor()
 
-YFT_ds2 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
+YFT_ds2 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
   restrict_predictor()
 
-YFT_ds3 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
+YFT_ds3 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
   restrict_predictor()
 
-YFT_ds4 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>%
+YFT_ds4 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>%
   restrict_predictor()
 
 # Build model with known data only

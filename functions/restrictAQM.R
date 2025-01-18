@@ -1,6 +1,8 @@
+# DESCRIPTION: Restricting the model outputs to the adult's species' AquaMaps ranges
+
 restrictAQM <- function(mdl, sp){
   
-  range_limits <- readRDS(here::here("data_output", "RangeLimits.rds")) %>% 
+  range_limits <- readRDS(file.path("data_output", "RangeLimits.rds")) %>% 
     filter(Species == sp)
   
   mdl_sp <- mdl %>% 

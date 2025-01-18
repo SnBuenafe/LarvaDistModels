@@ -9,7 +9,7 @@ source(file.path("analyses", "04_models", "02a_YFT_Data.R")) # Load YFT data
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = brt_cols, resp_in = 5)
 
-saveRDS(CVGrid, here::here(CVgrid_dir, paste(species, "CVGrid.rds", sep = "_")))
+saveRDS(CVGrid, file.path(CVgrid_dir, paste(species, "CVGrid.rds", sep = "_")))
 
 best <- CVGrid %>% 
   dplyr::arrange(desc(test_AUC)) %>%  # BEST TEST AUC
@@ -58,11 +58,11 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits)
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jan-mar", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "jan-mar", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 nish <- plotNish(`grid_YFT_jan-mar`) # plot nishikawa presence-absence data for Jan-Mar
-ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "jan-mar", "nishikawa.png", sep = "_")),
+ggsave(plot = nish, filename = file.path(figure_dir, paste(species, "jan-mar", "nishikawa.png", sep = "_")),
        width = 14, height = 5, dpi = 600)
 
 # April-June
@@ -75,11 +75,11 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits)
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "apr-jun", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "apr-jun", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 nish <- plotNish(`grid_YFT_apr-jun`) # plot nishikawa presence-absence data for April-June
-ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "apr-jun", "nishikawa.png", sep = "_")),
+ggsave(plot = nish, filename = file.path(figure_dir, paste(species, "apr-jun", "nishikawa.png", sep = "_")),
        width = 14, height = 5, dpi = 600)
 
 # July-September
@@ -92,11 +92,11 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits)
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sep", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "jul-sep", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 nish <- plotNish(`grid_YFT_jul-sep`) # plot nishikawa presence-absence data for July-September
-ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "jul-sep", "nishikawa.png", sep = "_")),
+ggsave(plot = nish, filename = file.path(figure_dir, paste(species, "jul-sep", "nishikawa.png", sep = "_")),
        width = 14, height = 5, dpi = 600)
 
 # October-December
@@ -109,9 +109,9 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits) # plot model extrapolation for Oct-Dec
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "oct-dec", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "oct-dec", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 nish <- plotNish(`grid_YFT_oct-dec`) # plot nishikawa presence-absence data for October-December
-ggsave(plot = nish, filename = here::here(figure_dir, paste(species, "oct-dec", "nishikawa.png", sep = "_")),
+ggsave(plot = nish, filename = file.path(figure_dir, paste(species, "oct-dec", "nishikawa.png", sep = "_")),
        width = 14, height = 5, dpi = 600)
