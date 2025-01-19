@@ -4,7 +4,7 @@
 source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
 source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 species <- "SLT"
-figure_dir <- here::here(figure_dir, species)
+figure_dir <- file.path(figure_dir, species)
 
 # Function to restrict adult distribution predictor to just slender tuna
 restrict_predictor <- function(x){
@@ -29,16 +29,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load SLTtle tuna datasets
-SLT_ds1 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
+SLT_ds1 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
   restrict_predictor()
 
-SLT_ds2 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
+SLT_ds2 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
   restrict_predictor()
 
-SLT_ds3 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
+SLT_ds3 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
   restrict_predictor()
 
-SLT_ds4 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
+SLT_ds4 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
   restrict_predictor()
 
 # Build model with known data only
