@@ -4,7 +4,7 @@
 source(file.path("analyses", "02_preliminaries", "00_SetupGrid.R"))
 source(file.path("analyses", "02_preliminaries", "00_Preliminaries.R"))
 species <- "SWO"
-figure_dir <- here::here(figure_dir, species)
+figure_dir <- file.path(figure_dir, species)
 
 # Define functions
 # Function to restrict adult distribution predictor to just swordfish
@@ -27,16 +27,16 @@ for(s in 1:length(seasons)) {
 }
 
 # Load swordfish datasets
-SWO_ds1 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
+SWO_ds1 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[1], ".rds"))) %>% 
   restrict_predictor()
 
-SWO_ds2 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
+SWO_ds2 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[2], ".rds"))) %>% 
   restrict_predictor()
 
-SWO_ds3 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
+SWO_ds3 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[3], ".rds"))) %>% 
   restrict_predictor()
 
-SWO_ds4 <- readRDS(here::here(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
+SWO_ds4 <- readRDS(file.path(input_dir, paste0(species, "_", seasons[4], ".rds"))) %>% 
   restrict_predictor()
 
 # Build model with known data only
