@@ -9,7 +9,7 @@ source(file.path("analyses", "04_models", "16a_LESC_Data.R")) # Load LESC data
 # 5-fold grid search
 CVGrid <- CVgridSearch(train, test, tc = c(1, 2), bf = c(0.5, 0.75), lr = seq(0.005, 0.01, 0.001), pred_in = brt_cols, resp_in = 5)
 
-saveRDS(CVGrid, here::here(CVgrid_dir, paste(species, "CVGrid.rds", sep = "_")))
+saveRDS(CVGrid, file.path(CVgrid_dir, paste(species, "CVGrid.rds", sep = "_")))
 
 best <- CVGrid %>% 
   dplyr::arrange(desc(test_AUC)) %>%  # BEST TEST AUC
@@ -22,8 +22,8 @@ LESC_model <- dismo::gbm.step(data = train, gbm.x = brt_cols,
                               bag.fraction = best$bag_fraction, 
                               learning.rate = best$learning_rate)
 
-saveRDS(LESC_model, here::here(model_dir, paste(species, "model.rds", sep = "_")))
-# LESC_model <- readRDS(here::here(model_dir, paste(species, "model.rds", sep = "_")))
+saveRDS(LESC_model, file.path(model_dir, paste(species, "model.rds", sep = "_")))
+# LESC_model <- readRDS(file.path(model_dir, paste(species, "model.rds", sep = "_")))
 
 # Show the relative importance of each of the predictors
 summary(LESC_model)
@@ -57,7 +57,7 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits) # plot extrapolations for Jan-Mar
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jan-mar", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "jan-mar", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 # April-June
@@ -70,7 +70,7 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits) # plot extrapolations for Apr-Jun
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "apr-jun", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "apr-jun", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 # July-September
@@ -83,7 +83,7 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits) # plot extrapolations for jul-sep
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "jul-sep", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "jul-sep", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)
 
 # October-December
@@ -96,5 +96,5 @@ gg_obj <- create_speciesMap(train_tmp, # training object with model column (fitt
 )
 
 gg <- plotModel(gg_obj, limits) # plot extrapolations for Oct-Dec
-ggsave(plot = gg, filename = here::here(figure_dir, paste(species, "oct-dec", "base.png", sep = "_")), 
+ggsave(plot = gg, filename = file.path(figure_dir, paste(species, "oct-dec", "base.png", sep = "_")), 
        width = 14, height = 5, dpi = 600)

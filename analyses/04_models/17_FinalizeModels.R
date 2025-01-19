@@ -24,16 +24,16 @@ spp_list <- c("yft", "skp", "alb", "swo", "blum", "fri", "bet", "bft", "sail", "
 
 # January-March
 seas1 <- rast(create_rast(spp_list, "jan-mar"))
-writeRaster(seas1, filename = here::here(rast_dir, "ModelOutputs_jan-mar.tif"), overwrite = TRUE)
+writeRaster(seas1, filename = file.path(rast_dir, "ModelOutputs_jan-mar.tif"), overwrite = TRUE)
 
 # April-June
 seas2 <- rast(create_rast(spp_list, "apr-jun"))
-writeRaster(seas2, filename = here::here(rast_dir, "ModelOutputs_apr-jun.tif"), overwrite = TRUE)
+writeRaster(seas2, filename = file.path(rast_dir, "ModelOutputs_apr-jun.tif"), overwrite = TRUE)
 
 # July-September
 seas3 <- rast(create_rast(spp_list, "jul-sep"))
-writeRaster(seas3, filename = here::here(rast_dir, "ModelOutputs_jul-sep.tif"), overwrite = TRUE)
+writeRaster(seas3, filename = file.path(rast_dir, "ModelOutputs_jul-sep.tif"), overwrite = TRUE)
 
 # October-December
 seas4 <- rast(create_rast(spp_list, "oct-dec"))
-writeRaster(seas4, filename = here::here(rast_dir, "ModelOutputs_oct-dec.tif"), overwrite = TRUE)
+writeRaster(seas4, filename = file.path(rast_dir, "ModelOutputs_oct-dec.tif"), overwrite = TRUE)
