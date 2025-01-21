@@ -13,7 +13,7 @@ figure_dir <- here("figures")
 model_dir <- here("data_output", "Models")
 CVgrid_dir <- here("data_output", "CVGrid")
 preds_dir <- here("data_output", "Predictions")
-clim_dir <- here("Data", "Climatology", "sf")
+clim_dir <- here("data_input", "climate_sf")
 pc_dir <- here("data_output", "PCA")
 rast_dir <- here("data_output", "FinalRaster")
 
