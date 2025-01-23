@@ -102,3 +102,4 @@ saveRDS(tos, here(output_dir,
 
 tmp <- create_plot(tos)
 ggsave(plot = tmp, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+

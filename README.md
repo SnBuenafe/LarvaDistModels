@@ -80,23 +80,20 @@ We used (in parentheses are the CMIP6 codes for the climate variables):
 __Table 1.__ Set of models used.
 | Model    | Reference |
 | -------- | ------- |
-| ACCESS-ESM1-5 | [Ziehn et al. (2019)](http://doi.org/10.22033/ESGF/CMIP6.4272) |
-| BCC-CSM2-MR | [Wu et al. (2018)](http://doi.org/10.22033/ESGF/CMIP6.2948) |
-| CMCC-CM2-SR5 | [Lovato et al. (2020)](http://doi.org/10.22033/ESGF/CMIP6.3825) |
-| CMCC-ESM2 | [Lovato et al. (2021)](http://doi.org/10.22033/ESGF/CMIP6.13195) |
-| FGOALS-f3-L | [Yu (2019)](http://doi.org/10.22033/ESGF/CMIP6.3355) |
-| FGOALS-g3 | [Li (2019)](http://doi.org/10.22033/ESGF/CMIP6.3356) |
-| GFDL-CM4 | [Guo et al. (2018)](http://doi.org/10.22033/ESGF/CMIP6.8594) |
-| GFDL-ESM4 | [Krasting et al. (2018)](http://doi.org/10.22033/ESGF/CMIP6.8597) |
-| GISS-E2-1-G | [NASA Goddard Institute for Space Studies (2018)](http://doi.org/10.22033/ESGF/CMIP6.7127) |
-| GISS-E2-1-H | [NASA Goddard Institute for Space Studies (2018)](http://doi.org/10.22033/ESGF/CMIP6.7128) |
-| IPSL-CM5A2-INCA | [Boucher et al. (2020)](http://doi.org/10.22033/ESGF/CMIP6.13661) |
-| MCM-UA-1-0 | [Stouffer (2019)](http://doi.org/10.22033/ESGF/CMIP6.8888) |
-| MIROC-ES2L | [Hajima et al. (2019)](http://doi.org/10.22033/ESGF/CMIP6.5602) |
-| MIROC6 | [Tatebe & Watanabe (2018)](http://doi.org/10.22033/ESGF/CMIP6.5603) |
-| MPI-ESM1-2-HR | [Jungclaus et al. (2019)](http://doi.org/10.22033/ESGF/CMIP6.6594) |
-| MRI-ESM2-0 | [Yukimoto et al. (2019)](http://doi.org/10.22033/ESGF/CMIP6.6842) |
-| NorESM2-LM | [Seland et al. (2019)](http://doi.org/10.22033/ESGF/CMIP6.8036) |
+| ACCESS-OM2 | [Hayashida et al. (2021)](https://doi.org/10.22033/ESGF/CMIP6.14689) |
+| ACCESS-OM2-025 | [Holmes et al. (2021)](https://doi.org/10.22033/ESGF/CMIP6.14690) |
+| CESM2 | [Danabasoglu et al. (2019)](https://doi.org/10.22033/ESGF/CMIP6.7680) |
+| CMCC-CM2-HR4 | [Fogli et al. (2020)](https://doi.org/10.22033/ESGF/CMIP6.13235) |
+| CMCC-CM2-SR5 | [Fogli et al. (2020)](https://doi.org/10.22033/ESGF/CMIP6.13236) |
+| CNRM-CM6-1 | [Voldoire (2020)](https://doi.org/10.22033/ESGF/CMIP6.10345) |
+| CNRM-CM6-1-HR | [Voldoire (2021)](https://doi.org/10.22033/ESGF/CMIP6.10346) |
+| EC-Earth3 | [Consortium (EC-Earth; 2020)](https://doi.org/10.22033/ESGF/CMIP6.14718) |
+| FGOALS-f3-L| [Lin (2019)](https://doi.org/10.22033/ESGF/CMIP6.3419) |
+| GFDL-CM4 | [Hurlin et al. (2018)](https://doi.org/10.22033/ESGF/CMIP6.8626) |
+| MIROC6 | [Komuro (2019)](https://doi.org/10.22033/ESGF/CMIP6.5655) |
+| MRI-ESM2.0 | [Yukimoto et al. (2019)](https://doi.org/10.22033/ESGF/CMIP6.6842) |
+| NorESM2-LM | [Bentsen et al. (2019)](https://doi.org/10.22033/ESGF/CMIP6.8089) |
+| TaiESM1-TIMCOM2 | [Tseng et al. (2021)](https://doi.org/10.22033/ESGF/CMIP6.16336) |
 
 The mean depth was calculated using [The General Bathymetric Chart of the Oceans](https://www.gebco.net/data_and_products/gridded_bathymetry_data/).
 
