@@ -10,35 +10,43 @@ This project aims to:
 2. Delineate potential drivers of larval distribution and hemispheric seasonality across these taxa.
 3. Identify larval hotspots that could correspond to potential spawning grounds for these species.
 
-The repository hosts the subset of data used to generate the boosted regression tree models (in `Data/`), but the raw and complete data can be extracted from their original sources described in __Data__ below.
 
 ## WORKFLOW
-The scripts are named sequentially. To rerun __all__ the analyses, the user would have to go through all the scripts within the `/analyses/` folder sequentially. This requires that the user downloads all necessary data from their original sources (see __Data__ below).
+The scripts are named sequentially. To rerun __all__ the analyses, the user would have to go through all the scripts within the `/analyses/` folder sequentially. This requires downloading all necessary data from their original sources (see __Data__ section below) and placing them in their respective directories. However, the repository already hosts the subset of data that is sufficient to run the analyses without downloading additional data.
 
-Note that scripts prefixed with `00_` are preliminary scripts (found in `/analyses/02_preliminaries/`) and are called within the subsequent scripts. Therefore, there is no need to run them independently.
 
-### Summary of the code
-- `01_`: assembles all the predictors and creates seasonal data sets with the larval data (in `/analyses/03_assemble_predictors/`).
+### STRUCTURE OF THE CODE
+- `/analyses/01_climate_data/`: processes climate model outputs from the Ocean Model Intercomparison Project Phase 2 (OMIP2) to prepare data for analysis and visualization
 
-To redo all analyses, make sure all the data are in their respective directories. To reproduce the climatology data, download Earth System Model outputs (see __Data__ below) and run the code in the markdown `OMIP_runs.qmd` in `/analyses/01_climate_data/`. The assembled data frames with all the predictor data and species data are found in `data_output/csv/`.
+To reproduce the climatology data, download Earth System Model outputs (see "Data" section below) and run the code in the markdown OMIP_runs.qmd.
 
-- `02_` through `16_`: generate models for all 15 taxa (all found in `/analyses/04_models/`). Scripts prefixed with `a_` refer to assembling the necessary data to run the models. `b_` scripts are where the full model is built. `c_` scripts are where the model outputs are restricted to areas where confidence is higher. 
+- `/analyses/02_preliminaries/`: contains the preliminary scripts (prefixed with `00_`), which are called within the subsequent scripts, therefore there is no need to run them independently.
 
-To redo building the BRTs, make sure that the larval data (in `.rds` format) from [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7) is in `data_input/fish`. Please also make sure that the `crs` for these files are in `+proj=longlat +lon_0=180 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0` (see lines 14-15 of `00_SetupGrid.R`). The files in this repository are reprojected files of [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7).
+- `/analyses/03_assemble_predictors/` to `/analyses/06_hotspot_analyses/`:
 
-Models are found in `data_output/models/` and model predictions for each taxa are found in `data_output/predictions/`
+  - `01_`: assembles all the predictors and creates seasonal data sets with the larval data
+  
+  To reproduce the distribution of the 15 taxa in `01p_DataLayers_AquaMaps.R)`, the user would have to download their distribution from AquaMaps (see __Data__ below).
 
-- `17_`: assembling model outputs across taxa and saving them as rasters, which can be accessed in `data_output/final_raster`
+  - `02_` through `16_`: generate models for all 15 taxa (all found in `/analyses/04_models/`). Scripts prefixed with `a_` refer to assembling the necessary data to run the models. `b_` scripts are where the full model is built. `c_` scripts are where the model outputs are restricted to areas where confidence is higher. 
+  
+  Note that `b_` scripts take a significant amount of time to run, therefore the user can run `c_` scripts using existing files generated from `b_` scripts that are found in the repository. 
 
-- `18_`: Principal Component Analysis to determine hotspots
+  To redo building the BRTs, make sure that the larval data (in `.rds` format) from [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7) is in `data_input/fish`. Please also make sure that the `crs` for these files are in `+proj=longlat +lon_0=180 +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0` (see lines 14-15 of `00_SetupGrid.R`). The files in this repository are reprojected files of [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7).
 
-- `19_`: plotting hemispheric seasonality
+  Models are found in `data_output/models/` and model predictions for each taxa are found in `data_output/predictions/`
 
-- `20_`: generating seasonal taxa richness maps
+  - `17_`: assembling model outputs across taxa and saving them as rasters, which can be accessed in `data_output/final_raster`
 
-- `21_`: plotting model predictions vs predictors
+  - `18_`: plotting hemispheric seasonality
 
-- `22_`: calculating spatiotemporal dispersion
+  - `19_`: plotting predictor preferences across taxa
+
+  - `20_`: calculating spatial aggregation index and seasonality index
+
+  - `21_`: extracting model parameters
+
+  - `22_`: principal component analysis to determine hotspots
 
 ## DATA
 The digitized larval data are found in [(Buenafe et al., 2022)](https://doi.org/10.1038/s41597-022-01528-7). The following species were included in this study:
@@ -59,9 +67,9 @@ The digitized larval data are found in [(Buenafe et al., 2022)](https://doi.org/
 14. Striped marlin
 15. Longfin escolar
 
-The historical environmental predictors were prepared from Coupled Model Intercomparison Project 6 (CMIP6) Earth System Models (https://esgf-node.llnl.gov/search/cmip6/). The ensembles used for each of the variables are subsets of the set of models found below. 
+The historical environmental predictors were prepared from the OMIP2 Earth System Models [(Tsujino et al., 2020)](https://doi.org/10.5194/gmd-13-3643-2020). 
 
-We used (in parentheses are the CMIP6 codes for the climate variables): 
+We used (in parentheses are the OMIP2 codes for the climate variables): 
 
 1. temperature (tos)
 2. oxygen (o2os)
@@ -75,8 +83,7 @@ We used (in parentheses are the CMIP6 codes for the climate variables):
 10. zonal velocity (uo)
 11. meridional velocity (vo)
 
-**The set of models need to be updated** (would probably ask Kris to do this)
-
+The ensembles used for each of the variables are subsets of the set of models found below. 
 __Table 1.__ Set of models used.
 | Model    | Reference |
 | -------- | ------- |
