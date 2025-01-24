@@ -51,7 +51,7 @@ for(i in 1:nrow(species_code)) {
 }
 
 # Load climatology data
-predictors <- c("tos", "o2os", "phos", "chlos", "sos", "mlotst", "no3os", "po4os", "nh4os", "thermal_front", "salinity_front", "eke")
+predictors <- c("tos", "o2os", "phos", "chlos", "sos", "mlotst", "no3os", "po4os", "nh4os", "thermal_front", "salinity_front", "mke")
 
 seasons <- c("jan-mar", "apr-jun", "jul-sep", "oct-dec")
 
@@ -95,7 +95,7 @@ for(f in 1:nrow(species_code)) {
                          nh4os = eval(sym(paste("nh4os", seasons[s], sep = "_"))),
                          tf = eval(sym(paste("thermal_front", seasons[s], sep = "_"))),
                          sf = eval(sym(paste("salinity_front", seasons[s], sep = "_"))),
-                         eke = eval(sym(paste("eke", seasons[s], sep = "_"))),
+                         mke = eval(sym(paste("mke", seasons[s], sep = "_"))),
                          bathy = bathy,
                          dist2coast = dist2coast,
                          species = aqua)

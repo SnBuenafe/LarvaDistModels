@@ -200,14 +200,14 @@ for(i in 1:length(spp_list)) {
 }
 
 
-#### Eddy kinetic energy (EKE) ####
+#### Eddy kinetic energy (mke) ####
 # Assemble data frame
-df <- assemblePredictor(spp_list, "eke")
+df <- assemblePredictor(spp_list, "mke")
 
 for(i in 1:length(spp_list)) {
   
-  gg <- plot_scatter_predictor(df, "eke", spp_list[i])
-  ggsave(filename = file.path(figure_dir, paste("eke", paste0(spp_list[i], ".png"), sep = "_")), 
+  gg <- plot_scatter_predictor(df, "mke", spp_list[i])
+  ggsave(filename = file.path(figure_dir, paste("mke", paste0(spp_list[i], ".png"), sep = "_")), 
          plot = gg, 
          width = 5,
          height = 3,

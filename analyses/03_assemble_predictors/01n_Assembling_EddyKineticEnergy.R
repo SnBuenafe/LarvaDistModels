@@ -10,14 +10,14 @@ figure_dir <- here(figure_dir, "predictors")
 # Set labeling parameters
 input1 <- "uo_omip2"
 input2 <- "vo_omip2"
-label <- "eke_omip2"
+label <- "mke_omip2"
 
-# Function to calculate EKE
+# Function to calculate mke
 create_layer <- function(uo, vo) {
   comb <- left_join(uo, vo) %>% 
     dplyr::select(cellID, uo_transformed, vo_transformed, geometry) %>%  # arrange columns
-    mutate(eke = 0.5*(uo_transformed^2 + vo_transformed^2)) %>% # calculate EKE
-    dplyr::select(cellID, eke, geometry)
+    mutate(mke = 0.5*(uo_transformed^2 + vo_transformed^2)) %>% # calculate mke
+    dplyr::select(cellID, mke, geometry)
 }
 
 # Function to prepare plots
@@ -26,7 +26,7 @@ create_plot <- function(ggcomb) {
     st_as_sf(sf_column_name = "geometry")
   
   gg <- ggplot() +
-    geom_sf(data = dataMeso, aes(fill = eke), color = NA, size = 0.01) +
+    geom_sf(data = dataMeso, aes(fill = mke), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = rev(brewer.pal(9, "Blues")),
                          na.value = "grey64",
                          limits = c(0.001, 0.2),
@@ -50,8 +50,8 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke <- create_plot(comb)
-ggsave(plot = eke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+mke <- create_plot(comb)
+ggsave(plot = mke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # ii. April-June
 season <- "apr-jun"
@@ -61,8 +61,8 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke <- create_plot(comb)
-ggsave(plot = eke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+mke <- create_plot(comb)
+ggsave(plot = mke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iii. July-September
 season <- "jul-sep"
@@ -72,8 +72,8 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke <- create_plot(comb)
-ggsave(plot = eke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+mke <- create_plot(comb)
+ggsave(plot = mke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 
 # iv. October-December
 season <- "oct-dec"
@@ -83,6 +83,6 @@ comb <- create_layer(uo, vo)
 saveRDS(comb, here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 # comb <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
 
-eke <- create_plot(comb)
-ggsave(plot = eke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
+mke <- create_plot(comb)
+ggsave(plot = mke, filename = here(figure_dir, paste0(label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
 

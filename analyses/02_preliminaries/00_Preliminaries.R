@@ -21,7 +21,7 @@ brt_cols <- c("longitude", "latitude", "season", "tos_transformed", "o2os_transf
               "phos_transformed", "chlos_transformed", "sos_transformed", 
               "mlotst_transformed", "no3os_transformed", "po4os_transformed", 
               "nh4os_transformed", "thermal_front_transformed", 
-              "salinity_front_transformed", "eke", "meanDepth", "coastDistance") # "adult" # c(7:23, 25)
+              "salinity_front_transformed", "mke", "meanDepth", "coastDistance") # "adult" # c(7:23, 25)
 
 spec_dict <- tibble::tribble(
   ~code, ~common,
