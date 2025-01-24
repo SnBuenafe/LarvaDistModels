@@ -16,13 +16,13 @@ The scripts are named sequentially. To rerun __all__ the analyses, the user woul
 
 
 ### STRUCTURE OF THE CODE
-- `/analyses/01_climate_data/`: processes climate model outputs from the Ocean Model Intercomparison Project Phase 2 (OMIP2) to prepare data for analysis and visualization
+- `01_climate_data/`: processes climate model outputs from the Ocean Model Intercomparison Project Phase 2 (OMIP2) to prepare data for analysis and visualization
 
-To reproduce the climatology data, download Earth System Model outputs (see "Data" section below) and run the code in the markdown OMIP_runs.qmd.
+  To reproduce the climatology data, download Earth System Model outputs (see "Data" section below) and run the code in the markdown OMIP_runs.qmd.
 
-- `/analyses/02_preliminaries/`: contains the preliminary scripts (prefixed with `00_`), which are called within the subsequent scripts, therefore there is no need to run them independently.
+- `02_preliminaries/`: contains the preliminary scripts (prefixed with `00_`), which are called within the subsequent scripts, therefore there is no need to run them independently.
 
-- `/analyses/03_assemble_predictors/` to `/analyses/06_hotspot_analyses/`:
+- `03_assemble_predictors/` to `06_hotspot_analyses/`:
 
   - `01_`: assembles all the predictors and creates seasonal data sets with the larval data
   
@@ -84,6 +84,7 @@ We used (in parentheses are the OMIP2 codes for the climate variables):
 11. meridional velocity (vo)
 
 The ensembles used for each of the variables are subsets of the set of models found below. 
+
 __Table 1.__ Set of models used.
 | Model    | Reference |
 | -------- | ------- |
