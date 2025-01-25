@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("o2os", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "o2os_omip2"
-figure_dir <- here::here(figure_dir, "predictors")
+figure_dir <- here::here(figure_dir, "supplementary")
 
 # Function to prepare o2os layer
 create_layer <- function(rs) {
@@ -58,7 +58,7 @@ o2os_rs <- stars::read_ncdf(here::here(input_dir,
 o2os <- create_layer(o2os_rs)
 saveRDS(o2os, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# o2os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ox <- create_plot(o2os)
 ggsave(plot = ox, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -71,7 +71,7 @@ o2os_rs <- stars::read_ncdf(here::here(input_dir,
 o2os <- create_layer(o2os_rs)
 saveRDS(o2os, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# o2os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ox <- create_plot(o2os)
 ggsave(plot = ox, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -84,7 +84,7 @@ o2os_rs <- stars::read_ncdf(here::here(input_dir,
 o2os <- create_layer(o2os_rs)
 saveRDS(o2os, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# o2os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ox <- create_plot(o2os)
 ggsave(plot = ox, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -97,7 +97,7 @@ o2os_rs <- stars::read_ncdf(here::here(input_dir,
 o2os <- create_layer(o2os_rs)
 saveRDS(o2os, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# o2os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# o2os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ox <- create_plot(o2os)
 ggsave(plot = ox, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

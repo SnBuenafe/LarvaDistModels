@@ -1,5 +1,7 @@
 # DESCRIPTION: Preparing Aquamaps adult distribution layer
 
+# Note: This code can only be run if you have the raw AquaMaps files and your machine has enough computing power to run this code. The processed output of this script is what's used in downstream analyses and is available in the repository. We would generally suggest skipping this script.
+
 # Load packages
 # install.packages("pacman")
 pacman::p_load(cmocean, here, stars)

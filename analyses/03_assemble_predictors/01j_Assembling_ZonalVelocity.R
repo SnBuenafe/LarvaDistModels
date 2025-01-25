@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("uo", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "uo_omip2"
-figure_dir <- here(figure_dir, "predictors")
+figure_dir <- here(figure_dir, "supplementary")
 
 # Function to prepare uo layer
 create_layer <- function(rs) {
@@ -43,7 +43,7 @@ create_plot <- function(gguo) {
                            barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('Zonal velocity (m s'^"-1"*')  ')) +
+    labs(fill = expression('Zonal velocity (m s'^"-1"*')     ')) +
     change_gglayout()
 }
 
@@ -56,7 +56,7 @@ uo_rs <- stars::read_ncdf(here::here(input_dir,
 uo <- create_layer(uo_rs)
 saveRDS(uo, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# uo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 uo <- create_plot(uo)
 ggsave(plot = uo, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -69,7 +69,7 @@ uo_rs <- stars::read_ncdf(here::here(input_dir,
 uo <- create_layer(uo_rs)
 saveRDS(uo, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# uo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 uo <- create_plot(uo)
 ggsave(plot = uo, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -82,7 +82,7 @@ uo_rs <- stars::read_ncdf(here::here(input_dir,
 uo <- create_layer(uo_rs)
 saveRDS(uo, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# uo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 uo <- create_plot(uo)
 ggsave(plot = uo, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -95,7 +95,7 @@ uo_rs <- stars::read_ncdf(here::here(input_dir,
 uo <- create_layer(uo_rs)
 saveRDS(uo, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# uo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# uo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 uo <- create_plot(uo)
 ggsave(plot = uo, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

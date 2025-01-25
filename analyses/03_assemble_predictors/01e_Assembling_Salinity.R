@@ -55,7 +55,7 @@ sos_rs <- stars::read_ncdf(here::here(input_dir,
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# sos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
 ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -68,7 +68,7 @@ sos_rs <- stars::read_ncdf(here::here(input_dir,
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# sos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
 ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -81,7 +81,7 @@ sos_rs <- stars::read_ncdf(here::here(input_dir,
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# sos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
 ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -94,7 +94,7 @@ sos_rs <- stars::read_ncdf(here::here(input_dir,
 sos <- create_layer(sos_rs)
 saveRDS(sos, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# sos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# sos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sal <- create_plot(sos)
 ggsave(plot = sal, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

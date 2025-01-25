@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("chlos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "chlos_omip2"
-figure_dir <- here::here(figure_dir, "predictors")
+figure_dir <- here::here(figure_dir, "supplementary")
 
 # Function to prepare chlos layer
 create_layer <- function(rs) {
@@ -23,7 +23,7 @@ create_layer <- function(rs) {
     replaceNN(., grid, "chlos") %>%
     dplyr::as_tibble() %>% 
     dplyr::select(cellID, chlos_transformed, geometry) %>% 
-    dplyr::mutate(chlos_transformed = chlos_transformed*1000000) # We transform chlorophyll from kg m-3 to mg m-3 so we multiply by 10^6
+    dplyr::mutate(chlos_transformed = chlos_transformed*1000) # We transform chlorophyll from kg m-3 to g m-3 so we multiply by 10^6
   
 }
 
@@ -36,7 +36,7 @@ create_plot <- function(ggchlos, season) {
     geom_sf(data = dataChlorophyll, aes(fill = chlos_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = brewer.pal(9, "YlGn"),
                          na.value = "grey64",
-                         limits = c(0.02, 1200),
+                         limits = c(0, 0.5),
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
@@ -44,7 +44,7 @@ create_plot <- function(ggchlos, season) {
                            barwidth = grid::unit(0.3, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('Chlorophyll concentration (mg m'^"-3"*')')) +
+    labs(fill = expression('Chlorophyll concentration (g m'^"-3"*')   ')) +
     change_gglayout()
 }
 
@@ -57,7 +57,7 @@ chlos_rs <- stars::read_ncdf(here::here(input_dir,
 chlos <- create_layer(chlos_rs)
 saveRDS(chlos, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# chlos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 chl <- create_plot(chlos)
 ggsave(plot = chl, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -70,7 +70,7 @@ chlos_rs <- stars::read_ncdf(here::here(input_dir,
 chlos <- create_layer(chlos_rs)
 saveRDS(chlos, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# chlos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 chl <- create_plot(chlos)
 ggsave(plot = chl, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -83,7 +83,7 @@ chlos_rs <- stars::read_ncdf(here::here(input_dir,
 chlos <- create_layer(chlos_rs)
 saveRDS(chlos, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# chlos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 chl <- create_plot(chlos)
 ggsave(plot = chl, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -96,7 +96,7 @@ chlos_rs <- stars::read_ncdf(here::here(input_dir,
 chlos <- create_layer(chlos_rs)
 saveRDS(chlos, here::here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# chlos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# chlos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 chl <- create_plot(chlos)
 ggsave(plot = chl, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

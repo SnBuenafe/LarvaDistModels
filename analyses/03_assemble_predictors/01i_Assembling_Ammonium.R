@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("nh4os", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "nh4os_omip2"
-figure_dir <- here(figure_dir, "predictors")
+figure_dir <- here(figure_dir, "supplementary")
 
 # Function to prepare nh4os layer
 create_layer <- function(rs) {
@@ -22,7 +22,7 @@ create_layer <- function(rs) {
     st_as_sf(crs = cCRS) %>% 
     replaceNN(., grid, "nh4os") %>%
     as_tibble() %>% 
-    select(cellID, nh4os_transformed, geometry) %>% 
+    dplyr::select(cellID, nh4os_transformed, geometry) %>% 
     mutate(nh4os_transformed = nh4os_transformed*1000) # transform from mol m-3 to mmol m-3 
   
 }
@@ -57,7 +57,7 @@ nh4os_rs <- read_ncdf(here(input_dir,
 nh4os <- create_layer(nh4os_rs)
 saveRDS(nh4os, here(output_dir, 
                     paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# nh4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 amm <- create_plot(nh4os)
 ggsave(plot = amm, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -70,7 +70,7 @@ nh4os_rs <- read_ncdf(here(input_dir,
 nh4os <- create_layer(nh4os_rs)
 saveRDS(nh4os, here(output_dir, 
                     paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# nh4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 amm <- create_plot(nh4os)
 ggsave(plot = amm, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -83,7 +83,7 @@ nh4os_rs <- read_ncdf(here(input_dir,
 nh4os <- create_layer(nh4os_rs)
 saveRDS(nh4os, here(output_dir, 
                     paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# nh4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 amm <- create_plot(nh4os)
 ggsave(plot = amm, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -96,7 +96,7 @@ nh4os_rs <- read_ncdf(here(input_dir,
 nh4os <- create_layer(nh4os_rs)
 saveRDS(nh4os, here(output_dir, 
                     paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# nh4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# nh4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 amm <- create_plot(nh4os)
 ggsave(plot = amm, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

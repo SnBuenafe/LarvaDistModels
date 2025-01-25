@@ -29,7 +29,7 @@ create_rast <- function(spp_list = c("yft", "skp", "alb", "swo", "blum",
       dplyr::filter(!is.na(model)) %>% # only select points with model values
       terra::vect(., geom = c("longitude", "latitude"), crs = lonlat) # convert to SpatVect
     
-    empt[[i]] <- rasterize(mod, nc, "model")
+    empt[[i]] <- terra::rasterize(mod, nc, "model")
     
     names(empt[[i]]) <- spp_list[i]
     

@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("phos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "phos_omip2"
-figure_dir <- here(figure_dir, "predictors")
+figure_dir <- here(figure_dir, "supplementary")
 
 # Function to prepare phos layer
 create_layer <- function(rs) {
@@ -42,7 +42,7 @@ create_plot <- function(ggphos) {
                            barwidth = grid::unit(0.6, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('pH ')) +
+    labs(fill = expression('pH    ')) +
     change_gglayout()
 }
 
@@ -55,7 +55,7 @@ phos_rs <- stars::read_ncdf(here::here(input_dir,
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# phos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
 ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -68,7 +68,7 @@ phos_rs <- stars::read_ncdf(here::here(input_dir,
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# phos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
 ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -81,7 +81,7 @@ phos_rs <- stars::read_ncdf(here::here(input_dir,
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# phos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
 ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -94,7 +94,7 @@ phos_rs <- stars::read_ncdf(here::here(input_dir,
 phos <- create_layer(phos_rs)
 saveRDS(phos, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# phos <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# phos <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 ph <- create_plot(phos)
 ggsave(plot = ph, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

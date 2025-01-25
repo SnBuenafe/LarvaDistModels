@@ -57,7 +57,7 @@ no3os_rs <- stars::read_ncdf(here::here(input_dir,
 no3os <- create_layer(no3os_rs)
 saveRDS(no3os, here::here(output_dir, 
                            paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# no3os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 nit <- create_plot(no3os)
 ggsave(plot = nit, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -70,7 +70,7 @@ no3os_rs <- stars::read_ncdf(here::here(input_dir,
 no3os <- create_layer(no3os_rs)
 saveRDS(no3os, here::here(output_dir, 
                            paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# no3os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 nit <- create_plot(no3os)
 ggsave(plot = nit, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -83,7 +83,7 @@ no3os_rs <- stars::read_ncdf(here::here(input_dir,
 no3os <- create_layer(no3os_rs)
 saveRDS(no3os, here::here(output_dir, 
                            paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# no3os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 nit <- create_plot(no3os)
 ggsave(plot = nit, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -96,7 +96,7 @@ no3os_rs <- stars::read_ncdf(here::here(input_dir,
 no3os <- create_layer(no3os_rs)
 saveRDS(no3os, here::here(output_dir, 
                            paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# no3os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# no3os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 nit <- create_plot(no3os)
 ggsave(plot = nit, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

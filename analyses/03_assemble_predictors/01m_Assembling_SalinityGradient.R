@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("sos", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "salinity_front_omip2"
-figure_dir <- here(figure_dir, "predictors")
+figure_dir <- here(figure_dir, "supplementary")
 
 # Function to prepare thermal gradient layer
 create_layer <- function(rs) {
@@ -60,7 +60,7 @@ rs <- read_ncdf(here(input_dir,
 grad <- create_layer(rs)
 saveRDS(grad, here(output_dir, 
                          paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# grad <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
 ggsave(plot = sf, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 15, height = 5, dpi = 600)
@@ -73,7 +73,7 @@ read_ncdf(here(input_dir,
 grad <- create_layer(rs)
 saveRDS(grad, here(output_dir, 
                    paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# grad <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
 ggsave(plot = sf, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 15, height = 5, dpi = 600)
@@ -86,7 +86,7 @@ rs <- read_ncdf(here(input_dir,
 grad <- create_layer(rs)
 saveRDS(grad, here(output_dir, 
                    paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# grad <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
 ggsave(plot = sf, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 15, height = 5, dpi = 600)
@@ -99,7 +99,7 @@ rs <- read_ncdf(here(input_dir,
 grad <- create_layer(rs)
 saveRDS(grad, here(output_dir, 
                    paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# grad <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# grad <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 sf <- create_plot(grad)
 ggsave(plot = sf, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 15, height = 5, dpi = 600)

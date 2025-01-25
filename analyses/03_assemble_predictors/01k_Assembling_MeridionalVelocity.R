@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("vo", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "vo_omip2"
-figure_dir <- here(figure_dir, "predictors")
+figure_dir <- here(figure_dir, "supplementary")
 
 
 # Function to prepare vo layer
@@ -44,7 +44,7 @@ create_plot <- function(ggvo) {
                            barwidth = grid::unit(0.5, "npc"),
                            frame.colour = "black")) +
     geom_sf(data = landmass, fill = "black", color = "black") +
-    labs(fill = expression('Meridional velocity (m s'^"-1"*')  ')) +
+    labs(fill = expression('Meridional velocity (m s'^"-1"*')     ')) +
     change_gglayout()
 }
 
@@ -57,7 +57,7 @@ vo_rs <- read_ncdf(here(input_dir,
 vo <- create_layer(vo_rs)
 saveRDS(vo, here(output_dir, 
                  paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# vo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 vo <- create_plot(vo)
 ggsave(plot = vo, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -70,7 +70,7 @@ vo_rs <- read_ncdf(here(input_dir,
 vo <- create_layer(vo_rs)
 saveRDS(vo, here(output_dir, 
                  paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# vo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 vo <- create_plot(vo)
 ggsave(plot = vo, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -83,7 +83,7 @@ vo_rs <- read_ncdf(here(input_dir,
 vo <- create_layer(vo_rs)
 saveRDS(vo, here(output_dir, 
                  paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# vo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 vo <- create_plot(vo)
 ggsave(plot = vo, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -96,7 +96,7 @@ vo_rs <- read_ncdf(here(input_dir,
 vo <- create_layer(vo_rs)
 saveRDS(vo, here(output_dir, 
                  paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# vo <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# vo <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 vo <- create_plot(vo)
 ggsave(plot = vo, filename = here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

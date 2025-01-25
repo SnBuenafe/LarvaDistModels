@@ -5,7 +5,7 @@
 pacman::p_load(cmocean, here)
 
 # Define directories
-figure_dir <- here("figures", "predictors")
+figure_dir <- here("figures", "supplementary")
 output_dir <- here("data_input")
 preliminaries_dir <- here("analyses", "02_preliminaries")
 

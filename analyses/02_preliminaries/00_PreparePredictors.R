@@ -2,7 +2,7 @@
 
 # Load packages
 # install.packages("pacman")
-pacman::p_load(tidyverse, sf, terra, patchwork, stars, purrr, cmocean, here, RColorBrewer, data.table)
+pacman::p_load(tidyverse, sf, terra, patchwork, stars, purrr, cmocean, here, RColorBrewer, data.table, ncmeta, PCICt, CircStats)
 
 # Set up directories
 input_dir <- here("data_input", "climate_ensemble")

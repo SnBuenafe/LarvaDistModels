@@ -57,7 +57,7 @@ po4os_rs <- stars::read_ncdf(here::here(input_dir,
 po4os <- create_layer(po4os_rs)
 saveRDS(po4os, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# po4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 phos <- create_plot(po4os)
 ggsave(plot = phos, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -70,7 +70,7 @@ po4os_rs <- stars::read_ncdf(here::here(input_dir,
 po4os <- create_layer(po4os_rs)
 saveRDS(po4os, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# po4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 phos <- create_plot(po4os)
 ggsave(plot = phos, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -83,7 +83,7 @@ po4os_rs <- stars::read_ncdf(here::here(input_dir,
 po4os <- create_layer(po4os_rs)
 saveRDS(po4os, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# po4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 phos <- create_plot(po4os)
 ggsave(plot = phos, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -96,7 +96,7 @@ po4os_rs <- stars::read_ncdf(here::here(input_dir,
 po4os <- create_layer(po4os_rs)
 saveRDS(po4os, here::here(output_dir, 
                           paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# po4os <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# po4os <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 phos <- create_plot(po4os)
 ggsave(plot = phos, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)

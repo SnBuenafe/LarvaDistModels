@@ -8,7 +8,7 @@ source(here(preliminaries_dir, "00_PreparePredictors.R"))
 # Set labeling parameters
 old_label <- paste("mlotst", "Omon", "ensemble", "omip2", "r1i1p1f1", "seasonal", "19630101-19811231", sep = "_")
 new_label <- "mlotst_omip2"
-figure_dir <- here::here(figure_dir, "predictors")
+figure_dir <- here::here(figure_dir, "supplementary")
 
 # Function to prepare mlotst layer
 create_layer <- function(rs) {
@@ -35,7 +35,7 @@ create_plot <- function(ggmlotst) {
     geom_sf(data = dataMixed, aes(fill = mlotst_transformed), color = NA, size = 0.01) +
     scale_fill_gradientn(colors = rev(brewer.pal(9, "GnBu")),
                          na.value = "grey64",
-                         limits = c(15, 400),
+                         limits = c(15, 350),
                          oob = scales::squish,
                          guide = guide_colourbar(
                            title.vjust = 0.5,
@@ -56,7 +56,7 @@ mlotst_rs <- stars::read_ncdf(here::here(input_dir,
 mlotst <- create_layer(mlotst_rs)
 saveRDS(mlotst, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# mlotst <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 mix <- create_plot(mlotst)
 ggsave(plot = mix, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -69,7 +69,7 @@ mlotst_rs <- stars::read_ncdf(here::here(input_dir,
 mlotst <- create_layer(mlotst_rs)
 saveRDS(mlotst, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# mlotst <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 mix <- create_plot(mlotst)
 ggsave(plot = mix, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -82,7 +82,7 @@ mlotst_rs <- stars::read_ncdf(here::here(input_dir,
 mlotst <- create_layer(mlotst_rs)
 saveRDS(mlotst, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# mlotst <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 mix <- create_plot(mlotst)
 ggsave(plot = mix, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
@@ -95,7 +95,7 @@ mlotst_rs <- stars::read_ncdf(here::here(input_dir,
 mlotst <- create_layer(mlotst_rs)
 saveRDS(mlotst, here::here(output_dir, 
                         paste(new_label, season, "interpolated.rds", sep = "_"))) # save object
-# mlotst <- readRDS(here::here(output_dir, paste(label, season, "interpolated.rds", sep = "_")))
+# mlotst <- readRDS(here::here(output_dir, paste(new_label, season, "interpolated.rds", sep = "_")))
 
 mix <- create_plot(mlotst)
 ggsave(plot = mix, filename = here::here(figure_dir, paste0(new_label, "_", season, ".png")), width = 14, height = 5, dpi = 600)
