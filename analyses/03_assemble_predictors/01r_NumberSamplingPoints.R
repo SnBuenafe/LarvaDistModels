@@ -2,8 +2,8 @@ library(tidyverse)
 library(sf)
 library(purrr)
 
-dir <- here::here("Data", "Fish")
-fig_dir <- here::here("Figures")
+dir <- file.path("data_input", "fish")
+fig_dir <- file.path("figures", "supplementary")
 
 # Get the frequency of CPUE categories per season per species
 file_list <- list.files(dir)
@@ -16,7 +16,7 @@ spp <- str_remove_all(file_list, "VectorFile_") %>%
 sum_freq_raw <- list()
 for(i in 1:length(file_list)) {
   
-  tmp <- readRDS(here::here(dir, file_list[i]))
+  tmp <- readRDS(file.path(dir, file_list[i]))
   
   sum_freq_raw[[i]] <- tmp %>% 
     dplyr::as_tibble() %>% 
@@ -43,7 +43,7 @@ ggplot() +
         axis.text = element_text(size = 10, color = "black"),
         plot.margin = unit(c(1,0.5,1,0.5), "cm"))
 
-ggsave(filename = here::here(fig_dir, "Supp_NumberSamplePoints.png"),
+ggsave(filename = file.path(fig_dir, "Supp_NumberSamplePoints.png"),
        dpi = 600,
        width = 7,
        height = 3)  
@@ -62,7 +62,7 @@ ggplot() +
         axis.text = element_text(size = 10, color = "black"),
         plot.margin = unit(c(1,0.5,1,0.5), "cm"))
 
-ggsave(filename = here::here(fig_dir, "Supp_NumberSamplePoints_Absolute.png"),
+ggsave(filename = file.path(fig_dir, "Supp_NumberSamplePoints_Absolute.png"),
        dpi = 600,
        width = 7,
        height = 3)  
@@ -74,5 +74,5 @@ spp_freq <- bind_rows(sum_freq_raw) %>%
   dplyr::summarise(freq = sum(freq), .by = c("abundance", "species")) %>% 
   tidyr::pivot_wider(names_from = "abundance", values_from = "freq")
 
-write_csv(spp_freq, file = file.path("Output", "SpeciesFreqTable.csv"))
+write_csv(spp_freq, file = file.path("docs", "SpeciesFreqTable.csv"))
 
