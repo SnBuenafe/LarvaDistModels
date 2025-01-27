@@ -1,12 +1,9 @@
-# DESCRIPTION: Plotting the number of sampling points
-
 library(tidyverse)
 library(sf)
 library(purrr)
-library(here)
 
-dir <- here("data_input", "fish")
-fig_dir <- here("figures", "supplementary")
+dir <- here::here("Data", "Fish")
+fig_dir <- here::here("Figures")
 
 # Get the frequency of CPUE categories per season per species
 file_list <- list.files(dir)
@@ -19,7 +16,7 @@ spp <- str_remove_all(file_list, "VectorFile_") %>%
 sum_freq_raw <- list()
 for(i in 1:length(file_list)) {
   
-  tmp <- readRDS(here(dir, file_list[i]))
+  tmp <- readRDS(here::here(dir, file_list[i]))
   
   sum_freq_raw[[i]] <- tmp %>% 
     dplyr::as_tibble() %>% 
@@ -29,10 +26,9 @@ for(i in 1:length(file_list)) {
   
 }
 
-sum_freq <- reduce(sum_freq, dplyr::left_join, by = "abundance") %>% 
-  rowwise() %>% 
-  mutate(freq = sum(c_across(starts_with("freq")), na.rm = TRUE)) %>% 
-  dplyr::select(abundance, freq)
+sum_freq <- bind_rows(sum_freq_raw) %>% 
+  dplyr::summarise(freq = sum(freq), .by = "abundance")
+
 
 sum(sum_freq$freq) # get total sampling points
 
@@ -51,7 +47,7 @@ ggsave(filename = here::here(fig_dir, "Supp_NumberSamplePoints.png"),
        dpi = 600,
        width = 7,
        height = 3)  
- 
+
 
 
 ggplot() +
