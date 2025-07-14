@@ -9,6 +9,12 @@ source(file.path("analyses", "05_spawning_analyses", "20a_SpawningIndices.R"))
 m1 <- lm(SI ~ SAI, data = full)
 summary(m1) # Simplest model is best
 
+# Calculate confidence intervals
+df_conf_intervals <- predict(m1, interval = "confidence", level = 0.95) %>% 
+  as_tibble()
+min(df_conf_intervals$lwr) # 0.2017444
+max(df_conf_intervals$upr) # 1.192783
+
 m2 <- lm(log10(SI) ~ log10(SAI), data = full)
 summary(m2)
 
@@ -20,6 +26,10 @@ summary(m3)
 ggplot(data = full, 
        aes(x = SAI, y = SI, label = code)) +
   geom_smooth(method = "lm", alpha = 0.15, color = "grey64") +
+  geom_errorbar(aes(ymin = SI-SI_SEM, ymax = SI+SI_SEM), 
+                linewidth = 0.5, width = 0.05, color = "grey60") +
+  geom_errorbar(aes(xmin = SAI-SAI_SEM, xmax = SAI+SAI_SEM),
+                linewidth = 0.5, width = 0.05, color = "grey60") +
   geom_point(size = 5, aes(shape = Hemisphere#, 
                            #color = Hemisphere
                            )
@@ -44,4 +54,4 @@ ggplot(data = full,
         legend.title = element_text(size = 15),
         panel.border = element_rect(color = "black", linewidth = 1))
 
-ggsave(filename = file.path(figure_dir, "SAI_SI_across_hemispheres_tmp.png"), dpi = 600, width = 15, height = 8, units = "in")
+ggsave(filename = file.path(figure_dir, "SAI_SI_across_hemispheres.png"), dpi = 600, width = 15, height = 8, units = "in")

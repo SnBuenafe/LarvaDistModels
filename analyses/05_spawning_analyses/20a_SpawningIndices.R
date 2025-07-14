@@ -53,7 +53,8 @@ for(i in 1:length(seasons)) {
 full_SAI <- purrr::reduce(df_SAI, dplyr::left_join, by = c("species", "hemisphere")) %>% 
   dplyr::rowwise() %>% 
   dplyr::mutate(SAI = mean(c_across(starts_with("ind")), na.rm = TRUE)) %>% # SAI Annual = Mean of SAI across Seasons
-  dplyr::select(species, hemisphere, SAI) %>% 
+  dplyr::mutate(SAI_SEM = sd(c_across(starts_with("ind")), na.rm = TRUE)/sqrt(length(c_across(starts_with("ind"))))) %>% # calculating standard error of mean
+  dplyr::select(species, hemisphere, SAI, SAI_SEM) %>% 
   dplyr::mutate(code = toupper(species)) %>% 
   dplyr::select(-species) %>% 
   dplyr::ungroup() %>% 
@@ -88,7 +89,8 @@ full_SI <- purrr::reduce(df_SI, dplyr::left_join, by = c("species", "hemisphere"
   dplyr::rowwise() %>% 
   # dplyr::mutate(SI = sd(c_across(starts_with("ind")), na.rm = TRUE)) %>% # Take the SD across seasons for mean per species (Seasonality Index)
   dplyr::mutate(SI = sd(c_across(starts_with("ind")), na.rm = TRUE) / mean(c_across(starts_with("ind")), na.rm = TRUE)) %>% # Take the SD across seasons for mean per species and standardise for the mean (Seasonality Index)
-  dplyr::select(species, hemisphere, SI) %>% 
+  dplyr::mutate(SI_SEM = sd(c_across(starts_with("ind")), na.rm = TRUE)/sqrt(length(c_across(starts_with("ind"))))) %>% # calculating standard error of mean
+  dplyr::select(species, hemisphere, SI, SI_SEM) %>% 
   dplyr::mutate(code = toupper(species)) %>% 
   dplyr::select(-species) %>% 
   dplyr::ungroup() %>% 
