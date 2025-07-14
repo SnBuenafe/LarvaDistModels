@@ -11,6 +11,10 @@ plotScree <- function(var) {
              aes(x = as.factor(Var1), y = Freq),
              color = "slategrey",
              fill = "slategrey") +
+    geom_point(data = scree_obj,
+               aes(x = as.factor(Var1), y = Freq),
+               color = "black",
+               size = 2) +
     scale_y_continuous(expand = c(0,0)) +
     ylab("Proportion of variance explained") +
     xlab("Principal components") +
