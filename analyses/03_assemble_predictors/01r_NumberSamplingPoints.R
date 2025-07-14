@@ -33,7 +33,8 @@ sum_freq <- bind_rows(sum_freq_raw) %>%
 sum(sum_freq$freq) # get total sampling points
 
 ggplot() +
-  geom_col(data = sum_freq, aes(x = abundance, y = freq/238950), fill = "lightsalmon2", color = NA) +
+  geom_col(data = sum_freq, aes(x = abundance, y = freq/sum(sum_freq$freq)), fill = "lightsalmon2", color = NA) +
+  geom_point(data = sum_freq, aes(x = abundance, y = freq/sum(sum_freq$freq)), color = "black", size = 2) +
   xlab("CPUE category") +
   ylab("Relative frequency") +
   theme_bw() +
