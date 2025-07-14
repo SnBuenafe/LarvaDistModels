@@ -1,7 +1,7 @@
-# Historical hotspots of pelagic fish larvae in the Indian and Pacific Oceans.
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8271292.svg)](https://doi.org/10.5281/zenodo.8271292)
+# Near-global spawning strategies of large pelagic fish.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14745329.svg)](https://doi.org/10.5281/zenodo.14745329)
 
-This repository contains all the pertinent code and analysis of Buenafe et al. (submitted).
+This repository contains all the pertinent code and analysis of Buenafe et al. (in press). *Nature Communications*
 
 ## DESCRIPTION
 This project aims to:
