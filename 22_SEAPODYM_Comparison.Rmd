@@ -1,0 +1,273 @@
+---
+title: "Correlation between larval model outputs"
+author: "Jason Flower"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+Purpose: Test if the BRT larval habitat suitability model outputs correlate with larval density model outputs from SEAPODYM.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+source("00_Preliminaries.R")
+library(sf)
+library(terra)
+library(rnaturalearth)
+library(cowplot)
+
+
+scale_fun <- function(input_raster){
+  minmax_data <- minmax(input_raster)    
+  return((input_raster - minmax_data[1,]) / (minmax_data[2,] - minmax_data[1,]))
+}
+
+figure_dir <- here::here(figure_dir, "SEAPODYM_comparison")
+data_dir <- here::here("Data")
+
+season_names <- c("jan_mar", "apr_jun", "jul_sep", "oct_dec")
+
+species_subset <- c("skp", "yft", "bet")
+
+pacific <- ne_countries(scale = 50, continent = c("Asia", "Oceania", "South America", "North America"), returnclass = "sf") %>%
+  st_shift_longitude() 
+```
+
+```{r include=FALSE}
+#load BRT model outputs
+brt_jan_mar <- rast(file.path(rast_dir, "ModelOutputs_jan-mar.tif")) %>% 
+  rotate(left = FALSE) %>% 
+  subset(species_subset) %>% 
+  setNames(paste("brt_", names(.), "_jan_mar") %>% gsub(" ", "", .))
+
+brt_apr_jun <- rast(file.path(rast_dir, "ModelOutputs_apr-jun.tif")) %>% 
+  rotate(left = FALSE) %>% 
+  subset(species_subset) %>% 
+  setNames(paste("brt_", names(.), "_apr_jun") %>% gsub(" ", "", .))
+
+brt_jul_sept <- rast(file.path(rast_dir, "ModelOutputs_jul-sept.tif")) %>% 
+  rotate(left = FALSE) %>% 
+  subset(species_subset) %>% 
+  setNames(paste("brt_", names(.), "_jul_sept") %>% gsub(" ", "", .))
+
+brt_oct_dec <- rast(file.path(rast_dir, "ModelOutputs_oct-dec.tif")) %>% 
+  rotate(left = FALSE) %>% 
+  subset(species_subset) %>% 
+  setNames(paste("brt_", names(.), "_oct_dec") %>% gsub(" ", "", .))
+
+#stack skipjack, yellowfin then bigeye to match order in main figure of paper
+brt_all <- c(brt_jan_mar, brt_apr_jun, brt_jul_sept, brt_oct_dec) %>% 
+  subset(c(grep(species_subset[1], names(.)), grep(species_subset[2], names(.)), grep(species_subset[3], names(.))))
+
+#load SEAPODYM model outputs
+seapodym_all <- rast(here::here(data_dir, "seapodym_seasonal_means.tif"))
+```
+
+```{r include=FALSE}
+#resample the BRTs to same extent and resolution as SEAPODYM outputs
+brt_all_resampled <- brt_all %>% 
+  resample(seapodym_all[[1]])
+
+temp_list <- list()
+#mask SEAPODYM ouputs using BRT seasonal rasters
+for (i in season_names) {
+   temp_list <- seapodym_all %>% 
+    subset(grep(i, names(.))) %>% 
+    mask(brt_all_resampled %>% subset(grep(i, names(.)))) %>% 
+    c(temp_list, .)
+}
+
+seapodym_all_masked <- rast(temp_list) %>% 
+  #reorder
+  subset(c(grep(species_subset[1], names(.)), grep(species_subset[2], names(.)), grep(species_subset[3], names(.))))
+```
+
+```{r include=FALSE}
+#rescale all rasters 0-1
+seapodym_all_masked_scaled <- scale_fun(seapodym_all_masked)
+
+brt_all_resampled_scaled <- scale_fun(brt_all_resampled)
+```
+
+
+```{r include=FALSE}
+#do pearson correlation test for each species and season
+corr_results <- data.frame(name = character(),
+                           pearson_corr = double())
+corr_maps <- list()
+
+for (i in 1:nlyr(seapodym_all_masked_scaled)) {
+  data_stack <- c(brt_all_resampled_scaled[[i]], seapodym_all_masked_scaled[[i]])
+  
+  results_pair_name <- gsub("seapodym_", "", names(data_stack[[1]]))
+  
+  results_list <- layerCor(data_stack, fun = "pearson", asSample = FALSE, na.rm=TRUE) 
+  
+  corr_results <- bind_rows(corr_results, bind_cols(name = results_pair_name, 
+                                        pearson_corr = results_list$pearson[[2]]))
+  
+  corr_maps[[i]] <- focalPairs(data_stack, w=5, "pearson", na.rm=TRUE) %>%
+    mask(data_stack[[1]]) %>% 
+    setNames(results_pair_name)
+}
+
+corr_maps <- rast(corr_maps)
+```
+
+```{r include=FALSE}
+#setup ggplot data
+sf_use_s2(FALSE)
+pacific <- pacific%>% 
+  st_crop(brt_all_resampled_scaled[[1]])
+
+season_names_nice <- stringr::str_to_title(gsub("_", "-", season_names))
+
+#combine both model outputs in the order we want for plotting - by species, model, then season
+brt_seapodym_combined <- rast()
+for (i in species_subset) {
+  brt_seapodym_combined <- c(brt_all_resampled_scaled %>% subset(grep(i, names(.))),
+                             seapodym_all_masked_scaled%>% subset(grep(i, names(.)))) %>% 
+    c(brt_seapodym_combined, .)
+}
+
+ggplot_data <- brt_seapodym_combined %>% 
+  as.data.frame(xy=TRUE, na.rm=FALSE) %>% 
+  tidyr::gather(ras_layer_name, value, -(x:y)) %>% 
+  dplyr::mutate(model = case_when(grepl("brt", ras_layer_name, fixed=TRUE) ~ "BRT", 
+                                  .default = "SEAPODYM"),
+                season = case_when(grepl(season_names[1], ras_layer_name, fixed = TRUE) ~ season_names_nice[1],
+                                   grepl(season_names[2], ras_layer_name, fixed = TRUE) ~ season_names_nice[2],
+                                   grepl(season_names[3], ras_layer_name, fixed = TRUE) ~ season_names_nice[3],
+                                   .default = season_names_nice[4]
+                ),
+                season = factor(season, levels = season_names_nice)
+  )
+  
+model_label_sequence <- c(1, 5)
+
+corr_plots_colours <- "BrBG"
+
+```
+
+
+```{r}
+#make all the plots
+plot_list <- list()
+
+for (species in species_subset) {
+  for (i in 1:8) {
+    temp_ras <- brt_seapodym_combined %>%
+      #subset for this species
+      subset(grep(species, names(.))) %>%
+      #and this index 
+      subset(i)
+    
+    corr_results_temp <-
+      corr_results$pearson_corr[grep(species, corr_results$name)]
+    
+    this_plot_data <- ggplot_data %>%
+      filter(ras_layer_name == names(temp_ras))
+    
+    g <- ggplot() +
+      geom_raster(data = this_plot_data, aes(x = x, y = y, fill = value)) +
+      geom_sf(data = pacific) +
+      scale_fill_viridis_c(na.value = "white") +
+      ylab(ifelse(
+        i %in% model_label_sequence,
+        unique(this_plot_data$model),
+        ""
+      )) +
+      ggtitle(ifelse(i %in% 5:8, paste0(
+        "corr = ", sprintf("%.2f", corr_results_temp[i - 4])
+      ), "")) +
+      theme_bw() +
+      theme(axis.title.x = element_blank(),
+            plot.margin = unit(c(0, 0, 0, 0), "cm"))
+    
+    if (i %% 8) {
+      g_legend <- get_legend(g)
+    }
+    g <- g + theme(legend.position = 'none')
+    
+    x_plot_data <- temp_ras %>%
+      init('x') %>%
+      zonal(temp_ras, ., fun = mean, na.rm = T) %>%
+      rename(x = 1, value = 2)
+    
+    x_plot <- cowplot::axis_canvas(g, axis = "x") +
+      geom_col(data = x_plot_data,
+               aes(x, value),
+               width = 2,
+               na.rm = TRUE) +
+      theme_void()
+    
+    y_plot_data <- temp_ras %>%
+      init('y') %>%
+      zonal(temp_ras, ., fun = mean, na.rm = T) %>%
+      rename(y = 1, value = 2)
+    
+    y_plot <- cowplot::axis_canvas(g, axis = "y", coord_flip = TRUE) +
+      geom_col(data = y_plot_data,
+               aes(y, value),
+               width = 2,
+               na.rm = TRUE) +
+      coord_flip() +
+      theme_void()
+    
+    plot_list[[i]] <- g %>%
+      cowplot::insert_xaxis_grob(x_plot) %>%
+      cowplot::insert_yaxis_grob(y_plot) %>%
+      cowplot::ggdraw()
+    
+  }
+  
+  corr_plots_list <- list()
+  
+  for (i in 1:4) {
+    temp_ras <- corr_maps %>%
+      #subset for this species
+      subset(grep(species, names(.))) %>%
+      #and this index %>%
+      subset(i)
+    
+    this_plot_data <- temp_ras %>%
+      as.data.frame(xy = TRUE, na.rm = FALSE) %>%
+      rename(value = 3)
+    
+    corr_plots_list[[i]] <- ggplot() +
+      geom_raster(data = this_plot_data, aes(x = x, y = y, fill = value)) +
+      geom_sf(data = pacific) +
+      scale_fill_distiller(palette = corr_plots_colours, na.value = "white") +
+      ylab(ifelse(i %in% model_label_sequence, "Pairwise\ncorrelation", "")) +
+      theme_bw() +
+      theme(axis.title.x = element_blank(),
+            plot.margin = unit(c(0, 0, 0, 0), "cm"))
+    
+    if (i %% 4) {
+      corr_legend <- get_legend(corr_plots_list[[i]])
+    }
+    corr_plots_list[[i]] <-
+      corr_plots_list[[i]] + theme(legend.position = 'none')
+  }
+  
+  
+  #arrange plots
+  
+  (
+    final_plot <-
+      cowplot::plot_grid(
+        plotlist = plot_list,
+        ncol = 4,
+        labels = season_names_nice,
+        hjust = -1
+      ) %>%
+      cowplot::plot_grid(g_legend, rel_widths = c(1, 0.1))
+  )
+
+  save_plot(
+    filename = here::here(figure_dir, paste0(species, ".png")),
+    plot = final_plot,
+    base_width = 14
+  )
+}
+```
